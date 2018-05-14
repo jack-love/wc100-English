@@ -13,11 +13,17 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">image:url(:/image/backGround.png)</string>
+  </property>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>2</x>
-     <y>180</y>
+     <x>10</x>
+     <y>60</y>
      <width>461</width>
      <height>601</height>
     </rect>
@@ -35,8 +41,8 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>120</width>
-          <height>120</height>
+          <width>125</width>
+          <height>125</height>
          </size>
         </property>
         <property name="locale">
@@ -51,8 +57,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>120</width>
-          <height>120</height>
+          <width>135</width>
+          <height>135</height>
          </size>
         </property>
        </widget>
@@ -80,8 +86,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>120</width>
-          <height>120</height>
+          <width>135</width>
+          <height>135</height>
          </size>
         </property>
        </widget>
@@ -116,8 +122,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>120</width>
-          <height>120</height>
+          <width>135</width>
+          <height>135</height>
          </size>
         </property>
        </widget>
@@ -148,8 +154,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>120</width>
-          <height>120</height>
+          <width>135</width>
+          <height>135</height>
          </size>
         </property>
        </widget>
@@ -184,8 +190,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>120</width>
-          <height>120</height>
+          <width>135</width>
+          <height>135</height>
          </size>
         </property>
        </widget>
@@ -216,8 +222,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>120</width>
-          <height>120</height>
+          <width>135</width>
+          <height>135</height>
          </size>
         </property>
        </widget>
@@ -252,8 +258,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>120</width>
-          <height>120</height>
+          <width>135</width>
+          <height>135</height>
          </size>
         </property>
        </widget>
@@ -284,8 +290,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>120</width>
-          <height>120</height>
+          <width>135</width>
+          <height>135</height>
          </size>
         </property>
        </widget>
