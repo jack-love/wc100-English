@@ -18,6 +18,15 @@ public:
 private:
     Ui::MainWindow *ui;
     Mainbutton* m_MainButtonDlg;
+private slots:
+    void TestingActionSlot();
+    void HistoryActionSlot();
+    void MaintancanceActionSlot();
+    void CalibrationActionSlot();
+    void SystemActionSlot();
+    void UpdateActionSlot();
+    void OtherActionSlot();
+    void PasswordActionSlot();
 };
 
 #endif // MAINWINDOW_H

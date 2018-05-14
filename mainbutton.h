@@ -15,6 +15,32 @@ public:
     explicit Mainbutton(QWidget *parent = 0);
     ~Mainbutton();
 
+signals:
+    void on_btn_Testing();
+    void on_btn_History();
+    void on_btn_Maintancance();
+    void on_btn_Calibration();
+    void on_btn_System();
+    void on_btn_Update();
+   void  on_btn_Other();
+   void  on_btn_Password();
+private slots:
+    void on_btn_Testing_clicked();
+
+    void on_btn_History_clicked();
+
+    void on_btn_Maintancance_clicked();
+
+    void on_btn_Calibration_clicked();
+
+    void on_btn_System_clicked();
+
+    void on_btn_Update_clicked();
+
+    void on_btn_Other_clicked();
+
+    void on_btn_Password_clicked();
+
 private:
     Ui::Mainbutton *ui;
 };

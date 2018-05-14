@@ -19,5 +19,40 @@ Mainbutton::~Mainbutton()
 
 void Mainbutton::on_btn_Testing_clicked()
 {
+ emit on_btn_Testing();
+}
 
+void Mainbutton::on_btn_History_clicked()
+{
+emit on_btn_History();
+}
+
+void Mainbutton::on_btn_Maintancance_clicked()
+{
+emit on_btn_Maintancance();
+}
+
+void Mainbutton::on_btn_Calibration_clicked()
+{
+emit on_btn_Calibration();
+}
+
+void Mainbutton::on_btn_System_clicked()
+{
+ emit on_btn_System();
+}
+
+void Mainbutton::on_btn_Update_clicked()
+{
+emit on_btn_Update();
+}
+
+void Mainbutton::on_btn_Other_clicked()
+{
+emit on_btn_Other();
+}
+
+void Mainbutton::on_btn_Password_clicked()
+{
+emit on_btn_Password();
 }
