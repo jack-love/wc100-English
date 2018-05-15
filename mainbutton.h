@@ -24,6 +24,7 @@ signals:
     void on_btn_Update();
    void  on_btn_Other();
    void  on_btn_Password();
+  // void sendsignal();
 private slots:
     void on_btn_Testing_clicked();
 
