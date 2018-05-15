@@ -1,0 +1,1462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TestingDialog</class>
+ <widget class="QDialog" name="TestingDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>480</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>30</y>
+     <width>440</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_8">
+    <property name="spacing">
+     <number>10</number>
+    </property>
+    <item>
+     <widget class="QLabel" name="label_Number">
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#0000ff;&quot;&gt;当前记录:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="edit_Number"/>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_Model">
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#0000ff;&quot;&gt;试纸型号:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="edit_Model"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>6</x>
+     <y>699</y>
+     <width>461</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_9">
+    <property name="spacing">
+     <number>50</number>
+    </property>
+    <item>
+     <widget class="QPushButton" name="btn_Start">
+      <property name="maximumSize">
+       <size>
+        <width>80</width>
+        <height>80</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="rc.qrc">
+        <normaloff>:/image/Run.png</normaloff>:/image/Run.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>60</width>
+        <height>60</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="btn_Stop">
+      <property name="maximumSize">
+       <size>
+        <width>80</width>
+        <height>80</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="rc.qrc">
+        <normaloff>:/image/Stop.png</normaloff>:/image/Stop.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>60</width>
+        <height>60</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="btn_Back">
+      <property name="maximumSize">
+       <size>
+        <width>80</width>
+        <height>80</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="rc.qrc">
+        <normaloff>:/image/15.png</normaloff>:/image/15.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>60</width>
+        <height>60</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>100</y>
+     <width>441</width>
+     <height>491</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_13">
+      <item>
+       <widget class="QComboBox" name="comboBox_20">
+        <item>
+         <property name="text">
+          <string>尿胆原</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>胆红素</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酮体</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>肌酐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>潜血</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>蛋白质</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>微白</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>亚硝酸盐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>白细胞</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>葡萄糖</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>比重</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酸碱度</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>维C</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>钙离子</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>ACR</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_20"/>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBox_21">
+        <item>
+         <property name="text">
+          <string>尿胆原</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>胆红素</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酮体</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>肌酐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>潜血</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>蛋白质</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>微白</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>亚硝酸盐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>白细胞</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>葡萄糖</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>比重</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酸碱度</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>维C</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>钙离子</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>ACR</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_21"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QComboBox" name="comboBox_4">
+        <item>
+         <property name="text">
+          <string>尿胆原</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>胆红素</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酮体</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>肌酐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>潜血</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>蛋白质</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>微白</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>亚硝酸盐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>白细胞</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>葡萄糖</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>比重</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酸碱度</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>维C</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>钙离子</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>ACR</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_4"/>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBox_5">
+        <item>
+         <property name="text">
+          <string>尿胆原</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>胆红素</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酮体</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>肌酐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>潜血</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>蛋白质</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>微白</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>亚硝酸盐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>白细胞</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>葡萄糖</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>比重</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酸碱度</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>维C</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>钙离子</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>ACR</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_5"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <widget class="QComboBox" name="comboBox_6">
+        <item>
+         <property name="text">
+          <string>尿胆原</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>胆红素</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酮体</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>肌酐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>潜血</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>蛋白质</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>微白</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>亚硝酸盐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>白细胞</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>葡萄糖</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>比重</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酸碱度</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>维C</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>钙离子</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>ACR</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_6"/>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBox_7">
+        <item>
+         <property name="text">
+          <string>尿胆原</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>胆红素</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酮体</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>肌酐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>潜血</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>蛋白质</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>微白</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>亚硝酸盐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>白细胞</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>葡萄糖</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>比重</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酸碱度</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>维C</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>钙离子</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>ACR</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_7"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QComboBox" name="comboBox_8">
+        <item>
+         <property name="text">
+          <string>尿胆原</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>胆红素</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酮体</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>肌酐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>潜血</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>蛋白质</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>微白</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>亚硝酸盐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>白细胞</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>葡萄糖</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>比重</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酸碱度</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>维C</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>钙离子</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>ACR</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_8"/>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBox_9">
+        <item>
+         <property name="text">
+          <string>尿胆原</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>胆红素</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酮体</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>肌酐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>潜血</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>蛋白质</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>微白</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>亚硝酸盐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>白细胞</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>葡萄糖</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>比重</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酸碱度</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>维C</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>钙离子</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>ACR</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_9"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_6">
+      <item>
+       <widget class="QComboBox" name="comboBox_10">
+        <item>
+         <property name="text">
+          <string>尿胆原</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>胆红素</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酮体</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>肌酐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>潜血</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>蛋白质</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>微白</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>亚硝酸盐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>白细胞</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>葡萄糖</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>比重</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酸碱度</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>维C</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>钙离子</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>ACR</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_10"/>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBox_11">
+        <item>
+         <property name="text">
+          <string>尿胆原</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>胆红素</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酮体</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>肌酐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>潜血</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>蛋白质</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>微白</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>亚硝酸盐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>白细胞</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>葡萄糖</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>比重</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酸碱度</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>维C</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>钙离子</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>ACR</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_11"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_11">
+      <item>
+       <widget class="QComboBox" name="comboBox_16">
+        <item>
+         <property name="text">
+          <string>尿胆原</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>胆红素</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酮体</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>肌酐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>潜血</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>蛋白质</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>微白</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>亚硝酸盐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>白细胞</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>葡萄糖</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>比重</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酸碱度</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>维C</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>钙离子</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>ACR</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_16"/>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBox_17">
+        <item>
+         <property name="text">
+          <string>尿胆原</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>胆红素</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酮体</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>肌酐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>潜血</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>蛋白质</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>微白</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>亚硝酸盐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>白细胞</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>葡萄糖</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>比重</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酸碱度</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>维C</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>钙离子</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>ACR</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_17"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_12">
+      <item>
+       <widget class="QComboBox" name="comboBox_18">
+        <item>
+         <property name="text">
+          <string>尿胆原</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>胆红素</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酮体</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>肌酐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>潜血</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>蛋白质</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>微白</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>亚硝酸盐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>白细胞</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>葡萄糖</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>比重</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酸碱度</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>维C</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>钙离子</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>ACR</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_18"/>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBox_19">
+        <item>
+         <property name="text">
+          <string>尿胆原</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>胆红素</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酮体</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>肌酐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>潜血</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>蛋白质</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>微白</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>亚硝酸盐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>白细胞</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>葡萄糖</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>比重</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酸碱度</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>维C</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>钙离子</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>ACR</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_19"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_14">
+      <item>
+       <widget class="QComboBox" name="comboBox_22">
+        <item>
+         <property name="text">
+          <string>尿胆原</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>胆红素</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酮体</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>肌酐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>潜血</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>蛋白质</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>微白</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>亚硝酸盐</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>白细胞</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>葡萄糖</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>比重</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>酸碱度</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>维C</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>钙离子</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>ACR</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_22"/>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::MinimumExpanding</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>54</width>
+          <height>38</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget_2</zorder>
+  <zorder>layoutWidget_3</zorder>
+  <zorder>layoutWidget_4</zorder>
+  <zorder>layoutWidget_5</zorder>
+  <zorder>layoutWidget_6</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>lineEdit</zorder>
+  <zorder>fontComboBox1</zorder>
+  <zorder>fontComboBox_2</zorder>
+  <zorder>lineEdit_2</zorder>
+  <zorder>comboBox_3</zorder>
+  <zorder>lineEdit_3</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget_2</zorder>
+  <zorder>layoutWidget_3</zorder>
+  <zorder>layoutWidget_4</zorder>
+  <zorder>lineEdit_12</zorder>
+  <zorder>layoutWidget_5</zorder>
+  <zorder>layoutWidget_6</zorder>
+  <zorder>layoutWidget_7</zorder>
+  <zorder>layoutWidget_8</zorder>
+ </widget>
+ <tabstops>
+  <tabstop>edit_Number</tabstop>
+  <tabstop>edit_Model</tabstop>
+  <tabstop>btn_Start</tabstop>
+  <tabstop>btn_Stop</tabstop>
+  <tabstop>btn_Back</tabstop>
+ </tabstops>
+ <resources>
+  <include location="rc.qrc"/>
+ </resources>
+ <connections/>
+</ui>

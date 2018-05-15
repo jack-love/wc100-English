@@ -34,6 +34,8 @@ MainWindow::~MainWindow()
 void MainWindow::TestingActionSlot(){
     qDebug("bug--->mainwindow.cpp->TestingActionSlot");
    // selectButton(TESTING);
+    QMessageBox::warning(NULL, "warning", "Please input X ", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
 }
 
 void MainWindow::HistoryActionSlot(){

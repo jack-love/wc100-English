@@ -14,13 +14,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    mainbutton.cpp
+    mainbutton.cpp \
+    testingdialog.cpp
 
 HEADERS  += mainwindow.h \
-    mainbutton.h
+    mainbutton.h \
+    testingdialog.h
 
 FORMS    += mainwindow.ui \
-    mainbutton.ui
+    mainbutton.ui \
+    testingdialog.ui
 
 RESOURCES += \
     rc.qrc

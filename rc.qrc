@@ -47,5 +47,7 @@
         <file>image/Title.jpg</file>
         <file>image/WarningIcon.png</file>
         <file>image/backGround.png</file>
+        <file>image/15.png</file>
+        <file>image/60.png</file>
     </qresource>
 </RCC>
