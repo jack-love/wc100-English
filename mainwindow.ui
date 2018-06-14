@@ -17,10 +17,10 @@
    <widget class="QFrame" name="main_Frame">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>90</y>
-      <width>481</width>
-      <height>661</height>
+      <x>1</x>
+      <y>67</y>
+      <width>479</width>
+      <height>741</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -30,70 +30,109 @@
      <enum>QFrame::Raised</enum>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>481</width>
-      <height>81</height>
+      <width>471</width>
+      <height>61</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <property name="leftMargin">
+      <number>10</number>
+     </property>
      <item>
-      <widget class="QLabel" name="lab_SystemTitle">
-       <property name="autoFillBackground">
-        <bool>false</bool>
+      <widget class="QLCDNumber" name="lcdNumber">
+       <property name="maximumSize">
+        <size>
+         <width>150</width>
+         <height>150</height>
+        </size>
+       </property>
+       <property name="sizeIncrement">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <italic>false</italic>
+        </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">image: url(:/image/CompanyTitle.png);</string>
+        <string notr="true">color:rgb(78,104,255)</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
        </property>
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
-       <property name="text">
-        <string/>
+       <property name="lineWidth">
+        <number>0</number>
        </property>
-       <property name="scaledContents">
-        <bool>false</bool>
+       <property name="midLineWidth">
+        <number>0</number>
+       </property>
+       <property name="digitCount">
+        <number>8</number>
+       </property>
+       <property name="mode">
+        <enum>QLCDNumber::Dec</enum>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="lab_SystemTitle_2">
-       <property name="autoFillBackground">
-        <bool>false</bool>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">image: url(:/image/CompanyTitle.png);</string>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
+      <widget class="QLabel" name="labelWireless">
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>50</height>
+        </size>
        </property>
        <property name="text">
         <string/>
-       </property>
-       <property name="scaledContents">
-        <bool>false</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="lab_SystemTitle_3">
-       <property name="autoFillBackground">
-        <bool>false</bool>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">image: url(:/image/CompanyTitle.png);</string>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
+      <widget class="QLabel" name="labelBluetooth">
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>50</height>
+        </size>
        </property>
        <property name="text">
         <string/>
        </property>
-       <property name="scaledContents">
-        <bool>false</bool>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelBattery">
+       <property name="minimumSize">
+        <size>
+         <width>50</width>
+         <height>50</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>50</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </item>

@@ -5,8 +5,9 @@
 #include <mainbutton.h>
 #include <QMessageBox>
 #include <testingdialog.h>
-
-
+#include <maintancance.h>
+#include<QTimer>
+#include<QTime>
 namespace Ui {
 class MainWindow;
 }
@@ -29,6 +30,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    QLabel *labelWireless;
+    QLabel *labelBattery;
 
 private:
     Ui::MainWindow *ui;
@@ -36,8 +39,13 @@ private:
      void selectButton(MAIN_BUTTON button);
        void hideButton(MAIN_BUTTON button);
     TestingDialog *m_TestDialog;
+    Maintancance *m_Maintancance;
     MAIN_BUTTON buttonState;
+    void showBattery();
+    void showWIFI();
+    void showBluetooth();
 private slots:
+    void showTime();
     void TestingActionSlot();
     void HistoryActionSlot();
     void MaintancanceActionSlot();
@@ -47,6 +55,7 @@ private slots:
     void OtherActionSlot();
     void PasswordActionSlot();
     void BackHomeActionSlot();
+    void GoTestingActionSlot();
 };
 
 #endif // MAINWINDOW_H

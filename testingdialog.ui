@@ -10,21 +10,32 @@
     <height>800</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <pointsize>25</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>10</x>
      <y>30</y>
-     <width>440</width>
-     <height>29</height>
+     <width>461</width>
+     <height>50</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_8">
     <property name="spacing">
-     <number>10</number>
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>56</number>
     </property>
     <item>
      <widget class="QLabel" name="label_Number">
@@ -48,11 +59,11 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>690</y>
+     <y>590</y>
      <width>461</width>
      <height>102</height>
     </rect>
@@ -132,12 +143,12 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>100</y>
-     <width>441</width>
+     <x>10</x>
+     <y>90</y>
+     <width>461</width>
      <height>491</height>
     </rect>
    </property>
@@ -146,6 +157,14 @@
      <layout class="QHBoxLayout" name="horizontalLayout_13">
       <item>
        <widget class="QComboBox" name="leftSelection_1">
+        <property name="font">
+         <font>
+          <pointsize>25</pointsize>
+         </font>
+        </property>
+        <property name="maxVisibleItems">
+         <number>10</number>
+        </property>
         <item>
          <property name="text">
           <string>尿胆原</string>
@@ -502,6 +521,11 @@
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
        <widget class="QComboBox" name="leftSelection_3">
+        <property name="font">
+         <font>
+          <pointsize>25</pointsize>
+         </font>
+        </property>
         <item>
          <property name="text">
           <string>尿胆原</string>
@@ -1475,7 +1499,13 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="leftShow_8"/>
+       <widget class="QLineEdit" name="leftShow_8">
+        <property name="font">
+         <font>
+          <pointsize>19</pointsize>
+         </font>
+        </property>
+       </widget>
       </item>
       <item>
        <spacer name="horizontalSpacer">
@@ -1497,31 +1527,6 @@
     </item>
    </layout>
   </widget>
-  <zorder>layoutWidget</zorder>
-  <zorder>layoutWidget</zorder>
-  <zorder>layoutWidget</zorder>
-  <zorder>layoutWidget</zorder>
-  <zorder>layoutWidget_2</zorder>
-  <zorder>layoutWidget_3</zorder>
-  <zorder>layoutWidget_4</zorder>
-  <zorder>layoutWidget_5</zorder>
-  <zorder>layoutWidget_6</zorder>
-  <zorder>layoutWidget</zorder>
-  <zorder>lineEdit</zorder>
-  <zorder>fontComboBox1</zorder>
-  <zorder>fontComboBox_2</zorder>
-  <zorder>lineEdit_2</zorder>
-  <zorder>comboBox_3</zorder>
-  <zorder>lineEdit_3</zorder>
-  <zorder>layoutWidget</zorder>
-  <zorder>layoutWidget_2</zorder>
-  <zorder>layoutWidget_3</zorder>
-  <zorder>layoutWidget_4</zorder>
-  <zorder>lineEdit_12</zorder>
-  <zorder>layoutWidget_5</zorder>
-  <zorder>layoutWidget_6</zorder>
-  <zorder>layoutWidget_7</zorder>
-  <zorder>layoutWidget_8</zorder>
  </widget>
  <tabstops>
   <tabstop>edit_Number</tabstop>
@@ -1559,16 +1564,6 @@
   <tabstop>btn_Start</tabstop>
   <tabstop>btn_Stop</tabstop>
   <tabstop>btn_Back</tabstop>
-  <tabstop>lineEdit_2</tabstop>
-  <tabstop>comboBox_12</tabstop>
-  <tabstop>lineEdit_12</tabstop>
-  <tabstop>comboBox_13</tabstop>
-  <tabstop>lineEdit_13</tabstop>
-  <tabstop>comboBox_14</tabstop>
-  <tabstop>comboBox_2</tabstop>
-  <tabstop>lineEdit_14</tabstop>
-  <tabstop>comboBox_15</tabstop>
-  <tabstop>lineEdit_15</tabstop>
  </tabstops>
  <resources>
   <include location="rc.qrc"/>

@@ -7,6 +7,11 @@ TestingDialog::TestingDialog(QWidget *parent) :
 {
    TestItem Itemval;
     ui->setupUi(this);
+    Qt::WindowFlags flags = 0;
+    flags |= Qt::WindowMinimizeButtonHint;
+    flags |=Qt::WindowMaximizeButtonHint;
+    setWindowFlags(flags); // 设置禁止最大化
+    setFixedSize(480,800); // 禁止改变窗口大小。
 setItemval_Urs14cc();
 showItemval_Urs14cc();
 }

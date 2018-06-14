@@ -16,6 +16,7 @@ public:
     ~Mainbutton();
 
 signals:
+     void SendHomeSignal();
     void on_btn_Testing();
     void on_btn_History();
     void on_btn_Maintancance();
@@ -41,6 +42,8 @@ private slots:
     void on_btn_Other_clicked();
 
     void on_btn_Password_clicked();
+
+    void on_btn_Back_clicked();
 
 private:
     Ui::Mainbutton *ui;

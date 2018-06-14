@@ -49,5 +49,19 @@
         <file>image/backGround.png</file>
         <file>image/Back.png</file>
         <file>image/Home.png</file>
+        <file>image/MechanicalTesting.png</file>
+        <file>image/WhiteBalance.png</file>
+        <file>icons/BatteryIcon.png</file>
+        <file>icons/BatteryIcon1.png</file>
+        <file>icons/BatteryIcon2.png</file>
+        <file>icons/BatteryIcon3.png</file>
+        <file>icons/BatteryIcon4.png</file>
+        <file>icons/WirelessIcon.png</file>
+        <file>icons/WirelessIcon1.png</file>
+        <file>icons/WirelessIcon2.png</file>
+        <file>icons/WirelessIcon3.png</file>
+        <file>icons/WirelessIcon4.png</file>
+        <file>icons/Bluetooth1.png</file>
+        <file>image/arrow_left.png</file>
     </qresource>
 </RCC>

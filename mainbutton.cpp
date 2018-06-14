@@ -5,11 +5,19 @@ Mainbutton::Mainbutton(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Mainbutton)
 {
+
+
    // qDebug("bug--->mainbuttondialog.cpp---> MainButtonDialog()");
     ui->setupUi(this);
     this->setWindowFlags(Qt::CustomizeWindowHint|Qt::FramelessWindowHint);
-    QPoint point(0, 0);
-    this->move(point);
+    //QPoint point(0, 0);
+    //this->move(point);
+    Qt::WindowFlags flags = 0;
+    flags |= Qt::WindowMinimizeButtonHint;
+    flags |=Qt::WindowMaximizeButtonHint;
+    setWindowFlags(flags); // 设置禁止最大化
+    setFixedSize(480,800); // 禁止改变窗口大小。
+
 }
 
 Mainbutton::~Mainbutton()
@@ -55,4 +63,10 @@ emit on_btn_Other();
 void Mainbutton::on_btn_Password_clicked()
 {
 emit on_btn_Password();
+}
+
+void Mainbutton::on_btn_Back_clicked()
+{
+emit SendHomeSignal();
+qDebug("bug--->mainbutton.cpp---> SendHomeSignal");
 }
