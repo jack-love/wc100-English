@@ -1,27 +1,60 @@
-<?xml version='1.0'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>SystemSetup</class>
- <widget name="SystemSetup" class="QTabWidget">
+ <widget class="QTabWidget" name="SystemSetup">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>480</width>
+    <height>800</height>
    </rect>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>35</pointsize>
+   </font>
   </property>
   <property name="windowTitle">
    <string>TabWidget</string>
   </property>
-  <widget name="tab" class="QWidget">
+  <property name="currentIndex">
+   <number>2</number>
+  </property>
+  <widget class="QWidget" name="systemSeting">
    <attribute name="title">
-    <string>Tab 1</string>
+    <string>系统设置</string>
+   </attribute>
+   <widget class="QPushButton" name="btn_Back">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>620</y>
+      <width>121</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>40</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>返回</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="wifiSeting">
+   <attribute name="title">
+    <string>WIFI设置</string>
    </attribute>
   </widget>
-  <widget name="tab" class="QWidget">
+  <widget class="QWidget" name="btSeting">
    <attribute name="title">
-    <string>Tab 2</string>
+    <string>BT设置</string>
    </attribute>
   </widget>
  </widget>
+ <resources/>
+ <connections/>
 </ui>

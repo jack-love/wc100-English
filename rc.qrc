@@ -71,5 +71,6 @@
         <file>image/Other.png</file>
         <file>image/Update_2.PNG</file>
         <file>image/PassWorld.png</file>
+        <file>syszux/syszuxpinyin</file>
     </qresource>
 </RCC>

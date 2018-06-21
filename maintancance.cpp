@@ -45,7 +45,10 @@ void Maintancance::on_clearReceive_clicked()
 
 void Maintancance::openTttyClicked()
 {
-
+//SignIn  signin;
+//bool  lock_tmp = signin.getlock();
+//qDebug()<< " dddddd" <<lock_tmp;
+if( lock){
     serialPort->setPortName("/dev/ttymxc3");
 
     serialPort->open(QIODevice::ReadWrite);
@@ -61,6 +64,27 @@ void Maintancance::openTttyClicked()
     ui->functionSelection->setEnabled(true);
 
     ui->clearReceive->setEnabled(true);
+}
+else
+{
+    //QMessageBox::warning(this," warning ", "Please log in first",QMessageBox::Yes);
+sendMessage("Please log in first.");
+
+
+}
+
+}
+void Maintancance::sendMessage(char *message){
+
+    QMessageBox box;
+    box.setText(QString::fromLocal8Bit(message));
+    box.setStyleSheet("color:red");
+    QFont font;
+    font.setPixelSize(30);
+    box.setFont(font);
+    box.setFixedSize(300, 300);
+    int bret = box.exec();
+
 }
 void Maintancance::closeTttyClicked()
 {

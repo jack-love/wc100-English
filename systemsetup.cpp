@@ -12,3 +12,8 @@ SystemSetup::~SystemSetup()
 {
     delete ui;
 }
+
+void SystemSetup::on_btn_Back_clicked()
+{
+    emit SendHomeSignal();
+}

@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_TestDialog = NULL;
     m_Maintancance = NULL;
     m_SignIn = NULL;
-
+   m_SystemSetup=NULL;//2
 
    buttonState = MAIN_BTN;
    selectButton(buttonState);
@@ -69,6 +69,7 @@ qDebug("bug--->mainwindow.cpp->CalibrationActionSlot");
 
 void MainWindow::SystemActionSlot(){
 qDebug("bug--->mainwindow.cpp->SystemActionSlot");
+selectButton(SYSTEM);
 }
 
 void MainWindow::UpdateActionSlot(){
@@ -91,13 +92,15 @@ void MainWindow::selectButton(MAIN_BUTTON   button){
     switch(button){
 
     case TESTING:
-       // qDebug("bug--->mainwindow.cpp->TESTING");
+       qDebug("bug--->mainwindow.cpp->TESTING 1");
        if(buttonState != button){
             hideButton(buttonState);
+            qDebug("bug--->mainwindow.cpp->TESTING 2");
         }
         if(m_TestDialog == NULL){
             m_TestDialog = new TestingDialog(ui->main_Frame);
             connect(m_TestDialog,SIGNAL(SendHomeSignal()),this,SLOT(BackHomeActionSlot()));
+            qDebug("bug--->mainwindow.cpp->TESTING 3");
         }
        m_TestDialog->setModal(true);
         m_TestDialog->show();
@@ -112,16 +115,14 @@ void MainWindow::selectButton(MAIN_BUTTON   button){
 
         if (m_MainButtonDlg == NULL){
             m_MainButtonDlg = new Mainbutton(ui->main_Frame);
-            #if 1
+
             connect(m_MainButtonDlg, SIGNAL(on_btn_Testing()), this, SLOT(TestingActionSlot()));
             connect(m_MainButtonDlg, SIGNAL(on_btn_History()), this, SLOT(HistoryActionSlot()));
             connect(m_MainButtonDlg,SIGNAL(on_btn_Maintancance()),this,SLOT(MaintancanceActionSlot()));
             connect(m_MainButtonDlg,SIGNAL(on_btn_Calibration()),this,SLOT(CalibrationActionSlot()));
             connect(m_MainButtonDlg,SIGNAL(on_btn_System()),this,SLOT(SystemActionSlot()));
             connect(m_MainButtonDlg,SIGNAL(on_btn_Update()),this,SLOT(UpdateActionSlot()));
-
             connect(m_MainButtonDlg,SIGNAL(on_btn_SignIn()),this,SLOT(SignInActionSlot()));
-            #endif
             connect(m_MainButtonDlg,SIGNAL(SendHomeSignal()),this,SLOT(GoTestingActionSlot()));
         }
         m_MainButtonDlg->setModal(true);
@@ -132,12 +133,13 @@ void MainWindow::selectButton(MAIN_BUTTON   button){
   case DEBUG:
         if(buttonState != button){
             hideButton(buttonState);
+
          }
          if(m_Maintancance == NULL){
          m_Maintancance = new Maintancance(ui->main_Frame);
          connect(m_Maintancance,SIGNAL(SendHomeSignal()),this,SLOT(BackHomeActionSlot()));
           }
-      //m_Maintancance->setModal(true);
+
          m_Maintancance->show();
          buttonState = button;
          break;
@@ -146,16 +148,31 @@ void MainWindow::selectButton(MAIN_BUTTON   button){
           if(buttonState != button){
               hideButton(buttonState);
          }
-         if(m_SignIn == NULL)
-         {
+         if(m_SignIn == NULL) {
              m_SignIn = new SignIn(ui->main_Frame);
 
              connect(m_SignIn,SIGNAL(SendHomeSignal()),this,SLOT(BackHomeActionSlot()));
          }
-          m_SignIn->setModal(true);
-          m_SignIn->show();
-           buttonState=button;
+        m_SignIn->setModal(true);
+        m_SignIn->show();
+        buttonState=button;
        break;
+
+    case SYSTEM:
+        qDebug("bug--->mainwindow.cpp->SYSTEM 1");
+       if(buttonState !=  button){
+            hideButton(buttonState);
+            qDebug("bug--->mainwindow.cpp->SYSTEM 2");
+        }
+
+       if(m_SystemSetup == NULL){
+        m_SystemSetup = new SystemSetup(ui->main_Frame);
+          connect(m_SystemSetup,SIGNAL(SendHomeSignal()),this,SLOT(BackHomeActionSlot()));
+            qDebug("bug--->mainwindow.cpp->SYSTEM 3");
+        }
+        m_SystemSetup->show();
+        buttonState = button;
+        break;
 
     }
 
@@ -189,19 +206,25 @@ void MainWindow::hideButton(MAIN_BUTTON button){
             m_systemDialog->hide();
         break;
        #endif
-    case DEBUG:
-           m_Maintancance->hide();
-           qDebug("bug--->mainwindow.cpp->MainWindow::hideButton case DEBUG ");
+        case DEBUG:
+        m_Maintancance->hide();
+        qDebug("bug--->mainwindow.cpp->MainWindow::hideButton case DEBUG ");
 
-    break;
+        break;
         case MAIN_BTN:
-            m_MainButtonDlg->hide();
-              qDebug("bug--->mainwindow.cpp->MainWindow::hideButton case MAIN_BTN ");
+        m_MainButtonDlg->hide();
+        qDebug("bug--->mainwindow.cpp->MainWindow::hideButton case MAIN_BTN ");
         break;
 
-         case  SIGNIN:
-             m_SignIn->hide();
-          break;
+        case  SIGNIN:
+        m_SignIn->hide();
+        break;
+
+        case SYSTEM:
+        m_SystemSetup->hide();
+          qDebug("bug--->mainwindow.cpp->MainWindow::hideButton case SYSTEM ");
+        break;
+
     }
 }
 

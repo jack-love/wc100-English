@@ -42,7 +42,7 @@
   </property>
   <property name="font">
    <font>
-    <pointsize>27</pointsize>
+    <pointsize>35</pointsize>
     <weight>50</weight>
     <italic>false</italic>
     <bold>false</bold>
@@ -84,7 +84,7 @@
    <enum>QTabWidget::Rounded</enum>
   </property>
   <property name="currentIndex">
-   <number>2</number>
+   <number>0</number>
   </property>
   <property name="iconSize">
    <size>
@@ -161,7 +161,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="rc.qrc">
          <normaloff>:/image/Run.png</normaloff>:/image/Run.png</iconset>
        </property>
        <property name="iconSize">
@@ -184,7 +184,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="rc.qrc">
          <normaloff>:/image/Stop.png</normaloff>:/image/Stop.png</iconset>
        </property>
        <property name="iconSize">
@@ -207,7 +207,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="rc.qrc">
          <normaloff>:/image/Back.png</normaloff>:/image/Back.png</iconset>
        </property>
        <property name="iconSize">
@@ -366,7 +366,7 @@
      <string>状态：</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>60</x>
@@ -473,7 +473,7 @@
       <string>清除接收</string>
      </property>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -616,6 +616,8 @@
    </widget>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="rc.qrc"/>
+ </resources>
  <connections/>
 </ui>

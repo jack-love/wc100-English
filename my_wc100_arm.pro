@@ -10,15 +10,20 @@ CONFIG += serialport
 # Input
 HEADERS += mainbutton.h maintancance.h mainwindow.h testingdialog.h \
     signin.h \
-    systemsetup.h
+    systemsetup.h \
+    keyboard.h \
+    thread.h
 FORMS += mainbutton.ui maintancance.ui mainwindow.ui testingdialog.ui \
     signin.ui \
-    systemsetup.ui
+    systemsetup.ui \
+    keyboard.ui
 SOURCES += main.cpp \
            mainbutton.cpp \
            maintancance.cpp \
            mainwindow.cpp \
            testingdialog.cpp \
     signin.cpp \
-    systemsetup.cpp
+    systemsetup.cpp \
+    keyboard.cpp \
+    thread.cpp
 RESOURCES += rc.qrc

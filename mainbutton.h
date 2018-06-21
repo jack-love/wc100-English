@@ -23,6 +23,7 @@ signals:
     void on_btn_Calibration();
     void on_btn_System();
     void on_btn_Update();
+
    void  on_btn_Other();
    void  on_btn_SignIn();
   // void sendsignal();

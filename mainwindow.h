@@ -7,6 +7,7 @@
 #include <testingdialog.h>
 #include <maintancance.h>
 #include <signin.h>
+
 #include <systemsetup.h>
 #include <QTimer>
 #include <QTime>
@@ -47,6 +48,7 @@ private:
     TestingDialog *m_TestDialog;
     Maintancance *m_Maintancance;
      SignIn * m_SignIn;
+     SystemSetup *m_SystemSetup; //1
 
     MAIN_BUTTON buttonState;
     void showBattery();
@@ -61,6 +63,7 @@ private slots:
     void SystemActionSlot();
     void UpdateActionSlot();
     void OtherActionSlot();
+  //  void SystemSetupActionSlot();
   //  void PasswordActionSlot();
     void SignInActionSlot();
     void BackHomeActionSlot();

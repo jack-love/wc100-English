@@ -15,6 +15,10 @@ public:
     explicit SystemSetup(QWidget *parent = 0);
     ~SystemSetup();
 
+private slots:
+    void on_btn_Back_clicked();
+signals:
+     void SendHomeSignal();
 private:
     Ui::SystemSetup *ui;
 };

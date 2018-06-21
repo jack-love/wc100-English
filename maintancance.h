@@ -6,6 +6,8 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QTimer>
 #include <QDebug>
+#include <signin.h>
+extern  bool lock;
 
 #define  R_VERSION   0xa1
 #define  R_SELFEX      0xa2
@@ -64,7 +66,7 @@ private slots:
      QString ByteArrayToHexString(QByteArray data);
      char ConvertHexChar(char ch);
      void StringToHex(QString str, QByteArray & senddata);
-
+    void sendMessage(char *message);
 
 
 };
