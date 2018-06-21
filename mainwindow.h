@@ -6,8 +6,11 @@
 #include <QMessageBox>
 #include <testingdialog.h>
 #include <maintancance.h>
-#include<QTimer>
-#include<QTime>
+#include <signin.h>
+#include <systemsetup.h>
+#include <QTimer>
+#include <QTime>
+
 namespace Ui {
 class MainWindow;
 }
@@ -17,12 +20,14 @@ enum MAIN_BUTTON{
     HISTORY = 1,
     QUALITY = 2,
     CALIBRATE = 3,
-    ITEM = 4,
+    SIGNIN= 4,
     SYSTEM = 5,
     DEBUG = 6,
     MAIN_BTN = 7,
     MYTEST=8
 };
+
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -37,9 +42,12 @@ private:
     Ui::MainWindow *ui;
     Mainbutton* m_MainButtonDlg;
      void selectButton(MAIN_BUTTON button);
-       void hideButton(MAIN_BUTTON button);
+     void hideButton(MAIN_BUTTON button);
+
     TestingDialog *m_TestDialog;
     Maintancance *m_Maintancance;
+     SignIn * m_SignIn;
+
     MAIN_BUTTON buttonState;
     void showBattery();
     void showWIFI();
@@ -53,7 +61,8 @@ private slots:
     void SystemActionSlot();
     void UpdateActionSlot();
     void OtherActionSlot();
-    void PasswordActionSlot();
+  //  void PasswordActionSlot();
+    void SignInActionSlot();
     void BackHomeActionSlot();
     void GoTestingActionSlot();
 };

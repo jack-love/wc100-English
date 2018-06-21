@@ -8,17 +8,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     m_MainButtonDlg = NULL;
-    m_TestDialog=NULL;
-   m_Maintancance=NULL;
+    m_TestDialog = NULL;
+    m_Maintancance = NULL;
+    m_SignIn = NULL;
 
-   #if 0
-    if(m_MainButtonDlg == NULL){
-        m_MainButtonDlg = new Mainbutton(ui->main_Frame);
-    }
-
-    m_MainButtonDlg->setModal(true);
-   m_MainButtonDlg->show();
-#endif
 
    buttonState = MAIN_BTN;
    selectButton(buttonState);
@@ -26,20 +19,11 @@ m_MainButtonDlg->hide();
    buttonState = TESTING;
    selectButton(buttonState);
 
+
 QRect rect(0,0,480, 800);
 this->setGeometry(rect);
 
 
-#if 0
-connect(m_MainButtonDlg, SIGNAL(on_btn_Testing()), this, SLOT(TestingActionSlot()));
-connect(m_MainButtonDlg, SIGNAL(on_btn_History()), this, SLOT(HistoryActionSlot()));
-connect(m_MainButtonDlg,SIGNAL(on_btn_Maintancance()),this,SLOT(MaintancanceActionSlot()));
-connect(m_MainButtonDlg,SIGNAL(on_btn_Calibration()),this,SLOT(CalibrationActionSlot()));
-connect(m_MainButtonDlg,SIGNAL(on_btn_System()),this,SLOT(SystemActionSlot()));
-connect(m_MainButtonDlg,SIGNAL(on_btn_Update()),this,SLOT(UpdateActionSlot()));
-connect(m_MainButtonDlg,SIGNAL(on_btn_Other()),this,SLOT(OtherActionSlot()));
-connect(m_MainButtonDlg,SIGNAL(on_btn_Password()),this,SLOT(PasswordActionSlot()));
-#endif 
 showBattery();
 showWIFI();
 showBluetooth();
@@ -96,17 +80,18 @@ void MainWindow::OtherActionSlot(){
 qDebug("bug--->mainwindow.cpp->OtherActionSlot");
 }
 
-void MainWindow::PasswordActionSlot(){
-qDebug("bug--->mainwindow.cpp->PasswordActionSlot");
+void MainWindow::SignInActionSlot(){
+qDebug("bug--->mainwindow.cpp->SignInActionSlot");
+selectButton(SIGNIN);
 }
 
 
-void MainWindow::selectButton(MAIN_BUTTON button){
+void MainWindow::selectButton(MAIN_BUTTON   button){
 
     switch(button){
 
     case TESTING:
-        qDebug("bug--->mainwindow.cpp->TESTING");
+       // qDebug("bug--->mainwindow.cpp->TESTING");
        if(buttonState != button){
             hideButton(buttonState);
         }
@@ -120,10 +105,11 @@ void MainWindow::selectButton(MAIN_BUTTON button){
         break;
 
     case MAIN_BTN:
-        qDebug("bug--->mainwindow.cpp->MAIN_BTN");
+
         if(buttonState != button){
             hideButton(buttonState);
        }
+
         if (m_MainButtonDlg == NULL){
             m_MainButtonDlg = new Mainbutton(ui->main_Frame);
             #if 1
@@ -133,8 +119,8 @@ void MainWindow::selectButton(MAIN_BUTTON button){
             connect(m_MainButtonDlg,SIGNAL(on_btn_Calibration()),this,SLOT(CalibrationActionSlot()));
             connect(m_MainButtonDlg,SIGNAL(on_btn_System()),this,SLOT(SystemActionSlot()));
             connect(m_MainButtonDlg,SIGNAL(on_btn_Update()),this,SLOT(UpdateActionSlot()));
-            connect(m_MainButtonDlg,SIGNAL(on_btn_Other()),this,SLOT(OtherActionSlot()));
-            connect(m_MainButtonDlg,SIGNAL(on_btn_Password()),this,SLOT(PasswordActionSlot()));
+
+            connect(m_MainButtonDlg,SIGNAL(on_btn_SignIn()),this,SLOT(SignInActionSlot()));
             #endif
             connect(m_MainButtonDlg,SIGNAL(SendHomeSignal()),this,SLOT(GoTestingActionSlot()));
         }
@@ -142,6 +128,7 @@ void MainWindow::selectButton(MAIN_BUTTON button){
         m_MainButtonDlg->show();
         buttonState = button;
         break;
+
   case DEBUG:
         if(buttonState != button){
             hideButton(buttonState);
@@ -154,6 +141,22 @@ void MainWindow::selectButton(MAIN_BUTTON button){
          m_Maintancance->show();
          buttonState = button;
          break;
+
+    case SIGNIN:
+          if(buttonState != button){
+              hideButton(buttonState);
+         }
+         if(m_SignIn == NULL)
+         {
+             m_SignIn = new SignIn(ui->main_Frame);
+
+             connect(m_SignIn,SIGNAL(SendHomeSignal()),this,SLOT(BackHomeActionSlot()));
+         }
+          m_SignIn->setModal(true);
+          m_SignIn->show();
+           buttonState=button;
+       break;
+
     }
 
 
@@ -195,6 +198,10 @@ void MainWindow::hideButton(MAIN_BUTTON button){
             m_MainButtonDlg->hide();
               qDebug("bug--->mainwindow.cpp->MainWindow::hideButton case MAIN_BTN ");
         break;
+
+         case  SIGNIN:
+             m_SignIn->hide();
+          break;
     }
 }
 

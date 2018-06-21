@@ -63,5 +63,13 @@
         <file>icons/WirelessIcon4.png</file>
         <file>icons/Bluetooth1.png</file>
         <file>image/arrow_left.png</file>
+        <file>image/History_my.png</file>
+        <file>image/Update.png</file>
+        <file>image/System_my.png</file>
+        <file>image/ContactUs.png</file>
+        <file>image/my_Maintainance.png</file>
+        <file>image/Other.png</file>
+        <file>image/Update_2.PNG</file>
+        <file>image/PassWorld.png</file>
     </qresource>
 </RCC>

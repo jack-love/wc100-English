@@ -24,10 +24,10 @@ signals:
     void on_btn_System();
     void on_btn_Update();
    void  on_btn_Other();
-   void  on_btn_Password();
+   void  on_btn_SignIn();
   // void sendsignal();
 private slots:
-    void on_btn_Testing_clicked();
+    //void on_btn_Testing_clicked();
 
     void on_btn_History_clicked();
 
@@ -39,11 +39,13 @@ private slots:
 
     void on_btn_Update_clicked();
 
-    void on_btn_Other_clicked();
-
-    void on_btn_Password_clicked();
-
     void on_btn_Back_clicked();
+
+    void on_btn_Help_clicked();
+
+    void on_btn_ContactUs_clicked();
+
+    void on_btn_SignIn_clicked();
 
 private:
     Ui::Mainbutton *ui;

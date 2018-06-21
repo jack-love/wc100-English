@@ -8,11 +8,17 @@ DEPENDPATH += .
 INCLUDEPATH += .
 CONFIG += serialport
 # Input
-HEADERS += mainbutton.h maintancance.h mainwindow.h testingdialog.h
-FORMS += mainbutton.ui maintancance.ui mainwindow.ui testingdialog.ui
+HEADERS += mainbutton.h maintancance.h mainwindow.h testingdialog.h \
+    signin.h \
+    systemsetup.h
+FORMS += mainbutton.ui maintancance.ui mainwindow.ui testingdialog.ui \
+    signin.ui \
+    systemsetup.ui
 SOURCES += main.cpp \
            mainbutton.cpp \
            maintancance.cpp \
            mainwindow.cpp \
-           testingdialog.cpp
+           testingdialog.cpp \
+    signin.cpp \
+    systemsetup.cpp
 RESOURCES += rc.qrc

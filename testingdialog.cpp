@@ -82,6 +82,6 @@ ui->leftSelection_8->setCurrentIndex(ACR);
 
 void TestingDialog::on_btn_Back_clicked()
 {
-qDebug("bug--->mainbuttondialog.cpp---> SendHomeSignal");
+//qDebug("bug--->mainbuttondialog.cpp---> SendHomeSignal");
  emit SendHomeSignal();
 }
