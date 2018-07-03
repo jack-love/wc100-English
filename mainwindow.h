@@ -7,7 +7,7 @@
 #include <testingdialog.h>
 #include <maintancance.h>
 #include <signin.h>
-
+#include <ttythread.h>
 #include <systemsetup.h>
 #include <QTimer>
 #include <QTime>
@@ -38,6 +38,8 @@ public:
     ~MainWindow();
     QLabel *labelWireless;
     QLabel *labelBattery;
+
+
 
 private:
     Ui::MainWindow *ui;

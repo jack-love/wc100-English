@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "ttythread.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -32,6 +33,9 @@ QTimer *timer=new QTimer(this);
 connect(timer,SIGNAL(timeout()),this,SLOT(showTime()));
 timer->start(500);
 connect(m_TestDialog,SIGNAL(sendsignal()),this,SLOT(BackHomeActionSlot()));
+
+
+
 }
 
 MainWindow::~MainWindow()

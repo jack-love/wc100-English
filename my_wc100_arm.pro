@@ -12,11 +12,14 @@ HEADERS += mainbutton.h maintancance.h mainwindow.h testingdialog.h \
     signin.h \
     systemsetup.h \
     keyboard.h \
-    thread.h
+    thread.h \
+    ttythread.h \
+    calibration.h
 FORMS += mainbutton.ui maintancance.ui mainwindow.ui testingdialog.ui \
     signin.ui \
     systemsetup.ui \
-    keyboard.ui
+    keyboard.ui \
+    calibration.ui
 SOURCES += main.cpp \
            mainbutton.cpp \
            maintancance.cpp \
@@ -25,5 +28,7 @@ SOURCES += main.cpp \
     signin.cpp \
     systemsetup.cpp \
     keyboard.cpp \
-    thread.cpp
+    thread.cpp \
+    ttythread.cpp \
+    calibration.cpp
 RESOURCES += rc.qrc
