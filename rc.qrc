@@ -72,5 +72,11 @@
         <file>image/Update_2.PNG</file>
         <file>image/PassWorld.png</file>
         <file>syszux/syszuxpinyin</file>
+        <file>image/whiteBalance.png</file>
+        <file>image/Clean.png</file>
+        <file>image/FirstPag.png</file>
+        <file>image/NextPage.png</file>
+        <file>image/LastPage.png</file>
+        <file>image/PreviousPage.png</file>
     </qresource>
 </RCC>

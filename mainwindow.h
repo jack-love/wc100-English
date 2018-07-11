@@ -11,7 +11,7 @@
 #include <systemsetup.h>
 #include <QTimer>
 #include <QTime>
-
+#include<calibration.h>
 namespace Ui {
 class MainWindow;
 }
@@ -43,14 +43,15 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    Mainbutton* m_MainButtonDlg;
      void selectButton(MAIN_BUTTON button);
      void hideButton(MAIN_BUTTON button);
 
+    Mainbutton* m_MainButtonDlg;
     TestingDialog *m_TestDialog;
     Maintancance *m_Maintancance;
-     SignIn * m_SignIn;
-     SystemSetup *m_SystemSetup; //1
+    Calibration *m_Calibration;
+    SignIn * m_SignIn;
+    SystemSetup *m_SystemSetup; //1
 
     MAIN_BUTTON buttonState;
     void showBattery();

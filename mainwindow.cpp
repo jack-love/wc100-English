@@ -12,7 +12,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_TestDialog = NULL;
     m_Maintancance = NULL;
     m_SignIn = NULL;
-   m_SystemSetup=NULL;//2
+    m_SystemSetup=NULL;//2
+    m_Calibration=NULL;
 
    buttonState = MAIN_BTN;
    selectButton(buttonState);
@@ -69,6 +70,7 @@ selectButton(DEBUG);
 
 void MainWindow::CalibrationActionSlot(){
 qDebug("bug--->mainwindow.cpp->CalibrationActionSlot");
+selectButton(CALIBRATE);
 }
 
 void MainWindow::SystemActionSlot(){
@@ -125,6 +127,7 @@ void MainWindow::selectButton(MAIN_BUTTON   button){
             connect(m_MainButtonDlg,SIGNAL(on_btn_Maintancance()),this,SLOT(MaintancanceActionSlot()));
             connect(m_MainButtonDlg,SIGNAL(on_btn_Calibration()),this,SLOT(CalibrationActionSlot()));
             connect(m_MainButtonDlg,SIGNAL(on_btn_System()),this,SLOT(SystemActionSlot()));
+
             connect(m_MainButtonDlg,SIGNAL(on_btn_Update()),this,SLOT(UpdateActionSlot()));
             connect(m_MainButtonDlg,SIGNAL(on_btn_SignIn()),this,SLOT(SignInActionSlot()));
             connect(m_MainButtonDlg,SIGNAL(SendHomeSignal()),this,SLOT(GoTestingActionSlot()));
@@ -178,6 +181,19 @@ void MainWindow::selectButton(MAIN_BUTTON   button){
         buttonState = button;
         break;
 
+    case CALIBRATE:
+          if(buttonState != button){
+              hideButton(buttonState);
+           }
+
+           if(m_Calibration == NULL){
+           m_Calibration = new Calibration(ui->main_Frame);
+           connect(m_Calibration,SIGNAL(SendHomeSignal()),this,SLOT(BackHomeActionSlot()));
+            }
+           m_Calibration->show();
+           buttonState = button;
+           break;
+
     }
 
 
@@ -187,9 +203,9 @@ void MainWindow::hideButton(MAIN_BUTTON button){
     switch(button){
         case TESTING:
         qDebug("bug--->mainwindow.cpp->MainWindow::hideButton case TESTING ");
-
             m_TestDialog->hide();
         break;
+
   #if 0
       case MYTEST:
             m_mytestDialog->hide();
@@ -200,8 +216,7 @@ void MainWindow::hideButton(MAIN_BUTTON button){
         case QUALITY:
             m_qualityControlDialog->hide();
         break;
-        case CALIBRATE:
-            m_calibrateDialog->hide();
+
         break;
         case ITEM:
             m_ParameterDialog->hide();
@@ -210,6 +225,11 @@ void MainWindow::hideButton(MAIN_BUTTON button){
             m_systemDialog->hide();
         break;
        #endif
+
+      case CALIBRATE:
+        m_Calibration->hide();
+        break;
+
         case DEBUG:
         m_Maintancance->hide();
         qDebug("bug--->mainwindow.cpp->MainWindow::hideButton case DEBUG ");

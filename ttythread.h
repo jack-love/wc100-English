@@ -8,7 +8,7 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 #include <QDebug>
-
+#include<QTimer>
 #define  R_VERSION   0xa1
 #define  R_SELFEX      0xa2
 #define  R_OFW          0xb1
@@ -35,6 +35,19 @@ enum WORK_STATE{
             WB=9,//R_WhiteBalance
 };
 
+enum ACK_STATE{
+            GETVERSION_ACK = 0, //Get a version
+            SELFEX_ACK   = 1, //Self-examination
+            ETW_ACK  = 2, //Out of the warehouse
+            OFW_ACK = 3, //Enter the warehouse
+            SETUP_ACK = 4,//setup
+            ONESTEP_ACK = 5,//test
+            STOP_ACK = 6,//stop
+            RDATA_ACK=7,
+            RESET_ACK=8,
+            WB_ACK=9,//R_WhiteBalance
+    ERR_ACK=10,
+};
 class ttyThread : public QThread
 {
     Q_OBJECT
@@ -50,7 +63,7 @@ public:
     void setCommand(WORK_STATE  status);
     void  ttyStop();
     void  ttyStart();
-
+    void setWorkTime(unsigned int s);
 
     QString ByteArrayToHexStr(QByteArray data);
     char ConvertHexChar(char ch);
@@ -69,17 +82,23 @@ private:
     QSerialPort *serialPort;
 
     unsigned char state_ack;
-
-
+    unsigned char  oneStepok;
+    QTimer *m_pTimer;
+   unsigned int time_s;
 
  private slots:
     void  slotReadTty();
    void   cmdHandle (unsigned char state);
+
+    void handleTimeout();
+
 signals:
          void  receiveTtyData(QString str);
          void  receiveAck(unsigned char state);
          void  sendcmd(unsigned char state);
-
+         void   sTime (int s);
+         void  receiveWb(unsigned int W,unsigned int R,unsigned int G,unsigned int B);
+        void  receiveRGB(unsigned int W,unsigned int R,unsigned int G,unsigned int B);
 };
 
 

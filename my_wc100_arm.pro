@@ -14,7 +14,8 @@ HEADERS += mainbutton.h maintancance.h mainwindow.h testingdialog.h \
     keyboard.h \
     thread.h \
     ttythread.h \
-    calibration.h
+    calibration.h \
+    cac.h
 FORMS += mainbutton.ui maintancance.ui mainwindow.ui testingdialog.ui \
     signin.ui \
     systemsetup.ui \
@@ -30,5 +31,6 @@ SOURCES += main.cpp \
     keyboard.cpp \
     thread.cpp \
     ttythread.cpp \
-    calibration.cpp
+    calibration.cpp \
+    cac.cpp
 RESOURCES += rc.qrc

@@ -17,41 +17,111 @@ connect(this,SIGNAL(sendcmd(unsigned char)),this,SLOT(cmdHandle(unsigned char ))
 
  // connect(this,SIGNAL(receiveAck(unsigned char)),this,SLOT(showTtyAck(unsigned char)));
 
+
+m_pTimer = new QTimer(this);
+connect(m_pTimer, SIGNAL(timeout()), this, SLOT(handleTimeout()));
+
+
 }
 
 ttyThread::~ttyThread()
 {
 
 }
+void ttyThread::setWorkTime(unsigned int s)
+{
+    time_s = s;
+    m_pTimer->start(1*1000);
+}
 
+void ttyThread::handleTimeout()
+{
+
+       if(m_pTimer->isActive()){
+           m_pTimer->stop();
+         // qDebug()<<"Enter timeout processing function\n";
+           time_s--;
+           emit sTime(time_s);
+           if(time_s != 0)
+           {
+              m_pTimer->start(1*1000);
+           }
+       }
+
+}
 
 void ttyThread::setCommand(WORK_STATE status)
 {
     state = status;
     cmdReady = true;
+    oneStepok=0x00;
 }
 
 
 void ttyThread::run()
 {
 
-    while(RUN)
-    {
+                    while(RUN)
+                 {
 
-                msleep(100);
-                if(cmdReady) {
-                            printf("---- run state ----%d\n",state);
-                            emit sendcmd(state);
-                             cmdReady=false;
-                 }
+                                         msleep(500);
+   printf("---- RUN_ACK----\n");
+                                          if(state == ONESTEP)
+                                          {
+                                                    if(state !=OFW_ACK && oneStepok==0x00 )
+                                                    {
+                                                            emit  sendcmd(OFW);
+                                                            oneStepok=0x01;
+                                                            setWorkTime(60);
+                                                            printf("--3-- state_val ----%d\n",state_ack);
+                                                    }else if ( oneStepok==0x01 && state_ack == OFW_ACK ){
+                                                            emit  sendcmd(ONESTEP);
+                                                            printf("--2-- state_val ----%d\n",state_ack);
+                                                      }
+                                                    else if(oneStepok ==0X00 && state_ack == OFW_ACK)
+                                                    {
+                                                            printf("--1-- state_val ----%d\n",state_ack);
+                                                            emit  sendcmd(ONESTEP);
+                                                    }
 
-                if(state_ack == 0x06 )  {
-                            printf("---- state_val ----%d\n",state_ack);
-                            RUN=false;
-                }
+                                          }
+                                          else if(cmdReady){//这里命令只执行一次
+                                                emit sendcmd(state);
+                                              cmdReady=false;
+                                          }
+
+
+                                        switch(state_ack)
+                                        {
+                                                case   RESET_ACK:
+                                                printf("---- RESET_ACK----\n");
+                                                RUN=false;
+                                                break;
+
+                                                case  WB_ACK:
+                                                printf("---- WB_ACK----\n");
+                                                RUN=false;
+                                                break;
+
+                                                case  ONESTEP_ACK:
+                                                printf("---- ONESTEP_ACK----\n");
+                                                break;
+
+
+                                                case OFW_ACK:
+                                                printf("---- OFW_ACK----\n");
+                                                break;
+
+                                                case STOP_ACK:
+                                                printf("---- STOP_ACK----\n");
+                                                RUN=false;
+                                                break;
+
+                                        default: break;
+                                        }
 
     }
-RUN=false;
+    RUN=false;
 
 }
 
@@ -265,6 +335,7 @@ void ttyThread::commandSend(WORK_STATE  status)
             data[4]=0xca;
             data[5]=(data[0]+data[1]+data[2]+data[3]+data[4])%256;
             cmdok=true;
+               printf("---- SETUP----\n");
             break;
 
         case  ONESTEP:
@@ -356,6 +427,7 @@ void ttyThread:: dataResolution(unsigned char *cmd,unsigned int length){ //0xcc 
 unsigned int i=0;
 unsigned int status=0;
 unsigned char R_data[6]={0};
+
 unsigned int R_DATA=0;
 unsigned int G_DATA=0;
 unsigned int B_DATA=0;
@@ -364,7 +436,7 @@ unsigned int W_DATA=0;
 QByteArray senddata;
 QString str;
 
-printf(" main :%x %x %x %x %x %x\n", cmd[0],   cmd[0+1],cmd[0+2],cmd[0+3],cmd[0+4], cmd[0+5]);
+//printf(" main :%x %x %x %x %x %x\n", cmd[0],   cmd[0+1],cmd[0+2],cmd[0+3],cmd[0+4], cmd[0+5]);
   //printf(" start 1 :%x %x %x %x %x %x\n", cmd[i],   cmd[i+1],cmd[i+2],cmd[i+3],cmd[i+4], cmd[i+5]);
 
      while( i < length )
@@ -377,60 +449,68 @@ printf(" main :%x %x %x %x %x %x\n", cmd[0],   cmd[0+1],cmd[0+2],cmd[0+3],cmd[0+
                {
                     status=1;
                    // printf(" start 2 :%x %x %x %x %x %x\n", cmd[i],   cmd[i+1],cmd[i+2],cmd[i+3],cmd[i+4], cmd[i+5]);
-
+                        state_ack=0;
                      switch ( cmd[i+2] )
                      {
                                 case  R_VERSION:
                                 printf("ACK Read version information ok!!\n");
                                 emit receiveAck(R_VERSION);
-                                 state_ack= 0x00;
+                                 state_ack= GETVERSION_ACK;
                                 break;
 
                                 case R_SELFEX:
                                 printf("ACK Self-test success\n");
                                 emit receiveAck(R_SELFEX);
+                                state_ack= SELFEX_ACK;
                                 break;
 
                                 case R_OFW:
                                printf("ACK Open the Door\n");
                                 emit receiveAck(R_OFW);
+                                 state_ack=OFW_ACK;
                                 break;
 
                                 case R_ETW:
                                printf("ACK Close the Door\n");
                                emit receiveAck(R_ETW);
+                                   state_ack= ETW_ACK;
                                 break;
 
                                 case R_SETUP:
                                 printf("ACK Setup success\n");
                                 emit receiveAck(R_SETUP);
+                                state_ack=SETUP_ACK;
                                 break;
 
                                 case R_ONESTEP:
                                printf("ACK One Step  success\n");
                                 emit receiveAck(R_ONESTEP);
+                                  state_ack=ONESTEP_ACK;
                                 break;
 
                                 case R_RESET:
                                 printf("ACK Machine Reset \n");
                                 emit receiveAck(R_RESET);
-                                state_ack= 0x06;
+                                state_ack= RESET_ACK;
                                 break;
 
                                case R_ERR_1:
                                 if(cmd[i+3] == R_ERR_2 )
                                   printf("Receive Mechanical error \n");
                                 emit receiveAck(R_ERR_1);
+                                state_ack= ERR_ACK;
                                 break;
 
                               case R_WhiteBalance://R_STOP
                                 printf("ACK White Balance  success \n");
                                 emit receiveAck(R_WhiteBalance);
+                                  state_ack= WB_ACK;
                               break;
 
                              case R_STOP://R_STOP
                                printf("ACK STOP  success \n");
                                emit receiveAck(R_STOP);
+                                    state_ack= STOP_ACK;
                              break;
 
                      }
@@ -452,6 +532,10 @@ printf(" main :%x %x %x %x %x %x\n", cmd[0],   cmd[0+1],cmd[0+2],cmd[0+3],cmd[0+
                  B_DATA  = (cmd[i+10] *100)+cmd[i+11];
 //                 printf(" %x %x %x %x \n",W_DATA,R_DATA,G_DATA,B_DATA);
                  printf("W:%d  R:%d  G:%d   B:%d\n",W_DATA,R_DATA,G_DATA,B_DATA);
+                 if(cmd[i+3] == 0xbb)
+                  emit receiveWb(W_DATA,R_DATA,G_DATA,B_DATA);
+               else
+                  emit receiveRGB(W_DATA,R_DATA,G_DATA,B_DATA);
 
                 R_data[0]=0xcc;
                 R_data[1]=0xdd;
