@@ -52,7 +52,10 @@ KeyBoard::~KeyBoard()
 {
     delete ui;
 }
-
+void KeyBoard::settext(QString string)
+{
+ui->lineEdit_keyboard->setText(string);
+}
 void KeyBoard::changeEvent(QEvent *e)
 {
     QDialog::changeEvent(e);

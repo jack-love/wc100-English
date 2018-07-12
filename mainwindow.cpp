@@ -8,6 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+  m_MainView = new MainBussniessView(this);
+
     m_MainButtonDlg = NULL;
     m_TestDialog = NULL;
     m_Maintancance = NULL;
@@ -15,11 +17,11 @@ MainWindow::MainWindow(QWidget *parent) :
     m_SystemSetup=NULL;//2
     m_Calibration=NULL;
 
-   buttonState = MAIN_BTN;
-   selectButton(buttonState);
-m_MainButtonDlg->hide();
-   buttonState = TESTING;
-   selectButton(buttonState);
+    buttonState = MAIN_BTN;
+    selectButton(buttonState);
+    m_MainButtonDlg->hide();
+    buttonState = TESTING;
+    selectButton(buttonState);
 
 
 QRect rect(0,0,480, 800);
@@ -187,7 +189,7 @@ void MainWindow::selectButton(MAIN_BUTTON   button){
            }
 
            if(m_Calibration == NULL){
-           m_Calibration = new Calibration(ui->main_Frame);
+           m_Calibration = new Calibration(ui->main_Frame,m_MainView);
            connect(m_Calibration,SIGNAL(SendHomeSignal()),this,SLOT(BackHomeActionSlot()));
             }
            m_Calibration->show();

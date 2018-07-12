@@ -12,6 +12,8 @@
 #include <QTimer>
 #include <QTime>
 #include<calibration.h>
+#include <databasehelper.h>
+#include<mainbussniessview.h>
 namespace Ui {
 class MainWindow;
 }
@@ -52,6 +54,7 @@ private:
     Calibration *m_Calibration;
     SignIn * m_SignIn;
     SystemSetup *m_SystemSetup; //1
+    MainBussniessView* m_MainView;
 
     MAIN_BUTTON buttonState;
     void showBattery();

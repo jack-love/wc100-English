@@ -7,6 +7,8 @@ TARGET =
 DEPENDPATH += .
 INCLUDEPATH += .
 CONFIG += serialport
+QT +=sql
+QT +=core
 # Input
 HEADERS += mainbutton.h maintancance.h mainwindow.h testingdialog.h \
     signin.h \
@@ -15,7 +17,19 @@ HEADERS += mainbutton.h maintancance.h mainwindow.h testingdialog.h \
     thread.h \
     ttythread.h \
     calibration.h \
-    cac.h
+    cac.h \
+    databasehelper.h \
+    mainbussniessview.h \
+    patientmodel.h \
+    itemmodel.h \
+    App.h \
+    itemparametermodel.h \
+    calibratemodel.h \
+    calibrateobservermodel.h \
+    qc_subitemmodel.h \
+    sampletypemodel.h \
+    testresultmodel.h \
+    qualitycontrolmodel.h
 FORMS += mainbutton.ui maintancance.ui mainwindow.ui testingdialog.ui \
     signin.ui \
     systemsetup.ui \
@@ -32,5 +46,17 @@ SOURCES += main.cpp \
     thread.cpp \
     ttythread.cpp \
     calibration.cpp \
-    cac.cpp
+    cac.cpp \
+    databasehelper.cpp \
+    mainbussniessview.cpp \
+    patientmodel.cpp \
+    itemmodel.cpp \
+    App.cpp \
+    itemparametermodel.cpp \
+    calibratemodel.cpp \
+    calibrateobservermodel.cpp \
+    qc_subitemmodel.cpp \
+    sampletypemodel.cpp \
+    testresultmodel.cpp \
+    qualitycontrolmodel.cpp
 RESOURCES += rc.qrc

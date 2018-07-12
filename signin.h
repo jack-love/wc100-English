@@ -26,8 +26,7 @@ signals:
      void SendHomeSignal();
 
 private slots:
-     void on_PB_OUT_clicked();
-
+     void on_PB_Out_clicked();
      void on_PB_SignIn_clicked();
     bool eventFilter(QObject *,QEvent *);
 private:

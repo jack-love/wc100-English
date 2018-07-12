@@ -16,7 +16,7 @@ class KeyBoard : public QDialog
 public:
     explicit KeyBoard(QWidget *parent = 0);
     ~KeyBoard();
-
+void settext(QString string);
 protected:
     void changeEvent(QEvent *e);
 

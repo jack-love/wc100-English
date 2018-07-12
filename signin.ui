@@ -13,143 +13,143 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QLabel" name="label">
+  <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>90</x>
-     <y>0</y>
-     <width>321</width>
-     <height>61</height>
+     <x>40</x>
+     <y>70</y>
+     <width>401</width>
+     <height>571</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>40</pointsize>
+     <pointsize>30</pointsize>
     </font>
    </property>
-   <property name="text">
-    <string>系统用户登录</string>
+   <property name="title">
+    <string>用户登录</string>
    </property>
-  </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>60</y>
-     <width>431</width>
-     <height>501</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QLabel" name="label_username">
-        <property name="font">
-         <font>
-          <pointsize>36</pointsize>
-         </font>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <property name="lineWidth">
-         <number>8</number>
-        </property>
-        <property name="midLineWidth">
-         <number>6</number>
-        </property>
-        <property name="text">
-         <string>用户名:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="edit_userName">
-        <property name="font">
-         <font>
-          <pointsize>40</pointsize>
-         </font>
-        </property>
-        <property name="focusPolicy">
-         <enum>Qt::ClickFocus</enum>
-        </property>
-        <property name="frame">
-         <bool>true</bool>
-        </property>
-        <property name="echoMode">
-         <enum>QLineEdit::Normal</enum>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QLabel" name="label_password">
-        <property name="font">
-         <font>
-          <pointsize>39</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>密码：</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="edit_passWord">
-        <property name="font">
-         <font>
-          <pointsize>40</pointsize>
-         </font>
-        </property>
-        <property name="focusPolicy">
-         <enum>Qt::ClickFocus</enum>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <property name="spacing">
-       <number>30</number>
-      </property>
-      <item>
-       <widget class="QPushButton" name="PB_SignIn">
-        <property name="font">
-         <font>
-          <pointsize>40</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>登录</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="PB_OUT">
-        <property name="font">
-         <font>
-          <pointsize>40</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>返回</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-   </layout>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>50</y>
+      <width>311</width>
+      <height>421</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="label_username">
+         <property name="font">
+          <font>
+           <pointsize>36</pointsize>
+          </font>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <property name="lineWidth">
+          <number>8</number>
+         </property>
+         <property name="midLineWidth">
+          <number>6</number>
+         </property>
+         <property name="text">
+          <string>用户名:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="edit_userName">
+         <property name="font">
+          <font>
+           <pointsize>40</pointsize>
+          </font>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::ClickFocus</enum>
+         </property>
+         <property name="frame">
+          <bool>true</bool>
+         </property>
+         <property name="echoMode">
+          <enum>QLineEdit::Normal</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="label_password">
+         <property name="font">
+          <font>
+           <pointsize>39</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>密码：</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="edit_passWord">
+         <property name="font">
+          <font>
+           <pointsize>40</pointsize>
+          </font>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::ClickFocus</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <property name="spacing">
+        <number>30</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="PB_SignIn">
+         <property name="font">
+          <font>
+           <pointsize>40</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>登录</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="PB_Out">
+         <property name="font">
+          <font>
+           <pointsize>40</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>返回</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
   </widget>
  </widget>
  <resources/>

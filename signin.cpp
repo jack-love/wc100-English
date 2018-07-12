@@ -25,7 +25,7 @@ SignIn::~SignIn()
     delete ui;
 }
 
-void SignIn::on_PB_OUT_clicked()
+void SignIn::on_PB_Out_clicked()
 {
  emit SendHomeSignal();
 }
