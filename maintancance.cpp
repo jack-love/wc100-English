@@ -9,7 +9,7 @@ Maintancance::Maintancance(QWidget *parent) :
     ui(new Ui::Maintancance)
 {
     ui->setupUi(this);
-      serialPort = new QSerialPort(this);
+ //     serialPort = new QSerialPort(this);
     Qt::WindowFlags flags = 0;
     flags |= Qt::WindowMinimizeButtonHint;
     flags |=Qt::WindowMaximizeButtonHint;
@@ -71,9 +71,9 @@ void Maintancance::clearReceiveClicked()
 
 void Maintancance::mechaniceTestClicked()
 {
-          if(! serialPort->isOpen()){
+         // if(! serialPort->isOpen()){
               openTttyClicked();
-          }
+        //  }
     tty_thread->ttyStart();
     tty_thread->start();
     tty_thread->setCommand(RESET);
@@ -94,9 +94,9 @@ void Maintancance::startDebugClicked()
     ui->white_Balance->setEnabled(false);
     ui->stop->setEnabled(true);
 
-        if(! serialPort->isOpen()){
+       // if(! serialPort->isOpen()){
             openTttyClicked();
-        }
+     //   }
 
 receive_count=0;
     tty_thread->commandSend(SETUP);
@@ -126,7 +126,7 @@ void Maintancance::openTttyClicked()
         //bool  lock_tmp = signin.getlock();
 
         if( 1){
-             if(! serialPort->isOpen()){
+            // if(! serialPort->isOpen()){
                  tty_thread->ttyOpen();
 
                 ui->openTtty->setEnabled(false);
@@ -134,7 +134,7 @@ void Maintancance::openTttyClicked()
                 ui->sendData->setEnabled(true);
                 ui->functionSelection->setEnabled(true);
                 ui->clearReceive->setEnabled(true);
-             }
+           //  }
         }
         else
         {
@@ -158,8 +158,8 @@ void Maintancance::sendMessage(char *message){
 
 void Maintancance::closeTttyClicked()
 {
-        if(serialPort->isOpen())
-            {
+//        if(serialPort->isOpen())
+//            {
 
                 tty_thread->ttyClose();
 
@@ -168,7 +168,7 @@ void Maintancance::closeTttyClicked()
                 ui->sendData->setEnabled(false);
                 ui->functionSelection->setEditable(false);
                 ui->clearReceive->setEnabled(false);
-           }
+        //   }
 }
 
 void Maintancance::sendDataClicked()
@@ -189,8 +189,6 @@ void Maintancance::showTtyData(QString str)
 
 void Maintancance::showTtyAck(unsigned char state)
 {
-
-
     switch ( state )
     {
             case  R_VERSION:

@@ -15,7 +15,8 @@
 #include <QMutex>
 #include <App.h>
 #include <calibrateobservermodel.h>
-
+#include<ttythread.h>
+#include<maintancance.h>
 class QLibrary;
 class databaseHelper;
 class TestingThread;
@@ -33,7 +34,7 @@ public:
     explicit MainBussniessView(QObject *parent = 0);
     bool Start();
     bool Stop();
-    bool White(QString mItemName);
+    bool sencmd(QString mItemName);
     ~MainBussniessView();
     bool PatientSaveAndUpdate(PatientModel patientModel);
 
@@ -89,12 +90,21 @@ signals:
     void SampleType_Result(QSqlTableModel*);
     void CalibrateObserverveResult(QSqlTableModel*);
 
-    //void Test_WhiteResult(QSqlTableModel*);
+    void SendHomeSignal();
+    void  receiveTtyData(QString str);
+    void  receiveAck(unsigned char state);
+    void   sTime (int s);
+    void  receiveWb(unsigned int W,unsigned int R,unsigned int G,unsigned int B);
+    void  receiveRGB(unsigned int W,unsigned int R,unsigned int G,unsigned int B);
+
 public slots:
-    //bool on_PositionStatus(int i);
+   void sTimeSlot(int st);
     void updateProgressDialog();
-    //void on_testStart();
-    //void on_testStop();
+    void showTtyData(QString str);
+    void showTtyAck(unsigned char state);
+    void showWb(unsigned int W,unsigned int R,unsigned int G,unsigned int B);
+    void showWrgb(unsigned int W,unsigned int R,unsigned int G,unsigned int B);
+
 private:
     QList<ItemModel> lstItemModel;
     void setItemName(QString);
@@ -128,7 +138,8 @@ private:
     QSqlTableModel *calibrateObserveTableModel;
     QSqlTableModel *deleteTableModel;
     QMutex mutex;
-
+ ttyThread  * tty_thread=NULL;
+ Maintancance aintancace;
     typedef int (*SYS_STATUS)();
     SYS_STATUS _Sys_status;
     typedef int (*INITAL)();

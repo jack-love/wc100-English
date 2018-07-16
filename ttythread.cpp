@@ -11,6 +11,8 @@ RUN = true;
 cmdReady = false;
 state = GETVERSION;
 
+ App::test_result = false;
+printf("ttyThread()\n");
 serialPort = new QSerialPort(this);
 connect (serialPort,SIGNAL(readyRead()),this,SLOT(slotReadTty()));
 connect(this,SIGNAL(sendcmd(unsigned char)),this,SLOT(cmdHandle(unsigned char )));
@@ -58,36 +60,43 @@ void ttyThread::setCommand(WORK_STATE status)
 }
 
 
+void ttyThread::msleep(long s){
+    QThread::msleep(s);
+}
+
+
 void ttyThread::run()
 {
-
-                    while(RUN)
+App::test_finished=false;
+ App::mutex.lock();
+                    while(1)
                  {
-
+  App::test_result = false;
                                          msleep(500);
    printf("---- RUN_ACK----\n");
                                           if(state == ONESTEP)
                                           {
                                                     if(state !=OFW_ACK && oneStepok==0x00 )
-                                                    {
-                                                            emit  sendcmd(OFW);
-                                                            oneStepok=0x01;
-                                                            setWorkTime(60);
-                                                            printf("--3-- state_val ----%d\n",state_ack);
+                                                    {      App::test_result = false;
+                                                    emit  sendcmd(OFW);
+                                                    oneStepok=0x01;
+                                                    setWorkTime(60);
+                                                    printf("--3-- state_val ----%d\n",state_ack);
                                                     }else if ( oneStepok==0x01 && state_ack == OFW_ACK ){
-                                                            emit  sendcmd(ONESTEP);
-                                                            printf("--2-- state_val ----%d\n",state_ack);
-                                                      }
+                                                    emit  sendcmd(ONESTEP);
+                                                    printf("--2-- state_val ----%d\n",state_ack);
+                                                    }
                                                     else if(oneStepok ==0X00 && state_ack == OFW_ACK)
                                                     {
-                                                            printf("--1-- state_val ----%d\n",state_ack);
-                                                            emit  sendcmd(ONESTEP);
+                                                    printf("--1-- state_val ----%d\n",state_ack);
+                                                    emit  sendcmd(ONESTEP);
                                                     }
 
                                           }
-                                          else if(cmdReady){//这里命令只执行一次
-                                                emit sendcmd(state);
-                                              cmdReady=false;
+                                                    else if(cmdReady){//这里命令只执行一次
+                                                    emit sendcmd(state);
+                                                    cmdReady=false;
+
                                           }
 
 
@@ -104,6 +113,7 @@ void ttyThread::run()
                                                 break;
 
                                                 case  ONESTEP_ACK:
+                                               App::test_result=true;
                                                 printf("---- ONESTEP_ACK----\n");
                                                 break;
 
@@ -119,10 +129,18 @@ void ttyThread::run()
 
                                         default: break;
                                         }
+                                        if(!RUN)
+                                               {
+
+                                             printf("---- RUN END-1---\n");
+                                            break ;
+                                        }
 
     }
     RUN=false;
-
+ App::test_finished=true;
+     printf("---- RUN END--2--\n");
+        App::mutex.unlock();
 }
 
 
@@ -136,6 +154,7 @@ commandSend((WORK_STATE)state);
 void ttyThread::ttyStop()
 {
     RUN = false;
+    printf(" ttyStop \n");
 }
 
 
@@ -148,13 +167,17 @@ void ttyThread::ttyStart()
 
 void ttyThread::ttyOpen()
 {
-    serialPort->setPortName("/dev/ttymxc3");
-    serialPort->open(QIODevice::ReadWrite);
-    serialPort->setBaudRate(QSerialPort::Baud115200);
-    serialPort->setDataBits(QSerialPort::Data8);
-    serialPort->setParity(QSerialPort::NoParity);
-    serialPort->setStopBits(QSerialPort::OneStop);
-    serialPort->setFlowControl(QSerialPort::NoFlowControl);
+     if(! serialPort->isOpen())
+     {
+        serialPort->setPortName("/dev/ttymxc3");
+        serialPort->open(QIODevice::ReadWrite);
+        serialPort->setBaudRate(QSerialPort::Baud115200);
+        serialPort->setDataBits(QSerialPort::Data8);
+        serialPort->setParity(QSerialPort::NoParity);
+        serialPort->setStopBits(QSerialPort::OneStop);
+        serialPort->setFlowControl(QSerialPort::NoFlowControl);
+        tty_open = true;
+     }
 printf("ttyOpen \n");
 }
 
@@ -163,6 +186,7 @@ void ttyThread::ttyClose()
     if(serialPort->isOpen())
     {
         serialPort->close();
+        tty_open=false;
     }
 }
 
@@ -279,6 +303,9 @@ void ttyThread::commandSend(WORK_STATE  status)
 
     QByteArray senddata;
     QString str;
+//    if(! serialPort->isOpen()){
+//        ttyOpen();
+//    }
 
 
     switch (status) {
@@ -415,7 +442,7 @@ void ttyThread::commandSend(WORK_STATE  status)
 
                     StringToHex(str,senddata);//将str字符串转换为16进制的形式
                     serialPort->write(senddata);//发送到串口
-
+printf("send cmd \n");
                     QString ttyname= serialPort->portName();
 
                     cmdok=false;

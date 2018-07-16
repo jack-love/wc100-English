@@ -4,7 +4,9 @@
 //#include <testingthread.h>
 #include <QDateTime>
 //#include<QVariant>
-
+#include <QtCore>
+#include <QtGui>
+#include <QDesktopWidget>
 #include <QProgressDialog>
 #include<QtSql/QSqlTableModel>
 #include <QtSql/QSqlQuery>
@@ -16,8 +18,7 @@
 #include <QtDebug>
 //#include <myhelper.h>
 #include<assert.h>
-//#include <stopthread.h>
-///#include <whitethread.h>
+#include <QThread>
 MainBussniessView::MainBussniessView(QObject *parent) :
     QObject(parent), p(parent)
 {
@@ -60,7 +61,9 @@ MainBussniessView::MainBussniessView(QObject *parent) :
     }
 #endif
     Initalize();
-    //lstTestResultModel = new QList<TestResultModel*>();
+
+
+
 }
 void MainBussniessView::Initalize(){
     // = new QList<ItemModel>();
@@ -393,28 +396,9 @@ bool MainBussniessView::Start(){
 }
 
 bool MainBussniessView::Stop(){
+    printf("MainBussniessView::Stop\n");
     App::test_start = false;
-//    if(stopThread != NULL){
-//        delete stopThread;
-//    }
-//    stopThread = new StopThread(this);
-///*    if(stopThread->isRunning()){
-//        return false;
-//    }
-//*/
-//    bool bfinished = false;
-//    while(!bfinished){
-//        if(App::test_result){
-//            App::test_finished = true;
-//            stopThread->msleep(300);
-//            stopThread->start();
-//            bfinished = true;
-//            break;
-//        }
-//        stopThread->msleep(10);
-//        QCoreApplication::processEvents(QEventLoop::AllEvents, 50);
-//    }
-//    stopThread->exit();
+tty_thread->ttyStop();
 
     return true;
 }
@@ -427,39 +411,54 @@ QString MainBussniessView::getItemName(){
     return _itemName;
 }
 
-bool MainBussniessView::White(QString mItemName){
-    qDebug()<< "+++++++++++++++begin white+++++++++++"<<mItemName;
-    App::test_start = true;
+bool MainBussniessView::sencmd(QString mItemName){
+    qDebug()<< "+++++++++++++++begin white+++++++++++"<< mItemName;
 
-//    if(whiteThread != NULL){
-//        delete whiteThread;
-//    }
 
-//    this->setItemName(mItemName);
-//    whiteThread = new WhiteThread(this);
-//    /*if(whiteThread->isRunning()){
-//        return false;
-//    }
-//    */
+    if(tty_thread != NULL){
+           delete tty_thread;
+       }
+    tty_thread = new ttyThread(this);
+   connect(tty_thread,SIGNAL(receiveTtyData(QString)),this,SLOT(showTtyData(QString)));
+   connect(tty_thread,SIGNAL(receiveAck(unsigned char)),this,SLOT(showTtyAck(unsigned char)));
+   connect(tty_thread,SIGNAL(sTime(int )),this,SLOT(sTimeSlot(int)));
+   connect(tty_thread,SIGNAL(receiveWb(unsigned int,unsigned int ,unsigned int ,unsigned int )),this,SLOT(showWb(unsigned int,unsigned int ,unsigned int,unsigned int )));
+   connect(tty_thread,SIGNAL(receiveRGB(unsigned int,unsigned int ,unsigned int ,unsigned int )),this,SLOT(showWrgb(unsigned int,unsigned int ,unsigned int,unsigned int )));
+App::test_start = true;
 
-//    whiteThread->start();
-//    bool bfinished = false;
-//    while(!bfinished){
-//        //App::mutex.lock();
-//        bfinished = App::test_finished;
-//        //App::mutex.unlock();
-//        whiteThread->msleep(100);
-//        try{
-//            QCoreApplication::processEvents(QEventLoop::AllEvents, 500);
-//        }catch(...){
-//            qDebug()<< "Exception....";
-//        }
+if(!(tty_thread->tty_open)){
+tty_thread->ttyOpen();
+}
 
-//        //msleep(500);
-//    }
-//    whiteThread->exit();
-//    qDebug()<< "+++++++++++++++end white+++++++++++";
-//    //}
+//receive_count=0;
+tty_thread->commandSend(SETUP);
+
+tty_thread->setCommand(ONESTEP);
+tty_thread->ttyStart();
+tty_thread->start();
+
+
+
+
+   bool bfinished = false;
+  while(!bfinished){
+
+        bfinished = App::test_finished;
+
+tty_thread->msleep(100);
+            try     {
+                 QCoreApplication::processEvents(QEventLoop::AllEvents, 500);
+                 printf("[debug]---->binished is %d\n",bfinished);
+            }catch(...){
+            qDebug()<< "Exception....";
+            }
+
+ }
+
+  tty_thread->exit();
+App::test_finished=false;
+
+qDebug()<<"[ debug ]--->White end..";
     return true;
 }
 
@@ -468,6 +467,132 @@ void MainBussniessView::msleep(int sec){
 //    while( QTime::currentTime() < dieTime ){
 //        whiteThread->msleep(10);
 //        QCoreApplication::processEvents();
+//    }
+}
+
+void MainBussniessView::showTtyData(QString str)
+{
+     qDebug() << "showTtyData"<< str ;
+}
+
+void MainBussniessView::showTtyAck(unsigned char state)
+{
+    switch ( state )
+    {
+            case  R_VERSION:
+           // ui->cmdShow->setText("ACK Read version information ok!!\n");
+            break;
+
+            case R_SELFEX:
+           // ui->cmdShow->setText("ACK Self test success");
+            break;
+
+            case R_OFW:
+           // ui->cmdShow->setText("Open the Door ACK");
+            break;
+
+            case R_ETW:
+           // ui->cmdShow->setText("Close the Door ACK");
+            break;
+
+            case R_SETUP:
+           // ui->cmdShow->setText("Setup up success ACK");
+        printf("showTtyAck:Setup up success ACK\n");
+            break;
+
+            case R_ONESTEP:
+           // ui->cmdShow->setText("One Step  success ACK");
+            break;
+
+            case R_RESET:
+//            ui->cmdShow->setText("Machine Reset ACK");
+//          ui->label_state->setText("machine reset ok");
+
+//          ui->start->setEnabled(true);
+//             ui->white_Balance->setEnabled(true);
+//          ui->mechaniceTest->setEnabled(true);
+            break;
+
+            case R_ERR_1:
+         //   ui->cmdShow->setText("Receive Mechanical error ACK");
+            break;
+
+            case R_WhiteBalance:
+//            ui->cmdShow->setText("White Balance  success ACK");
+//            ui->label_state->setText("White Balance  success ACK");
+
+//            ui->start->setEnabled(true);
+
+//            ui->mechaniceTest->setEnabled(true);
+//            ui->white_Balance->setEnabled(true);
+            break;
+
+            case R_STOP:
+//            ui->cmdShow->setText("Receive STOP   success ACK");
+//            ui->start->setEnabled(true);
+//             ui->backHome->setEnabled(true);
+//            ui->mechaniceTest->setEnabled(true);
+//            ui->white_Balance->setEnabled(true);
+//            ui->stop->setEnabled(false);
+            break;
+
+            default:
+             break;
+
+    }
+}
+void MainBussniessView::sTimeSlot( int st)
+{
+
+//    QString s = QString::number(st, 10);
+//    ui->timeNumber->display(s);
+}
+void MainBussniessView::showWb(unsigned int W, unsigned int R, unsigned int G, unsigned int B)// rec wb
+{
+//    QString w,r,g,b;
+
+//printf(" ***********  showWb ************\n");
+
+//    w =  QString::number(W, 10);
+//    r  =   QString::number(R, 10);
+//    g =  QString::number(G, 10);
+//    b =  QString::number(B, 10);
+
+//    ui->edit_white->setText(w);
+//    ui->edit_read->setText(r);
+//    ui->edit_green->setText(g);
+//    ui->eadit_blue->setText(b);
+
+//    result[0].white_value[0]=W;
+//    result[0].white_value[1]=R;
+//    result[0].white_value[2]=G;
+//    result[0].white_value[3]=B;
+
+}
+void MainBussniessView::showWrgb(unsigned int W, unsigned int R, unsigned int G,unsigned int B)// rec rgb
+{
+//    QString w,r,g,b;
+//printf(" ***********  showWrgb ************%d\n",receive_count);
+
+//w =  QString::number(W, 10);
+//r  =   QString::number(R, 10);
+//g =  QString::number(G, 10);
+//b =  QString::number(B, 10);
+
+//    ui->edit_white->setText(w);
+//    ui->edit_read->setText(r);
+//    ui->edit_green->setText(g);
+//    ui->eadit_blue->setText(b);
+
+//    result[receive_count].wrgb_value[0]=W;
+//    result[receive_count].wrgb_value[1]=R;
+//    result[receive_count].wrgb_value[2]=G;
+//    result[receive_count].wrgb_value[3]=B;
+
+//    receive_count++;
+//    if(receive_count >=12)
+//    {
+//        stopDebugClicked();
 //    }
 }
 

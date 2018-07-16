@@ -9,6 +9,7 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QDebug>
 #include<QTimer>
+#include <App.h>
 #define  R_VERSION   0xa1
 #define  R_SELFEX      0xa2
 #define  R_OFW          0xb1
@@ -64,11 +65,11 @@ public:
     void  ttyStop();
     void  ttyStart();
     void setWorkTime(unsigned int s);
-
     QString ByteArrayToHexStr(QByteArray data);
     char ConvertHexChar(char ch);
     void StringToHex(QString str, QByteArray & senddata);
-
+void msleep(long s);
+  bool tty_open=false;
 
 protected:
     void run(); //新线程,主线程调用start()时,新线程会自动调用run()函数

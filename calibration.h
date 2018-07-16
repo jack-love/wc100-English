@@ -8,7 +8,7 @@
 #include <QMessageBox>
 #include "keyboard.h"
 #include <calibrateobservermodel.h>
-
+#include<ttythread.h>
 namespace Ui {
 class Calibration;
 }
@@ -47,6 +47,7 @@ MainBussniessView *pMainBussView;
 QSqlQueryModel *pQueryModel;
 QSqlQueryModel *pTableModel=NULL;
 QString strItemName;
+
 };
 
 #endif // CALIBRATION_H

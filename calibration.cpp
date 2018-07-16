@@ -172,10 +172,12 @@ void Calibration::on_calibrate_start_clicked()
     qDebug("bug--->Calibrate.cpp->on_btn_CalibrateData_clicked start");
 
      qDebug() << "mItemName " <<  strItemName;
-    bResult = pMainBussView->White(strItemName);//调用发送接口
+    bResult = pMainBussView->sencmd(strItemName);//调用发送接口
 
     if(bResult){//判断是否完成
-
+        ui->calibrateList->setEnabled(true);
+        ui->calibrate_start->setEnabled(true);
+        ui->calibrate_stop->setEnabled(true);
     }else{
  qDebug("bug--->Calibrate.cpp->on_btn_CalibrateData_clicked end");
     ui->calibrateList->setEnabled(true);
