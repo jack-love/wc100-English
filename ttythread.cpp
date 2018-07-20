@@ -67,7 +67,7 @@ void ttyThread::msleep(long s){
 
 void ttyThread::run()
 {
-
+                    receivingCount=0;
                      App::mutex.lock();
                      App::test_result = false;
                     // App::test_finished=false;
@@ -86,7 +86,7 @@ void ttyThread::run()
                                                         emit  sendcmd(GETVERSION);
                                                         oneStepok=0X01;
 
-                                                        receivingCount=0;
+
                                                         setWorkTime(60);
                                                         printf("--[1]-- state_val ----%d\n",state_ack);
                                                      }
@@ -469,8 +469,8 @@ void ttyThread::commandSend(WORK_STATE  status)
 
                     StringToHex(str,senddata);//将str字符串转换为16进制的形式
                     serialPort->write(senddata);//发送到串口
-printf("send cmd \n");
-                    QString ttyname= serialPort->portName();
+//printf("send cmd \n");
+//                    QString ttyname= serialPort->portName();
 
                     cmdok=false;
               }
