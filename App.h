@@ -20,6 +20,13 @@ public:
     static bool test_finished;
     static bool test_result;
     static bool test_start;
+
+    static unsigned int Wb_w   ;
+    static unsigned int Wb_r    ;
+    static unsigned int Wb_g   ;
+    static unsigned int Wb_b  ;
+
+   static unsigned int white_value[4];
 };
 class SystemConfig{
 public :

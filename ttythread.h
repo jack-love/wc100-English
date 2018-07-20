@@ -48,6 +48,17 @@ enum ACK_STATE{
             RESET_ACK=8,
             WB_ACK=9,//R_WhiteBalance
     ERR_ACK=10,
+    REC_CONT=11,
+};
+
+struct resultVal {
+    unsigned int calibration[8];
+    unsigned int wrgb_value[4];
+    unsigned int white_value[4];
+};
+enum papertype{
+ R10T  =  0,
+ R113  =  1,
 };
 class ttyThread : public QThread
 {
@@ -82,14 +93,15 @@ private:
     WORK_STATE  state;
     QSerialPort *serialPort;
 
-    unsigned char state_ack;
+    unsigned char  state_ack;
     unsigned char  oneStepok;
+    unsigned char  receivingCount=0;
     QTimer *m_pTimer;
    unsigned int time_s;
 
  private slots:
     void  slotReadTty();
-   void   cmdHandle (unsigned char state);
+    void   cmdHandle (unsigned char state);
 
     void handleTimeout();
 

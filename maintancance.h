@@ -25,20 +25,17 @@ extern  bool lock;
 #define  R_STOP          0xbf
 
 
-enum papertype{
- R10T  =  0,
- R113  =  1,
-};
+
 namespace Ui {
 class Maintancance;
 }
 
 
-struct resultVal {
-    unsigned int calibration[8];
-    unsigned int wrgb_value[4];
-    unsigned int white_value[4];
-};
+//struct resultVal {
+//    unsigned int calibration[8];
+//    unsigned int wrgb_value[4];
+//    unsigned int white_value[4];
+//};
 
 class Maintancance : public QTabWidget
 {
@@ -91,6 +88,8 @@ private slots:
     void showWb(unsigned int W,unsigned int R,unsigned int G,unsigned int B);
     void showWrgb(unsigned int W,unsigned int R,unsigned int G,unsigned int B);
 
+
+   // void on_sendData_clicked();
 };
 
 #endif // MAINTANCANCE_H

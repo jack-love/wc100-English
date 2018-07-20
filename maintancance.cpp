@@ -1,6 +1,6 @@
 #include "maintancance.h"
 #include "ui_maintancance.h"
-
+#include <App.h>
 unsigned char R_data[6]={0};
 //bool  tty_receivingState=false;
 
@@ -23,13 +23,13 @@ Maintancance::Maintancance(QWidget *parent) :
      connect(ui->clearReceive,SIGNAL(clicked()),this,  SLOT(clearReceiveClicked()));
      connect(ui->backHome,SIGNAL(clicked()),this,  SLOT(backHomeClicked()));
      connect(ui->mechaniceTest,SIGNAL(clicked()),this,SLOT(mechaniceTestClicked()));
-
+     connect(ui->white_Balance,SIGNAL(clicked()),this,SLOT(whiteBalance()));
     connect(ui->start,SIGNAL(clicked()),this,SLOT(startDebugClicked()));
     connect(ui->stop,SIGNAL(clicked()),this,SLOT(stopDebugClicked()));
     connect(ui->paperType,SIGNAL(activated(int)),this,SLOT(typeSelectionClicked(int)));
     connect(ui->testItem,SIGNAL(activated(int)),this,SLOT(modelSelectionClicked(int)));
 
-    connect(ui->white_Balance,SIGNAL(clicked()),this,SLOT(whiteBalance()));
+
 
      ui->openTtty->setEnabled(true);
      ui->closeTtty->setEnabled(false);
@@ -61,6 +61,8 @@ Maintancance::~Maintancance()
 
 void Maintancance::backHomeClicked()
 {
+
+    closeTttyClicked();
     emit SendHomeSignal();
 }
 
@@ -71,9 +73,7 @@ void Maintancance::clearReceiveClicked()
 
 void Maintancance::mechaniceTestClicked()
 {
-         // if(! serialPort->isOpen()){
-              openTttyClicked();
-        //  }
+    openTttyClicked();
     tty_thread->ttyStart();
     tty_thread->start();
     tty_thread->setCommand(RESET);
@@ -83,27 +83,40 @@ void Maintancance::mechaniceTestClicked()
     ui->start->setEnabled(false);
     ui->mechaniceTest->setEnabled(false);
     ui->white_Balance->setEnabled(false);
+    ui->backHome->setEnabled(false);
 }
 
+void Maintancance::whiteBalance()
+{
+    openTttyClicked();
+    ui->start->setEnabled(false);
+    ui->mechaniceTest->setEnabled(false);
+    ui->white_Balance->setEnabled(false);
+   ui->backHome->setEnabled(false);
 
+    tty_thread->commandSend(SETUP);
+    tty_thread->ttyStart();
+    tty_thread->start();
+    tty_thread->setCommand(WB);
+    tty_thread->setWorkTime(60);
+    receive_count=0;
+
+}
 void Maintancance::startDebugClicked()
 {
+     openTttyClicked();
     ui->start->setEnabled(false);
     ui->backHome->setEnabled(false);
     ui->mechaniceTest->setEnabled(false);
     ui->white_Balance->setEnabled(false);
     ui->stop->setEnabled(true);
 
-       // if(! serialPort->isOpen()){
-            openTttyClicked();
-     //   }
 
-receive_count=0;
+    receive_count=0;
     tty_thread->commandSend(SETUP);
     tty_thread->setCommand(ONESTEP);
     tty_thread->ttyStart();
     tty_thread->start();
-
 
 }
 
@@ -111,12 +124,12 @@ receive_count=0;
 
 void Maintancance::stopDebugClicked()
 {
-    ui->start->setEnabled(true);
-    ui->backHome->setEnabled(true);
-    ui->mechaniceTest->setEnabled(true);
-    ui->white_Balance->setEnabled(true);
-    ui->stop->setEnabled(false);
- tty_thread->setCommand(STOP);
+        ui->start->setEnabled(true);
+        ui->backHome->setEnabled(true);
+        ui->mechaniceTest->setEnabled(true);
+        ui->white_Balance->setEnabled(true);
+        ui->stop->setEnabled(false);
+        tty_thread->setCommand(STOP);
 }
 
 //jack.cc
@@ -126,15 +139,16 @@ void Maintancance::openTttyClicked()
         //bool  lock_tmp = signin.getlock();
 
         if( 1){
-            // if(! serialPort->isOpen()){
-                 tty_thread->ttyOpen();
+                 if(!(tty_thread->tty_open)){
+                    tty_thread->ttyOpen();
 
-                ui->openTtty->setEnabled(false);
-                ui->closeTtty->setEnabled(true);
-                ui->sendData->setEnabled(true);
-                ui->functionSelection->setEnabled(true);
-                ui->clearReceive->setEnabled(true);
-           //  }
+                    ui->openTtty->setEnabled(false);
+                    ui->closeTtty->setEnabled(true);
+                    ui->sendData->setEnabled(true);
+                    ui->functionSelection->setEnabled(true);
+                    ui->clearReceive->setEnabled(true);
+                    printf("2 openTttyClicked\n");
+             }
         }
         else
         {
@@ -158,17 +172,16 @@ void Maintancance::sendMessage(char *message){
 
 void Maintancance::closeTttyClicked()
 {
-//        if(serialPort->isOpen())
-//            {
+      if( tty_thread->tty_open ) {
 
-                tty_thread->ttyClose();
+        tty_thread->ttyClose();
+        ui->openTtty->setEnabled(true);
+        ui->closeTtty->setEnabled(false);
+        ui->sendData->setEnabled(false);
+        ui->functionSelection->setEditable(false);
+        ui->clearReceive->setEnabled(false);
 
-                ui->openTtty->setEnabled(true);
-                ui->closeTtty->setEnabled(false);
-                ui->sendData->setEnabled(false);
-                ui->functionSelection->setEditable(false);
-                ui->clearReceive->setEnabled(false);
-        //   }
+      }
 }
 
 void Maintancance::sendDataClicked()
@@ -216,12 +229,13 @@ void Maintancance::showTtyAck(unsigned char state)
             break;
 
             case R_RESET:
-            ui->cmdShow->setText("Machine Reset ACK");
-          ui->label_state->setText("machine reset ok");
+                    ui->cmdShow->setText("Machine Reset ACK");
+                    ui->label_state->setText("machine reset ok");
 
-          ui->start->setEnabled(true);
-             ui->white_Balance->setEnabled(true);
-          ui->mechaniceTest->setEnabled(true);
+                    ui->start->setEnabled(true);
+                    ui->white_Balance->setEnabled(true);
+                    ui->mechaniceTest->setEnabled(true);
+                    ui->backHome->setEnabled(true);
             break;
 
             case R_ERR_1:
@@ -236,6 +250,7 @@ void Maintancance::showTtyAck(unsigned char state)
 
             ui->mechaniceTest->setEnabled(true);
             ui->white_Balance->setEnabled(true);
+            ui->backHome->setEnabled(true);
             break;
 
             case R_STOP:
@@ -323,24 +338,7 @@ void Maintancance::sTimeSlot( int st)
     ui->timeNumber->display(s);
 }
 
-void Maintancance::whiteBalance()
-{
-    ui->start->setEnabled(false);
-    ui->mechaniceTest->setEnabled(false);
-    ui->white_Balance->setEnabled(false);
 
-
-    if(! serialPort->isOpen()){
-        openTttyClicked();
-    }
-
-    tty_thread->ttyStart();
-    tty_thread->start();
-    tty_thread->setCommand(WB);
-    tty_thread->setWorkTime(60);
-    receive_count=0;
-
-}
 void Maintancance::uiShowRgb(unsigned int W, unsigned int R, unsigned int G, unsigned int B,unsigned int _result)
 {
     QString w,r,g,b,re;
@@ -601,7 +599,7 @@ void Maintancance::showWb(unsigned int W, unsigned int R, unsigned int G, unsign
 {
     QString w,r,g,b;
 
-printf(" ***********  showWb ************\n");
+
 
     w =  QString::number(W, 10);
     r  =   QString::number(R, 10);
@@ -618,6 +616,16 @@ printf(" ***********  showWb ************\n");
     result[0].white_value[2]=G;
     result[0].white_value[3]=B;
 
-
-
+    App::white_value[0] = W;
+    App::white_value[1] = R;
+    App::white_value[2] = G;
+    App::white_value[3] = B;
+printf(" ***********  showWb ************ W:%d   R:%d   G:%d  B:%d \n",W,R,G,B);
 }
+
+
+
+//void Maintancance::on_sendData_clicked()
+//{
+
+//}

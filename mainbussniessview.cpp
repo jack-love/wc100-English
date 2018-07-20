@@ -19,6 +19,8 @@
 //#include <myhelper.h>
 #include<assert.h>
 #include <QThread>
+#include<calibration.h>
+#include<App.h>
 MainBussniessView::MainBussniessView(QObject *parent) :
     QObject(parent), p(parent)
 {
@@ -51,141 +53,143 @@ MainBussniessView::MainBussniessView(QObject *parent) :
     deleteTableModel = NULL;
     showTabelModel = new QSqlTableModel();
     calibrateObserveTableModel = new QSqlTableModel();
-    Machine_Inital();
-#ifndef TEST_SO
-    int nResult = Machine_Reset();
-    if(0 == nResult){
-        myHelper::ShowMessageBoxError(tr("初始化失败, 重启机器!"));
-        system("reboot");
-        return;
-    }
-#endif
-    Initalize();
+  //  Machine_Inital();
+//#ifndef TEST_SO
+//    int nResult = Machine_Reset();
+//    if(0 == nResult){
+//        myHelper::ShowMessageBoxError(tr("初始化失败, 重启机器!"));
+//        system("reboot");
+//        return;
+//    }
+//#endif
+//    Initalize();
 
 
 
 }
-void MainBussniessView::Initalize(){
-    // = new QList<ItemModel>();
-    int icount = GetItemList(&lstItemModel);
-    for(int i = 0;i < icount;i++){
-        int itemNO = lstItemModel[i].getItemNo();
-        QString strItemName = lstItemModel[i].getItemName();
-        GetCalibration(itemNO, strItemName);
-        qDebug() << strItemName;
-    }
-    for(int j = icount-1;j >= 0;j--){
-        lstItemModel.removeAt(j);
-    }
-}
+//void MainBussniessView::Initalize(){
+//    // = new QList<ItemModel>();
+//    int icount = GetItemList(&lstItemModel);
+//    for(int i = 0;i < icount;i++){
+//        int itemNO = lstItemModel[i].getItemNo();
+//        QString strItemName = lstItemModel[i].getItemName();
+//        GetCalibration(itemNO, strItemName);
+//        qDebug() << strItemName;
+//    }
+//    for(int j = icount-1;j >= 0;j--){
+//        lstItemModel.removeAt(j);
+//    }
+//}
 
 QList<ItemModel> MainBussniessView::getItemModel(){
     return lstItemModel;
 }
 
-void MainBussniessView::Machine_Inital(){
+//void MainBussniessView::Machine_Inital(){
 
-    #ifdef TEST_SO
-        m_lib = new QLibrary("/lib/libtest.so.1.0.0");//://image/libtest.so.1.0.0
-    #else
-        m_lib = new QLibrary("/lib/libuart_init.so");
-    #endif
-    m_lib->load();
-    if(m_lib->isLoaded()){
-    #ifdef TEST_SO
-        _Run = NULL;
-        _Run = (RUN)m_lib->resolve("run");
-        if(_Run != NULL){
-            int ii = _Run(_result);
-        }
+//    #ifdef TEST_SO
+//        m_lib = new QLibrary("/lib/libtest.so.1.0.0");//://image/libtest.so.1.0.0
+//    #else
+//        m_lib = new QLibrary("/lib/libuart_init.so");
+//    #endif
+//    m_lib->load();
+//    if(m_lib->isLoaded()){
+//    #ifdef TEST_SO
+//        _Run = NULL;
+//        _Run = (RUN)m_lib->resolve("run");
+//        if(_Run != NULL){
+//            int ii = _Run(_result);
+//        }
 
-        qDebug() << "load library successfull!";
-    #else
-        _Inital = NULL;
-        _Inital = (INITAL)m_lib->resolve("uart_init");
-        if(_Inital != NULL){
-            int ii = _Inital();
-        }
-    #endif
-    }
-}
-int MainBussniessView::Machine_Power(){
-    int nResult = 0;
-#ifndef TEST_SO
-    _Power = NULL;
-    _Power = (POWER)m_lib->resolve("power");
-    if(_Power != NULL){
-        nResult = _Power();
-    }
-#endif
-    return nResult;
-}
+//        qDebug() << "load library successfull!";
+//    #else
+//        _Inital = NULL;
+//        _Inital = (INITAL)m_lib->resolve("uart_init");
+//        if(_Inital != NULL){
+//            int ii = _Inital();
+//        }
+//    #endif
+//    }
+//}
 
-int MainBussniessView::Machine_Stop(){
-    int nResult = 0;
-#ifndef TEST_SO
-    _Stop = NULL;
-    _Stop = (STOP)m_lib->resolve("stop");
-    if(_Stop != NULL){
-        nResult = _Stop();
-    }
-#endif
-    return nResult;
-}
+//int MainBussniessView::Machine_Power(){
+//    int nResult = 0;
+//#ifndef TEST_SO
+//    _Power = NULL;
+//    _Power = (POWER)m_lib->resolve("power");
+//    if(_Power != NULL){
+//        nResult = _Power();
+//    }
+//#endif
+//    return nResult;
+//}
 
-int MainBussniessView::Machine_Go_on(){
-    int nResult = 0;
-#ifndef TEST_SO
-    _Reset = NULL;
-    _Reset = (RESET)m_lib->resolve("go_on");
-    if(_Reset != NULL){
-        nResult = _Reset();
-    }
-#endif
-    return nResult;
-}
+//int MainBussniessView::Machine_Stop(){
+//    int nResult = 0;
+//#ifndef TEST_SO
+//    _Stop = NULL;
+//    _Stop = (STOP)m_lib->resolve("stop");
+//    if(_Stop != NULL){
+//        nResult = _Stop();
+//    }
+//#endif
+//    return nResult;
+//}
 
-int MainBussniessView::Machine_White(struct RESULT buf[]){
-    int nResult = 0;
-#ifndef TEST_SO
-    _White = NULL;
-    _White = (WHITE)m_lib->resolve("white");
-    if(_White != NULL){
-        nResult = _White(buf);
-    }
-#endif
-    return nResult;
-}
+//int MainBussniessView::Machine_Go_on(){
+//    int nResult = 0;
+//#ifndef TEST_SO
+//    _Reset = NULL;
+//    _Reset = (RESET)m_lib->resolve("go_on");
+//    if(_Reset != NULL){
+//        nResult = _Reset();
+//    }
+//#endif
+//    return nResult;
+//}
 
-int MainBussniessView::Machine_Run(struct RESULT buf[]){
-    int nResult = 0;
-    _Run = NULL;
-    _Run = (RUN)m_lib->resolve("run");
-    if(_Run != NULL){
-        nResult = _Run(buf);
-    }
-    return nResult;
-}
+//int MainBussniessView::Machine_White(struct RESULT buf[]){
+//    int nResult = 0;
+//#ifndef TEST_SO
+//    _White = NULL;
+//    _White = (WHITE)m_lib->resolve("white");
+//    if(_White != NULL){
+//        nResult = _White(buf);
+//    }
+//#endif
+//    return nResult;
+//}
 
-int MainBussniessView::Machine_Sys_Status(){
-    int nResult = 0;
-    _Sys_status = NULL;
-    _Sys_status = (SYS_STATUS)m_lib->resolve("system_state");
-    if(_Sys_status != NULL){
-        nResult = _Sys_status();
-    }
-    return nResult;
-}
+//int MainBussniessView::Machine_Run(struct RESULT buf[]){
+//    int nResult = 0;
+//    _Run = NULL;
+//    _Run = (RUN)m_lib->resolve("run");
+//    if(_Run != NULL){
+//        nResult = _Run(buf);
+//    }
+//    return nResult;
+//}
 
-int MainBussniessView:: Machine_Reset(){
-    int nResult = 0;
-    _Reset = NULL;
-    _Reset = (RESET)m_lib->resolve("reset");
-    if(_Reset != NULL){
-        nResult = _Reset();
-    }
-    return nResult;
-}
+//int MainBussniessView::Machine_Sys_Status(){
+//    int nResult = 0;
+//    _Sys_status = NULL;
+//    _Sys_status = (SYS_STATUS)m_lib->resolve("system_state");
+//    if(_Sys_status != NULL){
+//        nResult = _Sys_status();
+//    }
+//    return nResult;
+//}
+
+//int MainBussniessView:: Machine_Reset(){
+//    int nResult = 0;
+//    _Reset = NULL;
+//    _Reset = (RESET)m_lib->resolve("reset");
+//    if(_Reset != NULL){
+//        nResult = _Reset();
+//    }
+//    return nResult;
+//}
+
 int MainBussniessView::GetSampleType(QList<SampleTypeModel>* lstSampleType){
     QString strSQL = "select * from SampleType_tb";
     QSqlQuery query = m_DatabaseHelper->ExecuteSqlQuery(strSQL);
@@ -397,9 +401,9 @@ bool MainBussniessView::Start(){
 
 bool MainBussniessView::Stop(){
     printf("MainBussniessView::Stop\n");
-    App::test_start = false;
-tty_thread->ttyStop();
 
+tty_thread->ttyStop();
+tty_thread->ttyClose();
     return true;
 }
 
@@ -413,54 +417,46 @@ QString MainBussniessView::getItemName(){
 
 bool MainBussniessView::sencmd(QString mItemName){
     qDebug()<< "+++++++++++++++begin white+++++++++++"<< mItemName;
-
+   Name_tmp=mItemName;
 
     if(tty_thread != NULL){
            delete tty_thread;
        }
+
     tty_thread = new ttyThread(this);
    connect(tty_thread,SIGNAL(receiveTtyData(QString)),this,SLOT(showTtyData(QString)));
    connect(tty_thread,SIGNAL(receiveAck(unsigned char)),this,SLOT(showTtyAck(unsigned char)));
    connect(tty_thread,SIGNAL(sTime(int )),this,SLOT(sTimeSlot(int)));
    connect(tty_thread,SIGNAL(receiveWb(unsigned int,unsigned int ,unsigned int ,unsigned int )),this,SLOT(showWb(unsigned int,unsigned int ,unsigned int,unsigned int )));
    connect(tty_thread,SIGNAL(receiveRGB(unsigned int,unsigned int ,unsigned int ,unsigned int )),this,SLOT(showWrgb(unsigned int,unsigned int ,unsigned int,unsigned int )));
-App::test_start = true;
 
-if(!(tty_thread->tty_open)){
-tty_thread->ttyOpen();
+    receive_count=0;
+    tty_thread->ttyOpen();
+    tty_thread->setCommand(ONESTEP);
+    tty_thread->ttyStart();
+    tty_thread->start();
+    App::test_finished=false;
+    bool bfinished = false;
+
+       while(!bfinished){
+
+                    bfinished = App::test_finished;
+
+                    tty_thread->msleep(100);
+                    try {
+                    QCoreApplication::processEvents(QEventLoop::AllEvents, 500);
+                    }catch(...){
+                    qDebug()<< "Exception....";
+                    }
+         }
+
+    tty_thread->ttyClose();
+    tty_thread->exit();
+
+    qDebug()<<"[ debug ]--->White end.."<<App::test_result;
+    return  App::test_result;;
 }
-
-//receive_count=0;
-tty_thread->commandSend(SETUP);
-
-tty_thread->setCommand(ONESTEP);
-tty_thread->ttyStart();
-tty_thread->start();
-
-
-
-
-   bool bfinished = false;
-  while(!bfinished){
-
-        bfinished = App::test_finished;
-
-tty_thread->msleep(100);
-            try     {
-                 QCoreApplication::processEvents(QEventLoop::AllEvents, 500);
-                 printf("[debug]---->binished is %d\n",bfinished);
-            }catch(...){
-            qDebug()<< "Exception....";
-            }
-
- }
-
-  tty_thread->exit();
-App::test_finished=false;
-
-qDebug()<<"[ debug ]--->White end..";
-    return true;
-}
+//ok
 
 void MainBussniessView::msleep(int sec){
 //    QTime dieTime = QTime::currentTime().addMSecs(sec);
@@ -546,74 +542,105 @@ void MainBussniessView::sTimeSlot( int st)
 
 //    QString s = QString::number(st, 10);
 //    ui->timeNumber->display(s);
+emit sTime(st);
 }
 void MainBussniessView::showWb(unsigned int W, unsigned int R, unsigned int G, unsigned int B)// rec wb
 {
-//    QString w,r,g,b;
+    QString w,r,g,b;
 
-//printf(" ***********  showWb ************\n");
+    printf(" ***********  showWb ************\n");
 
-//    w =  QString::number(W, 10);
-//    r  =   QString::number(R, 10);
-//    g =  QString::number(G, 10);
-//    b =  QString::number(B, 10);
+    w =  QString::number(W, 10);
+    r  =   QString::number(R, 10);
+    g =  QString::number(G, 10);
+    b =  QString::number(B, 10);
 
-//    ui->edit_white->setText(w);
-//    ui->edit_read->setText(r);
-//    ui->edit_green->setText(g);
-//    ui->eadit_blue->setText(b);
 
-//    result[0].white_value[0]=W;
-//    result[0].white_value[1]=R;
-//    result[0].white_value[2]=G;
-//    result[0].white_value[3]=B;
+
+    result[0].white_value[0]=W;
+    result[0].white_value[1]=R;
+    result[0].white_value[2]=G;
+    result[0].white_value[3]=B;
 
 }
+
 void MainBussniessView::showWrgb(unsigned int W, unsigned int R, unsigned int G,unsigned int B)// rec rgb
 {
-//    QString w,r,g,b;
-//printf(" ***********  showWrgb ************%d\n",receive_count);
+                QString w,r,g,b;
+                printf(" ***********  showWrgb ************%d\n",receive_count);
 
-//w =  QString::number(W, 10);
-//r  =   QString::number(R, 10);
-//g =  QString::number(G, 10);
-//b =  QString::number(B, 10);
+                w =    QString::number(W, 10);
+                r  =    QString::number(R, 10);
+                g =    QString::number(G, 10);
+                b =    QString::number(B, 10);
 
-//    ui->edit_white->setText(w);
-//    ui->edit_read->setText(r);
-//    ui->edit_green->setText(g);
-//    ui->eadit_blue->setText(b);
 
-//    result[receive_count].wrgb_value[0]=W;
-//    result[receive_count].wrgb_value[1]=R;
-//    result[receive_count].wrgb_value[2]=G;
-//    result[receive_count].wrgb_value[3]=B;
 
-//    receive_count++;
-//    if(receive_count >=12)
-//    {
-//        stopDebugClicked();
-//    }
+                result[receive_count].wrgb_value[0]=W;
+                result[receive_count].wrgb_value[1]=R;
+                result[receive_count].wrgb_value[2]=G;
+                result[receive_count].wrgb_value[3]=B;
+
+                receive_count++;
+        if(receive_count >12)
+        {
+                            CalibrateObserverModel * resultModel = new CalibrateObserverModel();
+                            printf("MainBussniessView::showWrgb\n");
+                            unsigned int W=0,R=0,G=0,B=0,Ca=0;
+
+
+                             result[0].white_value[0] =  App::white_value[0];
+                             result[0].white_value[1] =  App::white_value[1];
+                             result[0].white_value[2] =  App::white_value[2];
+                             result[0].white_value[3] =  App::white_value[3];
+
+                            cac.calibrationCalculation(result,Name_tmp,R113,&W,&R,&G,&B,&Ca);
+                            printf("cac----> %d %d %d %d \n",W,R,G,B,Ca);
+
+                            resultModel->setWhite(W);
+                            resultModel->setRed(R);
+                            resultModel->setGreen(G);
+                            resultModel->setBlue(B);
+                            resultModel->setCalibrateValue(Ca);
+
+                            int nItemNo = 7;
+
+                            resultModel->setItemNo(nItemNo);
+
+
+                            resultModel->setItemName(QString(Name_tmp));
+
+                            QString ResultValue="-";
+                            resultModel->setResultValue(QString(ResultValue));
+                            resultModel->setCalibrateDate(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+
+                            WhiteResultSave(resultModel);
+                            Test_WhiteResult(resultModel);
+
+                            delete resultModel;
+
+                            receive_count=0;
+        }
 }
+//-------------------------------------------------------------------------------------------------------------------------------------
+//void MainBussniessView::ShowTestResult(){
 
-void MainBussniessView::ShowTestResult(){
-
-        m_DatabaseHelper->ExecuteQueryModel(showTabelModel, tr("select SampleNo, ItemName, SampleValue, Unit, SampleDate, SampleType, Barcode, HatchTime, IsPrint from TestResult_tb where SampleDate = '%1' order by SampleNo desc").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd")));
-        //model->setHeaderData(0,Qt::Horizontal,tr("用户号"));
-        showTabelModel->setHeaderData(0,Qt::Horizontal,tr("样本号"));
-        showTabelModel->setHeaderData(1,Qt::Horizontal,tr("项目名称"));
-        showTabelModel->setHeaderData(2,Qt::Horizontal,tr("样本值"));
-        showTabelModel->setHeaderData(3,Qt::Horizontal,tr("单位"));
-        showTabelModel->setHeaderData(4,Qt::Horizontal,tr("样本日期"));
-        showTabelModel->setHeaderData(5,Qt::Horizontal,tr("样本类型"));
-        showTabelModel->setHeaderData(6,Qt::Horizontal,tr("条码"));
-        showTabelModel->setHeaderData(7,Qt::Horizontal,tr("孵育时间"));
-        showTabelModel->setHeaderData(8,Qt::Horizontal,tr("是否打印"));
-        //showTabelModel->setHeaderData(4,Qt::Horizontal,tr("项目编号"));
-        //showTabelModel->setHeaderData(8,Qt::Horizontal,tr("测试方法"));
-        //showTabelModel->setHeaderData(11,Qt::Horizontal,tr("标志"));
-        emit testResult(showTabelModel);
-}
+//        m_DatabaseHelper->ExecuteQueryModel(showTabelModel, tr("select SampleNo, ItemName, SampleValue, Unit, SampleDate, SampleType, Barcode, HatchTime, IsPrint from TestResult_tb where SampleDate = '%1' order by SampleNo desc").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd")));
+//        model->setHeaderData(0,Qt::Horizontal,tr("用户号"));
+//        showTabelModel->setHeaderData(0,Qt::Horizontal,tr("样本号"));
+//        showTabelModel->setHeaderData(1,Qt::Horizontal,tr("项目名称"));
+//        showTabelModel->setHeaderData(2,Qt::Horizontal,tr("样本值"));
+//        showTabelModel->setHeaderData(3,Qt::Horizontal,tr("单位"));
+//        showTabelModel->setHeaderData(4,Qt::Horizontal,tr("样本日期"));
+//        showTabelModel->setHeaderData(5,Qt::Horizontal,tr("样本类型"));
+//        showTabelModel->setHeaderData(6,Qt::Horizontal,tr("条码"));
+//        showTabelModel->setHeaderData(7,Qt::Horizontal,tr("孵育时间"));
+//        showTabelModel->setHeaderData(8,Qt::Horizontal,tr("是否打印"));
+//        showTabelModel->setHeaderData(4,Qt::Horizontal,tr("项目编号"));
+//        showTabelModel->setHeaderData(8,Qt::Horizontal,tr("测试方法"));
+//        showTabelModel->setHeaderData(11,Qt::Horizontal,tr("标志"));
+//        emit testResult(showTabelModel);
+//}
 
 MainBussniessView::~MainBussniessView(){
 #ifndef TEST_SO
@@ -1326,7 +1353,7 @@ void MainBussniessView::Test_DeleteResult(QString sItemName){
     calibrateObserveTableModel->setHeaderData(5,Qt::Horizontal,tr("测试值"));
     calibrateObserveTableModel->setHeaderData(6,Qt::Horizontal,tr("校准时间"));
     calibrateObserveTableModel->setHeaderData(7,Qt::Horizontal,tr("项目编号"));
-   // calibrateObserveTableModel->setHeaderData(8,Qt::Horizontal,tr("项目名称"));
+    calibrateObserveTableModel->setHeaderData(8,Qt::Horizontal,tr("项目名称"));
     emit CalibrateObserverveResult(calibrateObserveTableModel);
 }
 

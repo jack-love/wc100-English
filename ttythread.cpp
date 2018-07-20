@@ -11,7 +11,7 @@ RUN = true;
 cmdReady = false;
 state = GETVERSION;
 
- App::test_result = false;
+
 printf("ttyThread()\n");
 serialPort = new QSerialPort(this);
 connect (serialPort,SIGNAL(readyRead()),this,SLOT(slotReadTty()));
@@ -67,88 +67,117 @@ void ttyThread::msleep(long s){
 
 void ttyThread::run()
 {
-App::test_finished=false;
- App::mutex.lock();
-                    while(1)
+
+                     App::mutex.lock();
+                     App::test_result = false;
+                    // App::test_finished=false;
+
+                  while(1)
                  {
-  App::test_result = false;
+
+
                                          msleep(500);
-   printf("---- RUN_ACK----\n");
+
                                           if(state == ONESTEP)
-                                          {
-                                                    if(state !=OFW_ACK && oneStepok==0x00 )
-                                                    {      App::test_result = false;
-                                                    emit  sendcmd(OFW);
-                                                    oneStepok=0x01;
-                                                    setWorkTime(60);
-                                                    printf("--3-- state_val ----%d\n",state_ack);
-                                                    }else if ( oneStepok==0x01 && state_ack == OFW_ACK ){
-                                                    emit  sendcmd(ONESTEP);
-                                                    printf("--2-- state_val ----%d\n",state_ack);
-                                                    }
-                                                    else if(oneStepok ==0X00 && state_ack == OFW_ACK)
+                                           {
+
+                                                    if(state_ack != GETVERSION_ACK && oneStepok == 0x00   )
+                                                     {
+                                                        emit  sendcmd(GETVERSION);
+                                                        oneStepok=0X01;
+
+                                                        receivingCount=0;
+                                                        setWorkTime(60);
+                                                        printf("--[1]-- state_val ----%d\n",state_ack);
+                                                     }
+
+//                                                   else if(state_ack != SETUP_ACK && oneStepok == 0x01  )
+//                                                     {
+//                                                            emit  sendcmd(SETUP);
+//                                                            oneStepok=0X02;
+//                                                            printf("--[2]-- state_val ----%d\n",state_ack);
+//                                                    }
+                                                   else  if(state_ack !=OFW_ACK && oneStepok==0x01 )//不在出仓位置时，执行下面的出仓命令
                                                     {
-                                                    printf("--1-- state_val ----%d\n",state_ack);
-                                                    emit  sendcmd(ONESTEP);
+                                                        emit  sendcmd(OFW);
+                                                        oneStepok=0x02;
+                                                        printf("--[3]-- state_val ----%d\n",state_ack);
+                                                    }
+                                                    else if ( state_ack == OFW_ACK && oneStepok==0x02  ){//执行进仓后，发送单步命令
+                                                         emit  sendcmd(ONESTEP);
+                                                         printf("--[4]-- state_val ----%d\n",state_ack);
+                                                    }
+                                                    else if(receivingCount >12 && time_s > 20 )//接收数据
+                                                    {
+                                                        RUN=false;
+                                                        App::test_result=true;
+                                                       printf("receivingCount 12 time %d\n",time_s);
+                                                    }
+                                                    else if(receivingCount < 12 && time_s ==0 )
+                                                   {
+                                                        RUN=false;
+                                                        App::test_result=false;
                                                     }
 
+
+                                                //  printf("---- ONESTEP_ACK----\n");
+                                            }
+
+                                           else if(cmdReady){//这里命令只执行一次
+                                                        emit sendcmd(state);
+                                                        cmdReady=false;
+                                                         printf("--[6]-- state_val ----%d\n",state_ack);
                                           }
-                                                    else if(cmdReady){//这里命令只执行一次
-                                                    emit sendcmd(state);
-                                                    cmdReady=false;
 
+                                          if(!RUN) {
+                                                   printf("---- RUN END-1---\n");
+                                                  break ;
+                                           }
+
+
+                                            switch(state_ack)
+                                            {
+                                                    case   RESET_ACK:
+                                                    printf("---- RESET_ACK----\n");
+                                                    RUN=false;
+                                                    break;
+
+                                                    case  WB_ACK:
+                                                    printf("---- WB_ACK----\n");
+                                                    RUN=false;
+                                                    break;
+
+                                                    case  ONESTEP_ACK:
+                                                    //printf("---- ONESTEP_ACK----\n");
+                                                    break;
+
+
+                                                    case OFW_ACK:
+                                                    printf("---- OFW_ACK----\n");
+                                                    break;
+
+                                                    case STOP_ACK:
+                                                    printf("---- STOP_ACK----\n");
+                                                    RUN=false;
+                                                    break;
+
+                                                   default: break;
                                           }
 
 
-                                        switch(state_ack)
-                                        {
-                                                case   RESET_ACK:
-                                                printf("---- RESET_ACK----\n");
-                                                RUN=false;
-                                                break;
-
-                                                case  WB_ACK:
-                                                printf("---- WB_ACK----\n");
-                                                RUN=false;
-                                                break;
-
-                                                case  ONESTEP_ACK:
-                                               App::test_result=true;
-                                                printf("---- ONESTEP_ACK----\n");
-                                                break;
-
-
-                                                case OFW_ACK:
-                                                printf("---- OFW_ACK----\n");
-                                                break;
-
-                                                case STOP_ACK:
-                                                printf("---- STOP_ACK----\n");
-                                                RUN=false;
-                                                break;
-
-                                        default: break;
-                                        }
-                                        if(!RUN)
-                                               {
-
-                                             printf("---- RUN END-1---\n");
-                                            break ;
-                                        }
-
-    }
-    RUN=false;
- App::test_finished=true;
-     printf("---- RUN END--2--\n");
-        App::mutex.unlock();
-}
+                                }
+                        RUN=false;
+                        App::test_finished=true;
+                        printf("---- RUN END--2--\n");
+                        App::mutex.unlock();
+ }
 
 
 void ttyThread::cmdHandle ( unsigned char state)
 {
-printf(" cmd Handle %d \n",state);
-commandSend((WORK_STATE)state);
+    printf(" cmd Handle %d \n",state);
 
+    commandSend((WORK_STATE)state);
 }
 
 void ttyThread::ttyStop()
@@ -177,8 +206,9 @@ void ttyThread::ttyOpen()
         serialPort->setStopBits(QSerialPort::OneStop);
         serialPort->setFlowControl(QSerialPort::NoFlowControl);
         tty_open = true;
+        printf("ttyOpen \n");
      }
-printf("ttyOpen \n");
+
 }
 
 void ttyThread::ttyClose()
@@ -303,9 +333,6 @@ void ttyThread::commandSend(WORK_STATE  status)
 
     QByteArray senddata;
     QString str;
-//    if(! serialPort->isOpen()){
-//        ttyOpen();
-//    }
 
 
     switch (status) {
@@ -557,12 +584,13 @@ QString str;
                  R_DATA  = (cmd[i+6] *100)+cmd[i+7];
                  G_DATA  = (cmd[i+8] *100)+cmd[i+9];
                  B_DATA  = (cmd[i+10] *100)+cmd[i+11];
+                 receivingCount+=1;
 //                 printf(" %x %x %x %x \n",W_DATA,R_DATA,G_DATA,B_DATA);
                  printf("W:%d  R:%d  G:%d   B:%d\n",W_DATA,R_DATA,G_DATA,B_DATA);
                  if(cmd[i+3] == 0xbb)
-                  emit receiveWb(W_DATA,R_DATA,G_DATA,B_DATA);
+                   emit receiveWb(W_DATA,R_DATA,G_DATA,B_DATA);//是单独白平衡发送
                else
-                  emit receiveRGB(W_DATA,R_DATA,G_DATA,B_DATA);
+                   emit receiveRGB(W_DATA,R_DATA,G_DATA,B_DATA);
 
                 R_data[0]=0xcc;
                 R_data[1]=0xdd;

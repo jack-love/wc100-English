@@ -23,3 +23,8 @@ uint SystemConfig::newold_Model = 0;
 uint SystemConfig::regeant_Model = 0;
 QString SystemConfig::barcode = "123456";
 QString SystemConfig::sampleType = QString::fromUtf8("尿常规");
+unsigned int App::Wb_w   ;
+unsigned int App::Wb_r    ;
+unsigned int App::Wb_g   ;
+unsigned int App::Wb_b  ;
+unsigned int App::white_value[4];

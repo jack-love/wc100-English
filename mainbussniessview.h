@@ -57,7 +57,7 @@ public:
     void GetTestResult(RESULT result[]);
     int GetSampleType(QList<SampleTypeModel>* lstSampleType);
     void TestResultSave(TestResultModel* resultModel);
-    void ShowTestResult();
+//    void ShowTestResult();
     void PrintInformation(PatientModel patientModel);
     void StartProcessing();
     void EndProcessing();
@@ -93,7 +93,7 @@ signals:
     void SendHomeSignal();
     void  receiveTtyData(QString str);
     void  receiveAck(unsigned char state);
-    void   sTime (int s);
+    void   sTime (int s);//
     void  receiveWb(unsigned int W,unsigned int R,unsigned int G,unsigned int B);
     void  receiveRGB(unsigned int W,unsigned int R,unsigned int G,unsigned int B);
 
@@ -108,7 +108,7 @@ public slots:
 private:
     QList<ItemModel> lstItemModel;
     void setItemName(QString);
-    void Initalize();
+  //  void Initalize();
     REPORT _report;
     QList<TestResultModel*> lstTestResultModel;
     double getCalculateCV(QList<double> lstQcValue);
@@ -155,16 +155,20 @@ private:
     typedef int(*RUN)(RESULT _result[]);
     RUN _Run;   
     QString _itemName;
-    void Machine_Inital();
+   // void Machine_Inital();
     void msleep(int sec);
+        unsigned int  receive_count=0;
+         resultVal    result[13];
+          Cac  cac;
+          QString Name_tmp;
 public:
-    int Machine_Reset();
-    int Machine_Power();
-    int Machine_Stop();
-    int Machine_Go_on();
-    int Machine_White(struct RESULT buf[]);
-    int Machine_Run(struct RESULT buf[]);
-    int Machine_Sys_Status();
+   // int Machine_Reset();
+   // int Machine_Power();
+  //  int Machine_Stop();
+   // int Machine_Go_on();
+  //  int Machine_White(struct RESULT buf[]);
+   // int Machine_Run(struct RESULT buf[]);
+    //int Machine_Sys_Status();
 
 };
 

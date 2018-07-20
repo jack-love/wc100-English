@@ -9,6 +9,288 @@ Cac::Cac(QWidget *parent) :
 
 }
 
+bool Cac::intervalCalculation()
+{
+
+
+}
+
+bool Cac:: calibrationCalculation( resultVal  *   result ,QString Name,unsigned char type,unsigned int *W,unsigned int *R,unsigned int * G,unsigned int *B,unsigned int* rgbResult)
+{
+    QString w,r,g,b;
+unsigned int JIEGUO[14]={0};
+    for(int i=0;i<13;i++)
+    {
+
+    printf("cac rgb: count:%d   W: %d  R: %d  G: %d  B: %d\n",i,result[i].wrgb_value[0],result[i].wrgb_value[1],result[i].wrgb_value[2],result[i].wrgb_value[3]);
+    }
+
+   printf("cac wb:   W:%d  R:%d  G:%d B:%d  \n",result[0].white_value[0],
+                                                                       result[0].white_value[1],
+                                                                       result[0].white_value[2],
+                                                                       result[0].white_value[3]
+              );
+
+
+    switch(type)
+    {
+        case R10T:
+//                        int index;
+
+//                        switch(index)
+//                        {
+//                        case 0:
+//                              //  uiShowRgb(result[10].wrgb_value[0],result[10].wrgb_value[1],result[10].wrgb_value[2],result[10].wrgb_value[3]);
+
+//                        break;
+
+//                        case 1:
+//                             //     uiShowRgb(result[9].wrgb_value[0],result[9].wrgb_value[1],result[9].wrgb_value[2],result[9].wrgb_value[3]);
+//                        break;
+
+//                        case 2:
+//                         //     uiShowRgb(result[8].wrgb_value[0],result[8].wrgb_value[1],result[8].wrgb_value[2],result[8].wrgb_value[3]);
+//                        break;
+
+//                        case 3:
+//                            //      uiShowRgb(result[7].wrgb_value[0],result[7].wrgb_value[1],result[7].wrgb_value[2],result[7].wrgb_value[3]);
+//                        break;
+
+//                        case 4:
+//                             //  uiShowRgb(result[6].wrgb_value[0],result[6].wrgb_value[1],result[6].wrgb_value[2],result[6].wrgb_value[3]);
+//                        break;
+
+//                        case 5:
+//                            //  uiShowRgb(result[5].wrgb_value[0],result[5].wrgb_value[1],result[5].wrgb_value[2],result[5].wrgb_value[3]);
+//                        break;
+
+//                        case 6:
+//                           //  uiShowRgb(result[4].wrgb_value[0],result[4].wrgb_value[1],result[4].wrgb_value[2],result[4].wrgb_value[3]);
+//                        break;
+
+//                        case 7:
+//                            //   uiShowRgb(result[3].wrgb_value[0],result[3].wrgb_value[1],result[3].wrgb_value[2],result[3].wrgb_value[3]);
+//                        break;
+
+//                        case 8:
+//                          //  uiShowRgb(result[2].wrgb_value[0],result[2].wrgb_value[1],result[2].wrgb_value[2],result[2].wrgb_value[3]);
+//                        break;
+
+//                        case 9:
+//                             //    uiShowRgb(result[1].wrgb_value[0],result[1].wrgb_value[1],result[1].wrgb_value[2],result[1].wrgb_value[3]);
+//                        break;
+
+//                        case 10:
+//                               // uiShowRgb(result[0].wrgb_value[0],result[0].wrgb_value[1],result[0].wrgb_value[2],result[0].wrgb_value[3]);
+//                        break;
+
+//                        default:break;
+//                        }
+        break;
+
+
+        case R113:
+                        //BIL
+                        if(Name ==QString::fromLocal8Bit("BIL")) {
+                            rgbCalculation(  2,0,
+                                                       result[12].wrgb_value,
+                                                       result[0].white_value,
+                                                       result[0].wrgb_value,
+                                                       JIEGUO );
+
+                                    *W=result[12].wrgb_value[0];
+                                    *R=result[12].wrgb_value[1];
+                                    *G=result[12].wrgb_value[2];
+                                    *B=result[12].wrgb_value[3];
+                                    *rgbResult=JIEGUO[1];
+                                    printf("[debug]---->BIL %d %d %d %d %d \n",*W,*R,*G,*B,*rgbResult);
+                            }
+
+                        //URO
+                        if(Name ==QString::fromLocal8Bit("URO")){
+
+                                  rgbCalculation(  2,1,
+                                                                    result[11].wrgb_value,
+                                                                    result[0].white_value,
+                                                                    result[0].wrgb_value,
+                                                                    JIEGUO );
+
+                                 *W =result[11].wrgb_value[0];
+                                 *R = result[11].wrgb_value[1];
+                                 *G= result[11].wrgb_value[2];
+                                 *B= result[11].wrgb_value[3];
+                                *rgbResult  =JIEGUO[0];
+                          }
+
+
+                        //KET
+                        if(Name ==QString::fromLocal8Bit("KET")) {
+                                 rgbCalculation(  2,2,
+                                                                          result[10].wrgb_value,
+                                                                          result[0].white_value,
+                                                                          result[0].wrgb_value,
+                                                                          JIEGUO );
+
+                                   * W = result[10].wrgb_value[0],
+                                    *R = result[10].wrgb_value[1],
+                                    *G = result[10].wrgb_value[2],
+                                    *B = result[10].wrgb_value[3],
+                                    *rgbResult = JIEGUO[2];
+                          }
+
+
+                        //BLD
+                        if(Name ==QString::fromLocal8Bit("BLD")){
+                                 rgbCalculation(  2,3,
+                                                                          result[9].wrgb_value,
+                                                                          result[0].white_value,
+                                                                          result[0].wrgb_value,
+                                                                          JIEGUO );
+                            *W=result[9].wrgb_value[0];
+                            *R=result[9].wrgb_value[1];
+                            *G=result[9].wrgb_value[2];
+                            *B=result[9].wrgb_value[3];
+                            *rgbResult=JIEGUO[3];
+                        }
+
+
+                            //PRO
+                     if(Name ==QString::fromLocal8Bit("PRO")){
+                                 rgbCalculation(  2,4,
+                                                                          result[8].wrgb_value,
+                                                                          result[0].white_value,
+                                                                          result[0].wrgb_value,
+                                                                          JIEGUO );
+
+
+                                 *W=result[8].wrgb_value[0];
+                                 *R=result[8].wrgb_value[1];
+                                 *G=result[8].wrgb_value[2];
+                                 *B=result[8].wrgb_value[3];
+                                 *rgbResult=JIEGUO[4];
+                           }
+
+                        //NIT
+                        if(Name ==QString::fromLocal8Bit("NIT")){
+                                rgbCalculation(  2,5,
+                                                                         result[7].wrgb_value,
+                                                                         result[0].white_value,
+                                                                         result[0].wrgb_value,
+                                                                         JIEGUO );
+
+
+                                *W=result[7].wrgb_value[0];
+                                *R=result[7].wrgb_value[1];
+                                *G=result[7].wrgb_value[2];
+                                *B=result[7].wrgb_value[3];
+                                *rgbResult=JIEGUO[5];
+
+                        }
+
+
+                          //WBC
+                         if(Name ==QString::fromLocal8Bit("WBC")){
+                                 rgbCalculation(  2,6,
+                                                                          result[6].wrgb_value,
+                                                                          result[0].white_value,
+                                                                          result[0].wrgb_value,
+                                                                          JIEGUO );
+
+                                *W=result[6].wrgb_value[0];
+                                 *R=result[6].wrgb_value[1];
+                                 *G=result[6].wrgb_value[2];
+                                 *B=result[6].wrgb_value[3];
+                                 *rgbResult=JIEGUO[6];
+                            }
+
+
+                            if(Name ==QString::fromLocal8Bit("GLU")){ //GLU
+                                    rgbCalculation(  2,7,
+                                                                            result[5].wrgb_value,
+                                                                            result[0].white_value,
+                                                                            result[0].wrgb_value,
+                                                                            JIEGUO );
+                                    *W=result[5].wrgb_value[0];
+                                    *R=result[5].wrgb_value[1];
+                                    *G=result[5].wrgb_value[2];
+                                    *B=result[5].wrgb_value[3];
+                                    *rgbResult=JIEGUO[7];
+
+                            }
+
+
+                        //SG
+                            if(Name ==QString::fromLocal8Bit("SG")){
+                                    rgbCalculation(  2,8,
+                                                                             result[4].wrgb_value,
+                                                                             result[0].white_value,
+                                                                             result[0].wrgb_value,
+                                                                             JIEGUO );
+
+                                        *W=result[4].wrgb_value[0];
+                                        *R=result[4].wrgb_value[1];
+                                        *G=result[4].wrgb_value[2];
+                                        *B=result[4].wrgb_value[3];
+                                        *rgbResult=JIEGUO[8];
+
+                                }
+
+                        //PH
+                          if(Name ==QString::fromLocal8Bit("PH")){
+                                   rgbCalculation(  2,9,
+                                                                             result[3].wrgb_value,
+                                                                             result[0].white_value,
+                                                                             result[0].wrgb_value,
+                                                                             JIEGUO );
+                                   *W=result[3].wrgb_value[0];
+                                   *R=result[3].wrgb_value[1];
+                                   *G=result[3].wrgb_value[2];
+                                   *B=result[3].wrgb_value[3];
+                                   *rgbResult=JIEGUO[9];
+
+                            }
+
+
+                        //VC
+                                if(Name ==QString::fromLocal8Bit("VC")){
+                                        rgbCalculation(  2,10,
+                                                                         result[2].wrgb_value,
+                                                                         result[0].white_value,
+                                                                         result[0].wrgb_value,
+                                                                         JIEGUO );
+
+                                       *W=result[2].wrgb_value[0];
+                                        *R=result[2].wrgb_value[1];
+                                        *G=result[2].wrgb_value[2];
+                                        *B=result[2].wrgb_value[3];
+                                        *rgbResult=JIEGUO[10];
+                                }
+
+
+                                //CC
+                                if(Name ==QString::fromLocal8Bit("CC")){
+                                             rgbCalculation(  2,11,
+                                                                                      result[1].wrgb_value,
+                                                                                      result[0].white_value,
+                                                                                      result[0].wrgb_value,
+                                                                                      JIEGUO );
+
+                                                     *W=result[1].wrgb_value[0];
+                                                     *R=result[1].wrgb_value[1];
+                                                     *G=result[1].wrgb_value[2];
+                                                     *B=result[1].wrgb_value[3];
+                                                     *rgbResult = JIEGUO[11];
+                                            }
+
+                                              //BPH
+                                             //                              uiShowRgb(result[0].wrgb_value[0],result[0].wrgb_value[1],result[0].wrgb_value[2],result[0].wrgb_value[3],result[0].wrgb_value[0]);
+                                              //                                printf(" BPH CAC  IS:%d  \n",result[0].wrgb_value[0]);
+                            break;
+
+        default:break;
+    }
+}
+
 //sys/class/leds/beeper-pwm/device/leds/beeper-pwm
 unsigned char Cac::rgbCalculation (unsigned char SHZHXH,unsigned char weizhi,unsigned int *CLCORNO, unsigned int *BPH,unsigned int *JSBPH,unsigned int  *JIEGUO)
 {
@@ -326,9 +608,7 @@ printf("JSBPH: %d %d %d %d\n",JSBPH[0],JSBPH[1],JSBPH[2],JSBPH[3]);
 
                             default: break;
                          }
-
 // }
-
 
 }
 
