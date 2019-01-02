@@ -1,47 +1,55 @@
 #include "ttythread.h"
 #include <QDebug>
-#include <QMessageBox>
 #include <QFile>
 
+#define DEBUG_TTY 1
 
 
-ttyThread::ttyThread(QObject *parent):QThread(parent)
-{
-RUN = true;
-cmdReady = false;
-state = GETVERSION;
+ttyThread::ttyThread(QObject *parent):QThread(parent){
 
+        command = GETVERSION;
 
-printf("ttyThread()\n");
-serialPort = new QSerialPort(this);
-connect (serialPort,SIGNAL(readyRead()),this,SLOT(slotReadTty()));
-connect(this,SIGNAL(sendcmd(unsigned char)),this,SLOT(cmdHandle(unsigned char )));
+        mcuUart = new QSerialPort(this);
+        connect (mcuUart,SIGNAL(readyRead()),this,SLOT(slotReadTty()));
+        connect(this,SIGNAL(sendcmd(unsigned char)),this,SLOT(cmdHandle(unsigned char )));
+        //connect(this,SIGNAL(receiveAck(unsigned char)),this,SLOT(showTtyAck(unsigned char)));
+        listUart = new QSerialPort(this);//list 系统串口
+        listUartOpen();
 
- // connect(this,SIGNAL(receiveAck(unsigned char)),this,SLOT(showTtyAck(unsigned char)));
+        m_pTimer = new QTimer(this);
+        connect(m_pTimer, SIGNAL(timeout()), this, SLOT(handleTimeout()));
+        m_wTimer = new QTimer(this);
+        connect(m_wTimer,SIGNAL(timeout()),this,SLOT(testTimeout()));
 
-
-m_pTimer = new QTimer(this);
-connect(m_pTimer, SIGNAL(timeout()), this, SLOT(handleTimeout()));
-
-
+         working_condition=UN_LOCATION;
+         fist_condition=true;
 }
 
 ttyThread::~ttyThread()
 {
-
+delete m_pTimer;
+delete m_wTimer;
+delete mcuUart;
+delete listUart;
 }
-void ttyThread::setWorkTime(unsigned int s)
+
+void ttyThread::setWorkTime(unsigned int s,bool status)
 {
+    if(status){
     time_s = s;
     m_pTimer->start(1*1000);
+    }
+    else{
+           emit sTime(s);
+          m_pTimer->stop();
+    }
 }
 
 void ttyThread::handleTimeout()
 {
-
        if(m_pTimer->isActive()){
            m_pTimer->stop();
-         // qDebug()<<"Enter timeout processing function\n";
+
            time_s--;
            emit sTime(time_s);
            if(time_s != 0)
@@ -49,14 +57,38 @@ void ttyThread::handleTimeout()
               m_pTimer->start(1*1000);
            }
        }
-
+}
+//-----------------------------------------------------------------------------
+void ttyThread::setTestTime(unsigned int s,bool status)
+{
+    if(status){
+        time_m = s;
+        m_wTimer->start(1*1000);
+    }
+    else{
+           m_wTimer->stop();
+           time_m=0;
+           emit mTime(s);
+    }
 }
 
-void ttyThread::setCommand(WORK_STATE status)
+void ttyThread::testTimeout()
 {
-    state = status;
-    cmdReady = true;
-    oneStepok=0x00;
+       if(m_wTimer->isActive()){
+           m_wTimer->stop();
+
+           time_m--;
+           emit mTime(time_m);
+//qDebug()<<"time_m"<<time_m;
+           if(time_m != 0){
+              m_wTimer->start(1*1000);
+           }
+       }
+}
+
+
+void ttyThread::setCommand(WORK_STATE cmd){
+    command = cmd;
 }
 
 
@@ -65,158 +97,348 @@ void ttyThread::msleep(long s){
 }
 
 
-void ttyThread::run()
-{
-                    receivingCount=0;
-                     App::mutex.lock();
-                     App::test_result = false;
-                    // App::test_finished=false;
 
-                  while(1)
-                 {
+void ttyThread::run() {
 
-
-                                         msleep(500);
-
-                                          if(state == ONESTEP)
-                                           {
-
-                                                    if(state_ack != GETVERSION_ACK && oneStepok == 0x00   )
-                                                     {
-                                                        emit  sendcmd(GETVERSION);
-                                                        oneStepok=0X01;
+                 int  count=0;
+                receiving_count=0;
+                App::test_result = false;
+                App::RUN = true;
+                state_ack=NULL_ACK;
+                oneTime=false;
+                oneTime_stop=false;
+                App::mutex.lock();
 
 
-                                                        setWorkTime(60);
-                                                        printf("--[1]-- state_val ----%d\n",state_ack);
-                                                     }
-
-//                                                   else if(state_ack != SETUP_ACK && oneStepok == 0x01  )
-//                                                     {
-//                                                            emit  sendcmd(SETUP);
-//                                                            oneStepok=0X02;
-//                                                            printf("--[2]-- state_val ----%d\n",state_ack);
-//                                                    }
-                                                   else  if(state_ack !=OFW_ACK && oneStepok==0x01 )//不在出仓位置时，执行下面的出仓命令
-                                                    {
-                                                        emit  sendcmd(OFW);
-                                                        oneStepok=0x02;
-                                                        printf("--[3]-- state_val ----%d\n",state_ack);
-                                                    }
-                                                    else if ( state_ack == OFW_ACK && oneStepok==0x02  ){//执行进仓后，发送单步命令
-                                                         emit  sendcmd(ONESTEP);
-                                                         printf("--[4]-- state_val ----%d\n",state_ack);
-                                                    }
-                                                    else if(receivingCount >12 && time_s > 20 )//接收数据
-                                                    {
-                                                        RUN=false;
-                                                        App::test_result=true;
-                                                       printf("receivingCount 12 time %d\n",time_s);
-                                                    }
-                                                    else if(receivingCount < 12 && time_s ==0 )
-                                                   {
-                                                        RUN=false;
-                                                        App::test_result=false;
-                                                    }
+                if (0 == QString::compare("11-III",App::TestPapertype)){
+                        count=(11+1);//0x0c
+                }else if (0 == QString::compare("10T", App::TestPapertype) ){
+                        count =(10+1);
+                  }else if (0 == QString::compare("12MA", App::TestPapertype) ){
+                        count =(12+1);
+                 }
 
 
-                                                //  printf("---- ONESTEP_ACK----\n");
-                                            }
+               while(1){
+                                                            msleep(500);
 
-                                           else if(cmdReady){//这里命令只执行一次
-                                                        emit sendcmd(state);
-                                                        cmdReady=false;
-                                                         printf("--[6]-- state_val ----%d\n",state_ack);
-                                          }
+                                                            if( command == GETVERSION)
+                                                            {
+                                                                        emit  sendcmd(GETVERSION);
+                                                                #if(DEBUG_TTY)
+                                                                        printf(" [tty run]--->get GETVERSION\n");
+                                                                #endif
+                                                                    if(!oneTime){
+                                                                        setWorkTime(3,true);
+                                                                        oneTime=true;
+                                                                     }
+                                                                     if( time_s == 0)
+                                                                     {
+                                                                        App::RUN=false;
+                                                                        App::test_result=false;
+                                                                   #if(DEBUG_TTY)
+                                                                        printf(" [run]---> Get version time out \n");
+                                                                    #endif
+                                                                     }
+                                                                     else if (state_ack ==  GETVERSION_ACK)
+                                                                     {
+                                                                           #if(DEBUG_TTY)
+                                                                                printf("  [tty run]--->GETVERSION ACK \n");
+                                                                            #endif
+                                                                        setWorkTime(0,false);
+                                                                        App::RUN=false;
+                                                                        App::test_result=true;
+                                                                        buzzer();
+                                                                     }
+                                                             }
 
-                                          if(!RUN) {
-                                                   printf("---- RUN END-1---\n");
-                                                  break ;
-                                           }
+                                                            else  if((command == SETUP) ) {
+                                                                    emit  sendcmd(SETUP);
+                                                                #if(DEBUG_TTY)
+                                                                    printf(" [tty run]--->SETUP CMD\n");
+                                                                #endif
+                                                                    if(!oneTime){
+                                                                        setWorkTime(3,true);
+                                                                        oneTime=true;
+                                                                     }
+
+                                                                     if( time_s == 0) {
+                                                                        App::RUN=false;
+                                                                        App::test_result=false;
+                                                               #if(DEBUG_TTY)
+                                                                        printf(" [run]--->SETUP time out \n");
+                                                                 #endif
+                                                                     }
+
+                                                                     else if (state_ack ==  SETUP_ACK){
+                                                                 #if(DEBUG_TTY)
+                                                                        printf(" [tty run]--->SETUP CMD ACK \n");
+                                                                  #endif
+                                                                        App::RUN=false;
+                                                                        App::test_result=true;
+                                                                        setWorkTime(0,false);
+                                                                      buzzer();
+                                                                        oneTime=false;
+                                                                     }
+
+                                                             }
 
 
-                                            switch(state_ack)
-                                            {
-                                                    case   RESET_ACK:
-                                                    printf("---- RESET_ACK----\n");
-                                                    RUN=false;
-                                                    break;
+                                                       else  if(command == ONESTEP){
+                                                                 if(time_m  == BUZZER )
+                                                                  {
+                                                                         buzzer();
+                                                                  }
+                                                              else if((working_condition == UN_LOCATION) ){
+                                                                         emit  sendcmd(OFW);
+                                                             #if(DEBUG_TTY)
+                                                                         printf("  [run]--->OFW CMD\n");
+                                                             #endif
 
-                                                    case  WB_ACK:
-                                                    printf("---- WB_ACK----\n");
-                                                    RUN=false;
-                                                    break;
+                                                                     if(!oneTime){
+                                                                            setTestTime(INIT_TIME,true);
+                                                                         //setWorkTime(15,true);
+                                                                         oneTime=true;
+                                                                         fist_condition=true;
+                                                                      }
 
-                                                    case  ONESTEP_ACK:
-                                                    //printf("---- ONESTEP_ACK----\n");
-                                                    break;
+                                                                      if( time_m == 0){
+                                                                         App::RUN=false;
+                                                                         App::test_result=false;
+                                                                        #if(DEBUG_TTY)
+                                                                        printf("[run]--->OFW time out \n");
+                                                                        #endif
+                                                                      }
+
+                                                                      else if (state_ack ==  OFW_ACK){
+                                                                         working_condition = OFW_LOCATION;
+                                                                         oneTime=false;
+                                                             #if(DEBUG_TTY)
+                                                                         printf("[run]--->OFW CMD ACK \n");
+                                                            #endif
+                                                                         //setWorkTime(0,false);
+                                                                       //  setTestTime(60,true);
+                                                                      }
+                                                              }
+
+                                                             else  if((working_condition == OFW_LOCATION) ){
+
+                                                                         if(!oneTime){
+                                                                                 if(!fist_condition){
+                                                                                    setTestTime(INIT_TIME ,true);
+                                                                                 }
+                                                                                fist_condition=false;
+                                                                                oneTime=true;
+                                                                          }
 
 
-                                                    case OFW_ACK:
-                                                    printf("---- OFW_ACK----\n");
-                                                    break;
+                                                                       else  if( time_m == TESTSTART  )
+                                                                         {
+                                                                              #if(DEBUG_TTY)
+                                                                                              printf(" [run]---> ONESTEP CMD\n");
+                                                                                 #endif
+                                                                              emit  sendcmd(ONESTEP);
+                                                                         }
 
-                                                    case STOP_ACK:
-                                                    printf("---- STOP_ACK----\n");
-                                                    RUN=false;
-                                                    break;
+                                                                     else  if( time_m == 0) {
+                                                                         App::RUN=false;
+                                                                         App::test_result=false;
+                                                                         printf("[run]--->ONESTEP time out \n");
+                                                                      }
 
-                                                   default: break;
-                                          }
+                                                                      else if (state_ack ==  ONESTEP_ACK) {
+                                                                         working_condition = ETW_LOCATION;
+                                                                         oneTime=false;
+                                                                         printf("[run]--->ONESTEP CMD ACK \n");
 
+
+                                                                      }
+                                                              }
+
+                                                           else  if((working_condition == ETW_LOCATION) ){
+
+                                                                     if( (time_m == 0)){
+                                                                       printf("[run]---> receiving error time out  .count[%d] \n",receiving_count);
+                                                                       App::RUN=false;
+                                                                       App::test_result=false;
+                                                                       working_condition=OFW_LOCATION;
+                                                                       setTestTime(0,false);
+                                                                    }
+
+                                                                     else if( (receiving_count > count )  ) {
+                                                                         App::RUN=false;
+                                                                         App::test_result=true;
+                                                                         printf("[run]--->receiving ok . count[%d], time[%d]. \n",receiving_count,time_s);
+                                                                         working_condition=OFW_LOCATION;
+                                                                        setTestTime(0,false);
+                                                                      }
+                                                       }
+                                                }
+
+                                                  else  if(command == STOPR) {
+                                                          emit  sendcmd(STOPR);
+                                                      #if(DEBUG_TTY)
+                                                          printf(" [run]--->STOPR CMD\n");
+                                                      #endif
+                                                          if(!oneTime_stop){
+                                                              working_condition = UN_LOCATION;
+                                                              setWorkTime(5,true);
+                                                              setTestTime(0,false);
+                                                              oneTime_stop=true;
+                                                               printf(" [run]--->STOPR CMD1\n");
+                                                           }
+
+                                                           if( time_s == 0)
+                                                           {
+                                                              App::RUN=false;
+                                                              App::test_result=false;
+                                                                setWorkTime(0,false);
+                                                     #if(DEBUG_TTY)
+                                                              printf(" [run]--->STOPR time out \n");
+                                                       #endif
+                                                           }
+                                                           else if (state_ack ==  STOP_ACK)
+                                                           {
+                                                       #if(DEBUG_TTY)
+                                                              printf(" [run]--->STOPR CMD ACK \n");
+                                                        #endif
+                                                              App::RUN=false;
+                                                              App::test_result=true;
+                                                              setWorkTime(0,false);
+                                                             // emit  sendcmd(ETW);
+                                                           }
+                                                      }
+
+                                                            else  if(command == RESET) {
+                                                                #if(DEBUG_TTY)
+                                                                    printf(" [run]--->RESET CMD\n");
+                                                                #endif
+                                                                    if(!oneTime){
+                                                                        emit  sendcmd(RESET);
+                                                                        setWorkTime(30,true);
+                                                                        oneTime=true;
+                                                                         working_condition = UN_LOCATION;
+                                                                     }
+
+                                                                     if( time_s == 0)
+                                                                     {
+                                                                        App::RUN=false;
+                                                                        App::test_result=false;
+                                                                          setWorkTime(0,false);
+                                                               #if(DEBUG_TTY)
+                                                                        printf(" [run]--->RESET time out \n");
+                                                                 #endif
+                                                                     }
+                                                                     else if (state_ack ==  RESET_ACK)
+                                                                     {
+                                                                 #if(DEBUG_TTY)
+                                                                        printf(" [run]--->RESET CMD ACK \n");
+                                                                  #endif
+                                                                        App::RUN=false;
+                                                                        App::test_result=true;
+                                                                        setWorkTime(0,false);
+                                                                        buzzer();
+                                                                     }
+                                                                }
+
+                                                            else  if(command == POWEROFF) {
+                                                                #if(DEBUG_TTY)
+                                                                    printf(" [run]--->POWEROFF CMD\n");
+                                                                #endif
+                                                                    if(!oneTime){
+                                                                        emit  sendcmd(POWEROFF);
+                                                                        setWorkTime(10,true);
+                                                                        oneTime=true;
+                                                                        working_condition = UN_LOCATION;
+                                                                     }
+
+                                                                     if( time_s == 0)
+                                                                     {
+                                                                        App::RUN=false;
+                                                                        App::test_result=false;
+                                                                          setWorkTime(0,false);
+                                                               #if(DEBUG_TTY)
+                                                                        printf(" [run]--->POWEROFF time out \n");
+                                                                 #endif
+                                                                     }
+                                                                     else if (state_ack ==  POWEROF_ACK)
+                                                                     {
+                                                                 #if(DEBUG_TTY)
+                                                                        printf(" [run]--->POWEROF_ACK CMD ACK \n");
+                                                                  #endif
+                                                                        App::RUN=false;
+                                                                        App::test_result=true;
+                                                                        setWorkTime(0,false);
+                                                                     }
+                                                                }
+
+
+                                                              if(!App::RUN) {
+                                                                  #if(DEBUG_TTY)
+                                                                   printf("[tty run]--->RUN END\n");
+                                                                    #endif
+                                                                  break ;
+                                                               }
 
                                 }
-                        RUN=false;
-                        App::test_finished=true;
-                        printf("---- RUN END--2--\n");
-                        App::mutex.unlock();
+
+                App::mutex.unlock();
+                App::RUN=false;
+                App::test_finished=true;
+
  }
 
 
-void ttyThread::cmdHandle ( unsigned char state)
-{
-    printf(" cmd Handle %d \n",state);
-
+void ttyThread::cmdHandle ( unsigned char state){
     commandSend((WORK_STATE)state);
 }
 
-void ttyThread::ttyStop()
+
+
+
+void ttyThread::mcuUartOpen()
 {
-    RUN = false;
-    printf(" ttyStop \n");
-}
-
-
-void ttyThread::ttyStart()
-{
-     RUN = true;
-}
-
-
-
-void ttyThread::ttyOpen()
-{
-     if(! serialPort->isOpen())
+     if(! mcuUart->isOpen())
      {
-        serialPort->setPortName("/dev/ttymxc3");
-        serialPort->open(QIODevice::ReadWrite);
-        serialPort->setBaudRate(QSerialPort::Baud115200);
-        serialPort->setDataBits(QSerialPort::Data8);
-        serialPort->setParity(QSerialPort::NoParity);
-        serialPort->setStopBits(QSerialPort::OneStop);
-        serialPort->setFlowControl(QSerialPort::NoFlowControl);
-        tty_open = true;
-        printf("ttyOpen \n");
+    // qDebug()<<"mcuUartOpen----->";
+        mcuUart->setPortName("/dev/ttymxc3");
+        mcuUart->open(QIODevice::ReadWrite);
+        mcuUart->setBaudRate(QSerialPort::Baud115200);
+        mcuUart->setDataBits(QSerialPort::Data8);
+        mcuUart->setParity(QSerialPort::NoParity);
+        mcuUart->setStopBits(QSerialPort::OneStop);
+        mcuUart->setFlowControl(QSerialPort::NoFlowControl);
      }
+}
+void ttyThread::listUartOpen()
+{
+    if(! listUart->isOpen())
+    {
+       listUart->setPortName("/dev/ttymxc4");
+       listUart->open(QIODevice::ReadWrite);
+       listUart->setBaudRate(QSerialPort::Baud9600);
+       listUart->setDataBits(QSerialPort::Data8);
+       listUart->setParity(QSerialPort::NoParity);
+       listUart->setStopBits(QSerialPort::OneStop);
+       listUart->setFlowControl(QSerialPort::NoFlowControl);
 
+    }
 }
 
-void ttyThread::ttyClose()
+void ttyThread::listUartClose()
 {
-    if(serialPort->isOpen())
+    if(listUart->isOpen())
     {
-        serialPort->close();
-        tty_open=false;
+        listUart->close();
+    }
+}
+
+
+void ttyThread::mcuUartClose()
+{
+    if(mcuUart->isOpen())
+    { //qDebug()<<"[mcuUartClose]------->bug";
+        mcuUart->close();
     }
 }
 
@@ -285,14 +507,13 @@ void ttyThread::StringToHex(QString str, QByteArray & senddata)  //字符串转�
 
 
 //---------------------------------------------------------------------------
-
 void ttyThread::slotReadTty()
 {
     char*  ch=NULL;
        unsigned char cont=0;
 
        //读取串口数据
-       QByteArray readComData = serialPort->readAll();
+       QByteArray readComData = mcuUart->readAll();
 
 
        //将读到的数据显示到数据接收区的te中
@@ -385,11 +606,19 @@ void ttyThread::commandSend(WORK_STATE  status)
             data[0]=0xcc;
             data[1]=0xaa;
             data[2]=0xb5;
-            data[3]=0x03;
+
+            if (0 == QString::compare("11-III",App::TestPapertype)){
+                data[3]=0x03;
+           }else   if (0 == QString::compare("10T",   App::TestPapertype)){
+                data[3]=0x01;
+            }else if (0 == QString::compare("12MA", App::TestPapertype) ){
+                data[3]=0x02;
+            }
+//qDebug()<<"commandSend" <<App::TestPapertype;
             data[4]=0xca;
             data[5]=(data[0]+data[1]+data[2]+data[3]+data[4])%256;
             cmdok=true;
-               printf("---- SETUP----\n");
+              // printf("---- SETUP----\n");
             break;
 
         case  ONESTEP:
@@ -403,7 +632,7 @@ void ttyThread::commandSend(WORK_STATE  status)
            cmdok=true;
              break;
 
-        case  STOP:
+        case  STOPR:
             //发送停止命令  0xcc 0xaa 0xbf 0x00 0xca Checksum
             data[0]=0xcc;
             data[1]=0xaa;
@@ -430,9 +659,9 @@ void ttyThread::commandSend(WORK_STATE  status)
             //data[4]=R_data[4];
             //data[5]=R_data[5];
             break;
-
+//cc dd b6 ca 29
         case RESET:
-            //发送复位  0xcc 0xaa 0xa6 0x00 0xca Checksum
+            //发送复位  0xcc 0xaa 0xb6 0x00 0xca Checksum
             data[0]=0xcc;
             data[1]=0xaa;
             data[2]=0xb6;
@@ -441,6 +670,17 @@ void ttyThread::commandSend(WORK_STATE  status)
             data[5]=(data[0]+data[1]+data[2]+data[3]+data[4])%256;
             cmdok=true;
             break;
+
+    case POWEROFF:
+        //发送关机命令
+        data[0]=0xcc;
+        data[1]=0xaa;
+        data[2]=0xb7;
+        data[3]=0x00;
+        data[4]=0xca;
+        data[5]=(data[0]+data[1]+data[2]+data[3]+data[4])%256;
+        cmdok=true;
+             break;
 
     case WB:
             //发送白平衡  0xcc 0xaa 0xb8 0x00 0xca Checksum
@@ -453,39 +693,43 @@ void ttyThread::commandSend(WORK_STATE  status)
             cmdok=true;
             break;
 
-    default:
-             break;
+
+            default: break;
     }
 
         if(cmdok) {
 
                     for(i=0;i<6;i++) {
-                    if(data[i]<16)
-                    str+='   '+'0'+QString::number(data[i], 16).toUpper();
-                    else
-                    str+='   '+QString::number(data[i], 16).toUpper();
+                        if(data[i]<16)
+                        str+='   '+'0'+QString::number(data[i], 16).toUpper();
+                        else
+                        str+='   '+QString::number(data[i], 16).toUpper();
                     }
 
 
                     StringToHex(str,senddata);//将str字符串转换为16进制的形式
-                    serialPort->write(senddata);//发送到串口
-//printf("send cmd \n");
-//                    QString ttyname= serialPort->portName();
+                    mcuUart->write(senddata);//发送到串口
+                 //   qDebug()<< "send cmd "<<str;
+
 
                     cmdok=false;
               }
 
 }
 
+void ttyThread::listWrite(QByteArray cstr){
+    listUart->write(cstr);
+}
+
 void ttyThread:: dataResolution(unsigned char *cmd,unsigned int length){ //0xcc 0xaa 0xa1 0x00 0xca Checksum
 unsigned int i=0;
-unsigned int status=0;
+//unsigned int status=0;
 unsigned char R_data[6]={0};
 
-unsigned int R_DATA=0;
-unsigned int G_DATA=0;
-unsigned int B_DATA=0;
-unsigned int W_DATA=0;
+//unsigned int R_DATA=0;
+//unsigned int G_DATA=0;
+//unsigned int B_DATA=0;
+//unsigned int W_DATA=0;
 
 QByteArray senddata;
 QString str;
@@ -501,45 +745,51 @@ QString str;
 
                 if( (   ((cmd[i]+ cmd[i+1]+cmd[i+2]+cmd[i+3]+cmd[i+4]) %256) ==  cmd[i+5]   ))
                {
-                    status=1;
+                  //  status=1;
                    // printf(" start 2 :%x %x %x %x %x %x\n", cmd[i],   cmd[i+1],cmd[i+2],cmd[i+3],cmd[i+4], cmd[i+5]);
                         state_ack=0;
                      switch ( cmd[i+2] )
                      {
                                 case  R_VERSION:
-                                printf("ACK Read version information ok!!\n");
+                              //  printf("ACK Read version information ok!!\n");
                                 emit receiveAck(R_VERSION);
                                  state_ack= GETVERSION_ACK;
                                 break;
 
                                 case R_SELFEX:
-                                printf("ACK Self-test success\n");
+                               // printf("ACK Self-test success\n");
                                 emit receiveAck(R_SELFEX);
                                 state_ack= SELFEX_ACK;
                                 break;
 
                                 case R_OFW:
-                               printf("ACK Open the Door\n");
+                               //printf("ACK Open the Door\n");
                                 emit receiveAck(R_OFW);
                                  state_ack=OFW_ACK;
                                 break;
 
                                 case R_ETW:
-                               printf("ACK Close the Door\n");
+                               //printf("ACK Close the Door\n");
                                emit receiveAck(R_ETW);
                                    state_ack= ETW_ACK;
                                 break;
 
                                 case R_SETUP:
-                                printf("ACK Setup success\n");
+                               // printf("ACK Setup success\n");
                                 emit receiveAck(R_SETUP);
                                 state_ack=SETUP_ACK;
                                 break;
 
                                 case R_ONESTEP:
-                               printf("ACK One Step  success\n");
+                              // printf("ACK One Step  success\n");
                                 emit receiveAck(R_ONESTEP);
                                   state_ack=ONESTEP_ACK;
+                                if(cmd[i+3]==0x01)
+                                {
+                                  //  commandSend(ONESTEP);
+                                    qDebug()<<"[send again ONESTEUP...]";
+                                   //  emit  sendcmd(ONESTEP);
+                                }
                                 break;
 
                                 case R_RESET:
@@ -550,22 +800,28 @@ QString str;
 
                                case R_ERR_1:
                                 if(cmd[i+3] == R_ERR_2 )
-                                  printf("Receive Mechanical error \n");
+                                //  printf("Receive Mechanical error \n");
                                 emit receiveAck(R_ERR_1);
                                 state_ack= ERR_ACK;
                                 break;
 
-                              case R_WhiteBalance://R_STOP
-                                printf("ACK White Balance  success \n");
+                              case R_WhiteBalance:
+                                //printf("ACK White Balance  success \n");
                                 emit receiveAck(R_WhiteBalance);
                                   state_ack= WB_ACK;
                               break;
 
                              case R_STOP://R_STOP
-                               printf("ACK STOP  success \n");
+                               //printf("ACK STOP  success \n");
                                emit receiveAck(R_STOP);
                                     state_ack= STOP_ACK;
                              break;
+
+                            case R_POWROFF:
+                                     emit receiveAck(R_POWROFF);
+                            break;
+
+                         default:break;
 
                      }
                     break;
@@ -578,19 +834,19 @@ QString str;
            {
 
 
-                printf("[%x] [%x]      W: %x%x   R :%x%x   G:%x%x    B:%x%x \n", cmd[i+2],cmd[i+3],cmd[i+4],cmd[i+5], cmd[i+6] ,cmd[i+7] ,cmd[i+8],cmd[i+9],cmd[i+10] ,cmd[i+11]);
+               // printf("[%x] [%x]      W: %x%x   R :%x%x   G:%x%x    B:%x%x \n", cmd[i+2],cmd[i+3],cmd[i+4],cmd[i+5], cmd[i+6] ,cmd[i+7] ,cmd[i+8],cmd[i+9],cmd[i+10] ,cmd[i+11]);
 
-                 W_DATA = (cmd[i+4] *100)+cmd[i+5];
-                 R_DATA  = (cmd[i+6] *100)+cmd[i+7];
-                 G_DATA  = (cmd[i+8] *100)+cmd[i+9];
-                 B_DATA  = (cmd[i+10] *100)+cmd[i+11];
-                 receivingCount+=1;
-//                 printf(" %x %x %x %x \n",W_DATA,R_DATA,G_DATA,B_DATA);
-                 printf("W:%d  R:%d  G:%d   B:%d\n",W_DATA,R_DATA,G_DATA,B_DATA);
+                  wrgb_data. W = (cmd[i+4] *100)+cmd[i+5];
+                  wrgb_data. R  = (cmd[i+6] *100)+cmd[i+7];
+                  wrgb_data. G  = (cmd[i+8] *100)+cmd[i+9];
+                  wrgb_data. B  = (cmd[i+10] *100)+cmd[i+11];
+                 receiving_count++;
+
+                 printf("[receive data---->] Count:%d  W:%d  R:%d  G:%d   B:%d\n",cmd[i+3],wrgb_data.W,wrgb_data.R,wrgb_data.G,wrgb_data.B);
                  if(cmd[i+3] == 0xbb)
-                   emit receiveWb(W_DATA,R_DATA,G_DATA,B_DATA);//是单独白平衡发送
+                   emit receiveWb(wrgb_data);//是单独白平衡发送
                else
-                   emit receiveRGB(W_DATA,R_DATA,G_DATA,B_DATA);
+                   emit receiveRGB(wrgb_data,cmd[i+3]);
 
                 R_data[0]=0xcc;
                 R_data[1]=0xdd;
@@ -606,12 +862,8 @@ QString str;
                         str+='   '+QString::number(R_data[i], 16).toUpper();
                 }
 
-                emit receiveAck(RD_ATAACK);
-
-
                 StringToHex(str,senddata);//将str字符串转换为16进制的形式
-                serialPort->write(senddata);//发送到串口
-
+                mcuUart->write(senddata);//发送到串口
             }
         }
 
@@ -619,4 +871,9 @@ QString str;
        ++i;
      }
 }
-//W:9945  R:3356  G:2933   B:3619
+
+void ttyThread::buzzer(){
+   system("echo 100  > /sys/class/leds/beeper-pwm/brightness");
+   msleep(100*4);//2000
+   system("echo 0 > /sys/class/leds/beeper-pwm/brightness");
+}

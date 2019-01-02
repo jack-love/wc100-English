@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QDebug>
-#include<ttythread.h>
+#include "ttythread.h"
 
 class Cac : public QWidget
 {
@@ -11,11 +11,9 @@ class Cac : public QWidget
 public:
     explicit Cac(QWidget *parent = 0);
 
-
-unsigned char   rgbCalculation  (unsigned char SHZHXH,unsigned char weizhi,unsigned int *CLCORNO, unsigned int *BPH,unsigned int *JSBPH,unsigned int  *JIEGUO);
-void gradientComparison();
-bool calibrationCalculation( resultVal  *   ttyResult ,QString Name,unsigned char type,unsigned int * W,unsigned int *R,unsigned int *G,unsigned int * B,unsigned int *rgbResult);
-bool intervalCalculation();//
+    void    interval_Calculation(struct RESULT buf[]);
+    unsigned int       wc100_algorithm(struct RESULT buf[15],unsigned int i, unsigned int position);
+    void    get_CalculationResult(struct RESULT buf[], QString Name,struct resultRGB*  tmp);
 
 signals:
 
@@ -23,8 +21,7 @@ public slots:
 
 
 private:
-    unsigned int JIEGUO[14];
-  //     resultVal    result[13];
+
 
 };
 

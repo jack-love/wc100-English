@@ -1,0 +1,1543 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>frmInput</class>
+ <widget class="QWidget" name="frmInput">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>490</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>输入法</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+
+QPushButton{
+background-color:rgb(85, 170, 255);
+color: white;
+border-radius: 20px;
+border: 2px groove gray;
+border-style: outset;
+font-size:25px;
+}
+QPushButton:hover{
+background-color:white;
+color: black;
+}
+QPushButton:pressed{
+background-color:rgb(0, 0, 0);
+color: white;
+border-style: inset;
+}
+
+QLineEdit {
+  border: 1px solid rgb(41, 57, 85);
+    border-radius: 15px;  
+    background: white;  
+    selection-background-color: green; 
+    font-size: 44px;
+ lineedit-password-character: 42;
+}
+
+QLabel{
+font-size:28px;
+}
+</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="widgetTop" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>6</number>
+      </property>
+      <property name="leftMargin">
+       <number>5</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>5</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>9</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="labInfo">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>中文输入</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="labPY">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>zhongwen</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnPre">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>52</width>
+            <height>41</height>
+           </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(170, 170, 127);</string>
+          </property>
+          <property name="text">
+           <string>&lt;</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnNext">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>45</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(170, 170, 127);</string>
+          </property>
+          <property name="text">
+           <string>&gt;</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="labCh0">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>46</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="labCh1">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>46</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="labCh2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>46</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="labCh3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>46</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="labCh4">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>46</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="labCh5">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>46</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="labCh6">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>46</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="labCh7">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>46</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="labCh8">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>46</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="labCh9">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>46</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widgetMain" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>22</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <widget class="QPushButton" name="btns">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>150</y>
+        <width>45</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>s</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnr">
+      <property name="geometry">
+       <rect>
+        <x>138</x>
+        <y>56</y>
+        <width>42</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>r</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnd">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>150</y>
+        <width>45</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>d</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn0">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>580</y>
+        <width>60</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn2">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>500</y>
+        <width>60</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>2</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOther12">
+      <property name="geometry">
+       <rect>
+        <x>350</x>
+        <y>580</y>
+        <width>40</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>/</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOther18">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>500</y>
+        <width>43</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>\</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOther13">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>500</y>
+        <width>43</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>|</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOther2">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>340</y>
+        <width>43</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>@</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn4">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>420</y>
+        <width>60</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>4</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnu">
+      <property name="geometry">
+       <rect>
+        <x>279</x>
+        <y>56</y>
+        <width>42</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>u</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnDelete">
+      <property name="geometry">
+       <rect>
+        <x>410</x>
+        <y>240</y>
+        <width>51</width>
+        <height>91</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(170, 170, 127);</string>
+      </property>
+      <property name="text">
+       <string>←</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btne">
+      <property name="geometry">
+       <rect>
+        <x>91</x>
+        <y>56</y>
+        <width>42</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>e</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOther17">
+      <property name="geometry">
+       <rect>
+        <x>410</x>
+        <y>500</y>
+        <width>43</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>,</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOther7">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>420</y>
+        <width>43</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>&amp;&amp;</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOther6">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>420</y>
+        <width>43</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>^</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnv">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>250</y>
+        <width>45</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>v</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOther3">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>340</y>
+        <width>43</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>#</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn6">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>420</y>
+        <width>60</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>6</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOther9">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>580</y>
+        <width>60</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>-</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnz">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>250</y>
+        <width>45</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>z</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOther4">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>340</y>
+        <width>43</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>$</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnp">
+      <property name="geometry">
+       <rect>
+        <x>420</x>
+        <y>56</y>
+        <width>42</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>p</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnt">
+      <property name="geometry">
+       <rect>
+        <x>185</x>
+        <y>56</y>
+        <width>42</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>t</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOther19">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>580</y>
+        <width>60</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>.</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn8">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>340</y>
+        <width>60</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>8</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnn">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>250</y>
+        <width>45</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>n</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOther5">
+      <property name="geometry">
+       <rect>
+        <x>410</x>
+        <y>340</y>
+        <width>43</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>%</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnh">
+      <property name="geometry">
+       <rect>
+        <x>250</x>
+        <y>150</y>
+        <width>45</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>h</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOther10">
+      <property name="geometry">
+       <rect>
+        <x>410</x>
+        <y>420</y>
+        <width>43</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>_</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOther8">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>420</y>
+        <width>43</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>*</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btni">
+      <property name="geometry">
+       <rect>
+        <x>326</x>
+        <y>56</y>
+        <width>42</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>i</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOther16">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>420</y>
+        <width>43</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>=</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btna">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>150</y>
+        <width>45</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>a</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnType">
+      <property name="geometry">
+       <rect>
+        <x>-10</x>
+        <y>240</y>
+        <width>61</width>
+        <height>91</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(170, 170, 127);</string>
+      </property>
+      <property name="text">
+       <string>小写</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn9">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>340</y>
+        <width>60</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>9</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOther11">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>580</y>
+        <width>60</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>+</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btng">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>150</y>
+        <width>45</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>g</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnj">
+      <property name="geometry">
+       <rect>
+        <x>300</x>
+        <y>150</y>
+        <width>45</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>j</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnm">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>250</y>
+        <width>45</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>m</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOther15">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>500</y>
+        <width>43</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>?</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnc">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>250</y>
+        <width>45</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>c</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOther14">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>500</y>
+        <width>43</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>:</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn7">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>340</y>
+        <width>60</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>7</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btno">
+      <property name="geometry">
+       <rect>
+        <x>373</x>
+        <y>56</y>
+        <width>42</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>o</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnf">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>150</y>
+        <width>45</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>f</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn5">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>420</y>
+        <width>60</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>5</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnx">
+      <property name="geometry">
+       <rect>
+        <x>110</x>
+        <y>250</y>
+        <width>45</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>x</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnk">
+      <property name="geometry">
+       <rect>
+        <x>350</x>
+        <y>150</y>
+        <width>45</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>k</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn3">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>500</y>
+        <width>60</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>3</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnl">
+      <property name="geometry">
+       <rect>
+        <x>400</x>
+        <y>150</y>
+        <width>45</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>l</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnq">
+      <property name="geometry">
+       <rect>
+        <x>-3</x>
+        <y>56</y>
+        <width>42</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>q</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnw">
+      <property name="geometry">
+       <rect>
+        <x>44</x>
+        <y>56</y>
+        <width>42</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>w</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOther1">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>340</y>
+        <width>43</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>!</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn1">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>500</y>
+        <width>60</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>1</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnb">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>250</y>
+        <width>45</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>b</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btny">
+      <property name="geometry">
+       <rect>
+        <x>232</x>
+        <y>56</y>
+        <width>42</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>y</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnEnter">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>590</y>
+        <width>61</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(0, 170, 0);</string>
+      </property>
+      <property name="text">
+       <string>ENT</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnSpace">
+      <property name="geometry">
+       <rect>
+        <x>399</x>
+        <y>590</y>
+        <width>61</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>-1</pointsize>
+       </font>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>SPACE</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="edt_keybord">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>0</y>
+        <width>361</width>
+        <height>55</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>-1</pointsize>
+       </font>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::ClickFocus</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLineEdit {
+  border: 1px solid rgb(41, 57, 85);
+    border-radius: 15px;  
+    background: white;  
+    selection-background-color: green; 
+    font-size: 44px;
+
+}</string>
+      </property>
+      <property name="frame">
+       <bool>true</bool>
+      </property>
+      <property name="echoMode">
+       <enum>QLineEdit::Normal</enum>
+      </property>
+     </widget>
+     <zorder>btn2</zorder>
+     <zorder>btnOther12</zorder>
+     <zorder>btnOther18</zorder>
+     <zorder>btnOther13</zorder>
+     <zorder>btnOther2</zorder>
+     <zorder>btn4</zorder>
+     <zorder>btnu</zorder>
+     <zorder>btnDelete</zorder>
+     <zorder>btne</zorder>
+     <zorder>btnOther17</zorder>
+     <zorder>btnOther7</zorder>
+     <zorder>btnOther6</zorder>
+     <zorder>btnv</zorder>
+     <zorder>btnOther3</zorder>
+     <zorder>btn6</zorder>
+     <zorder>btnOther9</zorder>
+     <zorder>btnz</zorder>
+     <zorder>btnOther4</zorder>
+     <zorder>btnp</zorder>
+     <zorder>btnt</zorder>
+     <zorder>btnOther19</zorder>
+     <zorder>btn8</zorder>
+     <zorder>btnn</zorder>
+     <zorder>btnOther5</zorder>
+     <zorder>btnh</zorder>
+     <zorder>btnOther10</zorder>
+     <zorder>btnOther8</zorder>
+     <zorder>btni</zorder>
+     <zorder>btnOther16</zorder>
+     <zorder>btna</zorder>
+     <zorder>btnType</zorder>
+     <zorder>btn9</zorder>
+     <zorder>btnOther11</zorder>
+     <zorder>btng</zorder>
+     <zorder>btnj</zorder>
+     <zorder>btnm</zorder>
+     <zorder>btnOther15</zorder>
+     <zorder>btnc</zorder>
+     <zorder>btnOther14</zorder>
+     <zorder>btn7</zorder>
+     <zorder>btno</zorder>
+     <zorder>btnf</zorder>
+     <zorder>btn5</zorder>
+     <zorder>btnx</zorder>
+     <zorder>btnk</zorder>
+     <zorder>btn3</zorder>
+     <zorder>btnl</zorder>
+     <zorder>btnq</zorder>
+     <zorder>btnw</zorder>
+     <zorder>btnOther1</zorder>
+     <zorder>btn1</zorder>
+     <zorder>btnb</zorder>
+     <zorder>btny</zorder>
+     <zorder>btnEnter</zorder>
+     <zorder>btnSpace</zorder>
+     <zorder>btns</zorder>
+     <zorder>btnr</zorder>
+     <zorder>btnd</zorder>
+     <zorder>btn0</zorder>
+     <zorder>edt_keybord</zorder>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

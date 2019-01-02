@@ -2,13 +2,18 @@
 #define KEYBOARD_H
 
 #include <QtGui/QDialog>
-#include "thread.h"
+#include "keyboardthread.h"
 #include <QMultiMap>
-
+#include <QLineEdit>
 namespace Ui {
     class KeyBoard;
 }
-
+enum  Filter_s
+{
+ nu_s=0,
+ le_s=1,
+ nule_s=3
+};
 class KeyBoard : public QDialog
 {
     Q_OBJECT
@@ -23,6 +28,12 @@ protected:
 private:
     Ui::KeyBoard *ui;
     unsigned char page_multiple;   //中文输入时翻页的页数
+    bool number;
+    bool letter;
+    QWidget *tmpWidget=NULL;
+      QLineEdit *currentLineEdit;     //当前焦点的文本框
+       QLineEdit *lineEdit_keyboard;
+        QWidget *bak_currentLineEdit;
     struct input_info
     {
         QString input_buf;  //输入的缓存内容
@@ -49,8 +60,10 @@ public:
     void SetKeyboardStyleCapital(bool caps);    //切换键盘按键的大小写风格
     void ShowChineseButton(bool pinyin);    //显示汉字备选字,共8个备选字
     void InputChinese(const QString& ch);  //中文输入时,除去输入框中的英文(键)
-
+   void setFilter(Filter_s  set);
+    //   void OpenKeyboard(QLineEdit * text);
 private slots:
+    void focusChanged(QWidget *oldWidget, QWidget *nowWidget);
   //  void on_pushButton_tab_clicked();
  //   void on_symbolBtn_12_clicked();
 //    void on_symbolBtn_11_clicked();

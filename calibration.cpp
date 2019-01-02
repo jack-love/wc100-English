@@ -1,7 +1,7 @@
 #include "calibration.h"
 #include "ui_calibration.h"
 
-#include <mainbussniessview.h>
+#include "mainbussniessview.h"
 #include <QtSql/QSqlQueryModel>
 #include <QtSql/QSqlTableModel>
 #include <QtSql/QSqlRecord>
@@ -9,16 +9,13 @@
 #include <QTableView>
 #include <QScrollBar>
 #include <QDebug>
+#include "messagebox.h"
+
 
 Calibration::Calibration(QWidget *parent,MainBussniessView* pMainView) :
-    QTabWidget(parent),pMainBussView(pMainView),
-    ui(new Ui::Calibration)
-{
-    ui->setupUi(this);
-    pQueryModel = new QSqlQueryModel(this);//
-    pMainBussView->GetItemName(pQueryModel);
-    ui->btn_options_setup->setModel(pQueryModel);
+    QTabWidget(parent),pMainBussView(pMainView),ui(new Ui::Calibration){
 
+    ui->setupUi(this);
 
     QRegExp regx("[0-9]+$");
     validator = new QRegExpValidator(regx, this);
@@ -31,36 +28,115 @@ Calibration::Calibration(QWidget *parent,MainBussniessView* pMainView) :
     ui->edt_Calibrate6->setValidator(validator);
     ui->edt_Calibrate7->setValidator(validator);
 
-    ui->edt_Calibrate0->installEventFilter(this);
-  connect(pMainBussView,SIGNAL(sTime(int )),this,SLOT(sTimeSlot(int)));
-       connect(pMainView, SIGNAL(CalibrateObserverveResult(QSqlTableModel*)), this, SLOT(on_CalibrateObserverveResult(QSqlTableModel*)), Qt::AutoConnection);
+//    ui->edt_Calibrate0->installEventFilter(this);
+//    ui->edt_Calibrate1->installEventFilter(this);
+//    ui->edt_Calibrate2->installEventFilter(this);
+//    ui->edt_Calibrate3->installEventFilter(this);
+//    ui->edt_Calibrate4->installEventFilter(this);
+//    ui->edt_Calibrate5->installEventFilter(this);
+//    ui->edt_Calibrate6->installEventFilter(this);
+//    ui->edt_Calibrate7->installEventFilter(this);
+
+    connect(pMainBussView,SIGNAL(mTime(int )),this,SLOT(sTimeSlot(int)));
+    connect(pMainView, SIGNAL(CalibrateObserverveResult(QSqlTableModel*)), this, SLOT(on_CalibrateObserverveResult(QSqlTableModel*)), Qt::AutoConnection);
+    connect(pMainBussView,SIGNAL(system_saveok()),this,SLOT(systemSetup_save()),Qt::AutoConnection);
+    connect(ui->btn_Back_2,SIGNAL(clicked()),this,SLOT(on_btn_BackHome_clicked()));
+    connect(ui->btn_Back_1,SIGNAL(clicked()),this,SLOT(on_btn_BackHome_clicked()));
+
+
+    pQueryModel = new QSqlQueryModel(this);
+    getItemName();
+    ui->btn_options_setup->setModel(pQueryModel);
+    ui->edt_TestPapertype->setText(App::TestPapertype);
+
+    pTableModel = new QSqlQueryModel(this);
+
+    ui->calibrate_start->setEnabled(true);
+    ui->calibrate_stop->setEnabled(false);
+
 }
 
 Calibration::~Calibration()
 {
     delete ui;
+    delete validator;
+    delete pQueryModel;
+    delete pTableModel;
 }
 
-void Calibration::on_btn_Back_clicked()
-{
+void Calibration::on_btn_BackHome_clicked() {
       emit SendHomeSignal();
 }
 
-//void Calibration::on_btn_Back_2_clicked()
-//{
-//      emit SendHomeSignal();
-//}
 
+void Calibration::getItemName()
+{
+    if (0 == QString::compare("11-III",App::TestPapertype)){
+         pMainBussView->GetItemName_11_3(pQueryModel);
+    }else   if (0 == QString::compare("10T",   App::TestPapertype)){
+         pMainBussView->GetItemName_10T(pQueryModel);
+    }else if (0 == QString::compare("12MA", App::TestPapertype) ){
+         pMainBussView->GetItemName_12MA(pQueryModel);
+    }
+}
+
+void Calibration::systemSetup_save()
+{
+   qDebug()<<"[Calibration::saveok()---->]"<<App::TestPapertype;
+
+        getItemName();
+        ui->btn_options_setup->setModel(pQueryModel);
+        ui->edt_TestPapertype->setText(App::TestPapertype);
+
+         ui->edt_Calibrate0->clear();//校准
+         ui->edt_Calibrate1->clear();
+         ui->edt_Calibrate2->clear();
+         ui->edt_Calibrate3->clear();
+         ui->edt_Calibrate4->clear();
+         ui->edt_Calibrate5->clear();
+         ui->edt_Calibrate6->clear();
+         ui->edt_Calibrate7->clear();
+
+         ui->edt_LaderValue0->clear();//梯度值
+         ui->edt_LaderValue1->clear();
+         ui->edt_LaderValue2->clear();
+         ui->edt_LaderValue3->clear();
+         ui->edt_LaderValue4->clear();
+         ui->edt_LaderValue5->clear();
+         ui->edt_LaderValue6->clear();
+         ui->edt_LaderValue7->clear();
+
+          pMainBussView-> Initalize();
+
+}
 
 void Calibration::on_btn_options_setup_pressed(const QModelIndex &index)
 {
-    qDebug("bug--->CalibrateDialog.cpp->on_lstView_ItemName_pressed");
-    strItemName = index.data(Qt::DisplayRole).toString();
-    if(pTableModel == NULL){
-        pTableModel = new QSqlQueryModel(this);
-    }
-    int nItemNo = pMainBussView->GetItemNoByItemName(strItemName);
-    pMainBussView->Calibrate_Query(pTableModel, nItemNo);
+
+            strItemName = index.data(Qt::DisplayRole).toString();
+ //             qDebug() << " debug--->on_btn_options_setup_pressed"<<strItemName;
+//            if(pTableModel == NULL){
+//                pTableModel = new QSqlQueryModel(this);
+//            }
+
+        if (0 == QString::compare("11-III",App::TestPapertype)){
+           int  nItemNo = pMainBussView->GetItemNoByItemName_11_3(strItemName);
+            pMainBussView->Calibrate_Query_11_3(pTableModel, nItemNo);
+            qDebug()<< "on_btn_options_setup_pressed"<<nItemNo;
+        }
+        else if (0 == QString::compare("10T", App::TestPapertype) ){
+           int  nItemNo = pMainBussView->GetItemNoByItemName_10T(strItemName);
+            pMainBussView->Calibrate_Query_10T(pTableModel, nItemNo);
+            qDebug()<< "on_btn_options_setup_pressed"<<nItemNo;
+
+        }
+        else if(0 == QString::compare("12MA",App::TestPapertype)){
+            int nItemNo = pMainBussView->GetItemNoByItemName_12MA(strItemName);
+            pMainBussView->Calibrate_Query_12MA(pTableModel, nItemNo);
+            qDebug()<< "on_btn_options_setup_pressed"<<nItemNo;
+
+        }
+
     QSqlRecord record = pTableModel->record(0);
     if(record.count() > 0){
         record.value("ItemName").toString();
@@ -85,10 +161,28 @@ void Calibration::on_btn_options_setup_pressed(const QModelIndex &index)
     }
 }
 
-void Calibration::on_btn_save_clicked()
-{
+
+void Calibration::on_btn_save_clicked(){
+
+
     CalibrateModel calibrateModel;
-    int nItemNo = pMainBussView->GetItemNoByItemName(strItemName);
+ int nItemNo;
+    if (0 == QString::compare("11-III",App::TestPapertype)){
+       nItemNo = pMainBussView->GetItemNoByItemName_11_3(strItemName);
+
+   }else if (0 == QString::compare("10T", App::TestPapertype) ){
+       nItemNo = pMainBussView->GetItemNoByItemName_10T(strItemName);
+
+     }else if (0 == QString::compare("12MA", App::TestPapertype) ){
+        nItemNo = pMainBussView->GetItemNoByItemName_12MA(strItemName);
+    }
+
+    MessageBox msg;
+    int     rets = msg.MessageBox_Ask(tr("Save data ?"));
+
+    if(rets == 0){
+    pMainBussView->buzzer();
+//--------------------------------------------------------------------------------------------------校准
     calibrateModel.setItemNo(nItemNo);
     calibrateModel.setCalibrateValue0(ui->edt_Calibrate0->text().toInt());
     calibrateModel.setCalibrateValue1(ui->edt_Calibrate1->text().toInt());
@@ -98,7 +192,7 @@ void Calibration::on_btn_save_clicked()
     calibrateModel.setCalibrateValue5(ui->edt_Calibrate5->text().toInt());
     calibrateModel.setCalibrateValue6(ui->edt_Calibrate6->text().toInt());
     calibrateModel.setCalibrateValue7(ui->edt_Calibrate7->text().toInt());
-
+//-------------------------------------------------------------------------------------------------梯度
     calibrateModel.setLaderValue0(ui->edt_LaderValue0->text());
     calibrateModel.setLaderValue1(ui->edt_LaderValue1->text());
     calibrateModel.setLaderValue2(ui->edt_LaderValue2->text());
@@ -107,127 +201,88 @@ void Calibration::on_btn_save_clicked()
     calibrateModel.setLaderValue5(ui->edt_LaderValue5->text());
     calibrateModel.setLaderValue6(ui->edt_LaderValue6->text());
     calibrateModel.setLaderValue7(ui->edt_LaderValue7->text());
-    pMainBussView->Calibrate_Save(calibrateModel);
-    pMainBussView->GetCalibration(nItemNo, strItemName);
-     qDebug("bug--->CalibrateDialog.cpp->on_btn_CalibrateSave_clicked");
+
+    pMainBussView->calibrateSave(calibrateModel);
+    pMainBussView->getCalibration(nItemNo, strItemName);
+    }
+
 }
 
 void Calibration::on_CalibrateObserverveResult(QSqlTableModel* calibrateTableModel){
-qDebug("bug--->CalibrateDialog.cpp->on_CalibrateObserverveResult");
-        ui->calibrateList->setModel(calibrateTableModel);
-        ui->calibrateList->setEditTriggers(QAbstractItemView::NoEditTriggers);   //使其不可编辑
-        ui->calibrateList->setSelectionMode(QAbstractItemView::SingleSelection);
-        ui->calibrateList->setSelectionBehavior(QAbstractItemView::SelectRows);
-       ui->calibrateList->setRowHeight(0,40);
 
-//        QFont font ;//定义一个字体变量
-//        font.setBold(true);  //设置粗体
-//         ui->calibrateList->horizontalHeader()->setFont(font);
-
-        ui->calibrateList->verticalHeader()->hide();
+    ui->calibrateList->setModel(calibrateTableModel);
+    ui->calibrateList->setEditTriggers(QAbstractItemView::NoEditTriggers);   //使其不可编辑
+    ui->calibrateList->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->calibrateList->setSelectionBehavior(QAbstractItemView::SelectRows);
+    //   ui->calibrateList->setRowHeight(0,20);
+    ui->calibrateList->setColumnWidth(0, 100);
+    ui->calibrateList->setColumnWidth(1, 170);
+    ui->calibrateList->setColumnWidth(2, 170);
+    ui->calibrateList->setColumnWidth(3, 80);
+    ui->calibrateList->setColumnWidth(4, 80);
+    ui->calibrateList->setColumnWidth(5, 80);
+    ui->calibrateList->setColumnWidth(6, 80);
+      ui->calibrateList->setColumnWidth(7, 280);
+    //ui->calibrateList->setColumnHidden(6, true);
+    //ui->calibrateList->setColumnHidden(7, true);
+    ui->calibrateList->verticalHeader()->hide();
+    calModel=calibrateTableModel;
 }
 
-bool Calibration::eventFilter(QObject *watched, QEvent *event)
-{
-    if (watched==ui->edt_Calibrate0)
-    {
-    if (event->type()==QEvent::FocusIn){OpenKeyboard();}
-     ui->edt_Calibrate0 ->clearFocus();
-    }
-
-    return QWidget::eventFilter(watched,event);
-}
-
-void Calibration::OpenKeyboard()
-{
-    QString mString = ui->edt_Calibrate0->text();
-
-    KeyBoard *v_key = new KeyBoard(this);
-    if(ui->edt_Calibrate0 ->hasFocus())
-    {
-        QString mString = ui->edt_Calibrate0->text();
-        v_key->settext(mString);
-        v_key->setWindowTitle(QString::fromUtf8("请输入内容"));
-        if(v_key->exec()==QDialog::Accepted)
-        {
-            QString ret = v_key->GetInputBuf(); //返回键盘输入的结果
-            if(0==ret.size())
-            //如果打开了键盘但是没有输入任何内容
-            {
-                ret = ui->edt_Calibrate0->text();
-            }
-            ui->edt_Calibrate0 ->setText(ret);
-        }
-    }
-delete v_key;
-}
 
 void Calibration::on_calibrate_start_clicked()
 {
-    QString strItemName = ui->btn_options_show->currentText();//获取选项名称
+    if(App::Electric_quantity > 20){
+    QString  strItemName = ui->btn_options_show->currentText();//获取选项名称
+    MessageBox msg;
 
-        if(!fist_show){
-            pMainBussView->Test_DeleteResult(strItemName);//显示一下
-            fist_show=true;
+        ItemName=strItemName;
+        bool bResult = false;
+       // ui->calibrateList->setEnabled(false);
+        ui->calibrate_start->setEnabled(false);
+        ui->calibrate_stop->setEnabled(true);
+
+        // pMainBussView->buzzer();
+        bResult = pMainBussView->calibrationTest(strItemName);//调用发送接口
+
+        if(!bResult){//判断是否完成
+            msg.MessageBox_Err(tr("Single step Test failure!"));
         }
 
-bool bResult = false;
-ui->calibrateList->setEnabled(false);
-ui->calibrate_start->setEnabled(false);
-ui->calibrate_stop->setEnabled(true);
-
-
-       // qDebug("bug--->Calibrate.cpp->on_btn_CalibrateData_clicked start");
-
-       //  qDebug() << "mItemName " <<  strItemName;
-        bResult = pMainBussView->sencmd(strItemName);//调用发送接口
-
-
-        if(bResult){//判断是否完成
-        qDebug("bug--->Calibrate.cpp->on_btn_CalibrateData_clicked end 1 ");
-        }else{
-         qDebug("bug--->Calibrate.cpp->on_btn_CalibrateData_clicked end 2");
-        }
-
-        ui->calibrateList->setEnabled(true);
+     //  ui->calibrateList->setEnabled(true);
         ui->calibrate_start->setEnabled(true);
         ui->calibrate_stop->setEnabled(false);
-}
-
-void Calibration::on_calibrate_stop_clicked()
-{
-
-    qDebug("bug--->CalibrateDialog.cpp->on_btn_CalibrateStop_clicked");
-
-    bool bResult = false;
-    fist_show=false;
-
-    bResult = pMainBussView->Stop();
-    if(bResult){
-//        QString strItemName = ui->btn_options_show->currentText();
-//        QList<int> lstResult;
-//        pMainBussView->WhiteCalendar(strItemName, lstResult);
-
-//        ui->lstResultView->clear();
-//        foreach (int nResult, lstResult) {
-//            ui->lstResultView->addItem(QString("%1").arg(nResult));
-//        }
-        //int nTotalCount = pageCount(ui->calibrateList);
-        int nTotalCount = pageCount(ui->calibrateList);
-        ui->lbTotalCount->setText(QString("%1").arg(nTotalCount));
-        ui->calibrate_stop->setEnabled(false);
-        ui->calibrate_start->setEnabled(true);
+    }else{
+        MessageBox msg;
+        msg.MessageBox_Ask(tr("Low power please charge !"));
     }
 }
-void Calibration::sTimeSlot( int st)
-{
-//printf("[Calibration::sTimeslot] ----->%d\n",st);
+
+void Calibration::on_calibrate_stop_clicked(){
+    MessageBox msg;
+    bool bResult = false;
+
+
+    bResult = pMainBussView->Stop();
+    if(!bResult){
+     msg.MessageBox_Err(tr("Single stop Test failure!"));
+    }
+   else{
+        int  nTotalCount = pageCount(ui->calibrateList);
+        ui->lbTotalCount->setText(QString("%1").arg(nTotalCount));
+    }
+
+    ui->calibrate_stop->setEnabled(false);
+    ui->calibrate_start->setEnabled(true);
+}
+
+void Calibration::sTimeSlot( int st){
     QString s = QString::number(st, 10);
     ui->time_Number->display(s);
 }
+
 bool Calibration::pageDown(QTableView *p,bool isLoop)//下翻
 {
-    qDebug("bug--->CalibrateDialog.cpp->pageDown");
     if(p == NULL)  return false;
     if(p->rowAt(0) < 0) return false;
     int rowCount = p->model()->rowCount();
@@ -256,31 +311,31 @@ bool Calibration::pageDown(QTableView *p,bool isLoop)//下翻
         if(isLoop == TRUE)
             p->verticalScrollBar()->setSliderPosition(0);
     }
+    return true;
 }
 
 bool Calibration::pageHome(QTableView *p)//首页
 {
-     qDebug("bug--->CalibrateDialog.cpp->pageHome");
     if(p == NULL)  return false;
     if(p->rowAt(0) < 0) return false;
     int maxValue = p->verticalScrollBar()->maximum(); // 当前SCROLLER最大显示值
     if(maxValue == 0)  return false;
     p->verticalScrollBar()->setSliderPosition(0);
+    return true;
 }
 
 bool Calibration::pageEnd(QTableView *p)//末页
 {
-      qDebug("bug--->CalibrateDialog.cpp->pageEnd");
     if(p == NULL)  return false;
     if(p->rowAt(0) < 0) return false;
     int maxValue = p->verticalScrollBar()->maximum(); // 当前SCROLLER最大显示值
     if(maxValue == 0)  return false;
     p->verticalScrollBar()->setSliderPosition(maxValue);
+    return true;
 }
 
 int Calibration::pageCount(QTableView *p)//QTableView 总页数
 {
-    qDebug("bug--->CalibrateDialog.cpp->pageCount");
     if(p == NULL)  return -1;
     if(p->rowAt(0) < 0) return false;
     int rowCount = p->model()->rowCount();
@@ -295,7 +350,6 @@ int Calibration::pageCount(QTableView *p)//QTableView 总页数
 
 bool Calibration::pageTo(QTableView *p, int pageNO)//翻到指定页
 {
-       qDebug("bug--->CalibrateDialog.cpp->pageTo");
     if(p == NULL)  return false;
     if(p->rowAt(0) < 0) return false;
     int maxPage = pageCount(p);
@@ -310,11 +364,12 @@ bool Calibration::pageTo(QTableView *p, int pageNO)//翻到指定页
     if(maxValue == 0) return false;
     int pageValue = (maxValue*rowCountPerPage)/canNotViewCount;
     p->verticalScrollBar()->setSliderPosition(pageValue*(pageNO-1));
+    return true;
 }
 
 bool Calibration::pageUp(QTableView *p,bool isLoop)//上翻
 {
-       qDebug("bug--->CalibrateDialog.cpp->pageUp");
+
     if(p == NULL)  return false;
     if(p->rowAt(0) < 0) return false;
     int rowCount = p->model()->rowCount();
@@ -336,30 +391,38 @@ bool Calibration::pageUp(QTableView *p,bool isLoop)//上翻
             p->verticalScrollBar()->setSliderPosition(maxValue);
         }
     }
+    return true;
 }
 
 
-void Calibration::on_btn_FirstPag_clicked()
-{
-    qDebug("bug--->CalibrateDialog.cpp->on_btn_FirstPag_clicked");
+void Calibration::on_btn_FirstPag_clicked(){
+   pMainBussView->calibrationQuery(ui->btn_options_show->currentText());
    pageHome(ui->calibrateList);
 }
 
-void Calibration::on_btn_PreviousPage_clicked()
-{
-    qDebug("bug--->CalibrateDialog.cpp->on_btn_PreviousPage_clicked");
+void Calibration::on_btn_PreviousPage_clicked(){
     pageUp(ui->calibrateList,false);
 }
 
-void Calibration::on_btn_NextPage_clicked()
-{
-    qDebug("bug--->CalibrateDialog.cpp->on_btn_NextPage_clicked");
+void Calibration::on_btn_NextPage_clicked(){
       pageDown(ui->calibrateList, false);
-
 }
 
-void Calibration::on_btn_LastPage_clicked()
-{
-    qDebug("bug--->CalibrateDialog.cpp->on_btn_PreviousPage_clicked");
+void Calibration::on_btn_LastPage_clicked(){
         pageEnd(ui->calibrateList);
 }
+
+void Calibration::on_btn_delete_clicked()
+{
+     MessageBox msg ;
+     int rets;
+
+    rets = msg.MessageBox_Ask(tr("delete data ?"));
+    if(rets == 0){
+         pMainBussView->calibrationDelete_Result(ui->btn_options_show->currentText());
+    }
+
+}
+
+
+

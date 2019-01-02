@@ -4,9 +4,7 @@ TestResultModel::TestResultModel()
 {
 
 }
-/*void TestResultModel::setUserID(int arg){
-    this->UserID = arg;
-}*/
+
 void TestResultModel::setSampleNo(uint arg){
     this->SampleNo = arg;
 }
@@ -36,7 +34,7 @@ void TestResultModel::setUnit(QString arg){
 }
 
 void TestResultModel::setBarcode(QString arg){
-    this->Barcode = arg;
+    this->TbType = arg;
 }
 
 void TestResultModel::setTestWay(QString arg){
@@ -55,16 +53,13 @@ void TestResultModel::setFlag(char arg){
     this->Flag = arg;
 }
 
-/*int TestResultModel::getUserID(){
-    return UserID;
-}*/
 
 uint TestResultModel::getSampleNo(){
     return SampleNo;
 }
 
 int TestResultModel::getHatchTime(){
-    return HatchTime;
+    return HatchTime;//
 }
 
 QString TestResultModel::getSampleValue(){
@@ -88,7 +83,7 @@ QString TestResultModel::getUnit(){
 }
 
 QString TestResultModel::getBarcode(){
-    return Barcode;
+    return TbType;
 }
 
 QString TestResultModel::getTestWay(){

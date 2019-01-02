@@ -44,7 +44,7 @@ private:
     int ItemNo;
     QString ItemName;
     QString Unit;
-    QString Barcode;
+    QString TbType;
     QString TestWay;
     QString SampleDate;
     bool IsPrint;

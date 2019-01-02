@@ -1,56 +1,15 @@
 <RCC>
     <qresource prefix="/">
-        <file>image/add-line_horizontal.png</file>
-        <file>image/add-line_vertical.png</file>
-        <file>image/array_down.png</file>
-        <file>image/Background.png</file>
-        <file>image/black.css</file>
-        <file>image/blue.css</file>
         <file>image/Calibrate.png</file>
         <file>image/checkbox_checked.png</file>
-        <file>image/checkbox_unchecked.png</file>
-        <file>image/Close1.png</file>
-        <file>image/CompanyTitle.png</file>
-        <file>image/Compute.png</file>
-        <file>image/Delete.png</file>
-        <file>image/error.png</file>
-        <file>image/Font Awesome Cheatsheet.png</file>
-        <file>image/fontawesome-webfont.ttf</file>
-        <file>image/gray.css</file>
         <file>image/History.png</file>
-        <file>image/info.png</file>
-        <file>image/libtest.so.1.0.0</file>
-        <file>image/logo.ico</file>
-        <file>image/logo.png</file>
         <file>image/Maintainance.png</file>
-        <file>image/Manual.png</file>
-        <file>image/Manual1.png</file>
-        <file>image/navy.css</file>
-        <file>image/Parameter.png</file>
-        <file>image/Print.png</file>
-        <file>image/QualityControl.png</file>
         <file>image/Query.png</file>
-        <file>image/question.png</file>
-        <file>image/radio_normal.png</file>
-        <file>image/radio_selected.png</file>
-        <file>image/Run.png</file>
-        <file>image/Run1.png</file>
-        <file>image/Save.png</file>
         <file>image/Shutdown.png</file>
-        <file>image/Stop.png</file>
-        <file>image/Stop1.png</file>
-        <file>image/sub-line_horizontal.png</file>
-        <file>image/sub-line_vertical.png</file>
         <file>image/System.png</file>
-        <file>image/testing.ico</file>
         <file>image/Testing.png</file>
-        <file>image/Title.jpg</file>
-        <file>image/WarningIcon.png</file>
         <file>image/backGround.png</file>
-        <file>image/Back.png</file>
         <file>image/Home.png</file>
-        <file>image/MechanicalTesting.png</file>
-        <file>image/WhiteBalance.png</file>
         <file>icons/BatteryIcon.png</file>
         <file>icons/BatteryIcon1.png</file>
         <file>icons/BatteryIcon2.png</file>
@@ -62,21 +21,27 @@
         <file>icons/WirelessIcon3.png</file>
         <file>icons/WirelessIcon4.png</file>
         <file>icons/Bluetooth1.png</file>
-        <file>image/arrow_left.png</file>
-        <file>image/History_my.png</file>
-        <file>image/Update.png</file>
-        <file>image/System_my.png</file>
-        <file>image/ContactUs.png</file>
-        <file>image/my_Maintainance.png</file>
-        <file>image/Other.png</file>
-        <file>image/Update_2.PNG</file>
         <file>image/PassWorld.png</file>
         <file>syszux/syszuxpinyin</file>
-        <file>image/whiteBalance.png</file>
-        <file>image/Clean.png</file>
         <file>image/FirstPag.png</file>
         <file>image/NextPage.png</file>
         <file>image/LastPage.png</file>
         <file>image/PreviousPage.png</file>
+        <file>image/export.png</file>
+        <file>image/power.ico</file>
+        <file>image/Left.png</file>
+        <file>icons/BatteryIcon5.png</file>
+        <file>icons/Bluetooth2.png</file>
+        <file>syszux/tr_en.qm</file>
+        <file>syszux/tr_zh.qm</file>
+        <file>image/Update.png</file>
+        <file>image/arrow_left.png</file>
+        <file>image/Run.png</file>
+        <file>image/Stop.png</file>
+        <file>image/Clean.png</file>
+        <file>image/Save.png</file>
+        <file>image/download1.png</file>
+        <file>image/download2.png</file>
+        <file>image/Initialize_logo.gif</file>
     </qresource>
 </RCC>

@@ -18,9 +18,9 @@
     <property name="geometry">
      <rect>
       <x>1</x>
-      <y>67</y>
+      <y>47</y>
       <width>479</width>
-      <height>741</height>
+      <height>761</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -30,113 +30,140 @@
      <enum>QFrame::Raised</enum>
     </property>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QLabel" name="lbl_sysTime">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>471</width>
-      <height>61</height>
+      <x>10</x>
+      <y>-10</y>
+      <width>271</width>
+      <height>71</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="spacing">
-      <number>10</number>
-     </property>
-     <property name="leftMargin">
-      <number>10</number>
-     </property>
-     <item>
-      <widget class="QLCDNumber" name="lcdNumber">
-       <property name="maximumSize">
-        <size>
-         <width>150</width>
-         <height>150</height>
-        </size>
-       </property>
-       <property name="sizeIncrement">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <italic>false</italic>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">color:rgb(78,104,255)</string>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="lineWidth">
-        <number>0</number>
-       </property>
-       <property name="midLineWidth">
-        <number>0</number>
-       </property>
-       <property name="digitCount">
-        <number>8</number>
-       </property>
-       <property name="mode">
-        <enum>QLCDNumber::Dec</enum>
-       </property>
-       <property name="segmentStyle">
-        <enum>QLCDNumber::Flat</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="labelWireless">
-       <property name="maximumSize">
-        <size>
-         <width>50</width>
-         <height>50</height>
-        </size>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="labelBluetooth">
-       <property name="maximumSize">
-        <size>
-         <width>50</width>
-         <height>50</height>
-        </size>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="labelBattery">
-       <property name="minimumSize">
-        <size>
-         <width>50</width>
-         <height>50</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>50</width>
-         <height>50</height>
-        </size>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>200</width>
+      <height>10</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>25</pointsize>
+      <kerning>false</kerning>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string notr="true"/>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="text">
+     <string notr="true">2000-1-1 00:23:40</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelWireless">
+    <property name="geometry">
+     <rect>
+      <x>311</x>
+      <y>0</y>
+      <width>50</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>50</width>
+      <height>50</height>
+     </size>
+    </property>
+    <property name="text">
+     <string comment="2"/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelBluetooth">
+    <property name="geometry">
+     <rect>
+      <x>358</x>
+      <y>0</y>
+      <width>50</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>50</width>
+      <height>50</height>
+     </size>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelBattery">
+    <property name="geometry">
+     <rect>
+      <x>414</x>
+      <y>0</y>
+      <width>61</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>5</horstretch>
+      <verstretch>2</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>50</width>
+      <height>50</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>68</width>
+      <height>68</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelCharging">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>0</y>
+      <width>31</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>13</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
    </widget>
   </widget>
  </widget>

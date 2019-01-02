@@ -12,125 +12,454 @@
   </property>
   <property name="font">
    <font>
-    <pointsize>35</pointsize>
+    <family>DejaVu Serif</family>
+    <pointsize>30</pointsize>
    </font>
   </property>
   <property name="windowTitle">
    <string>TabWidget</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+
+ QTabWidget::tab-bar {
+     left: 10px; /* move to the right by 10px */
+ }
+
+ /* Style the tab using the tab sub-control. Note that
+     it reads QTabBar _not_ QTabWidget */
+ QTabBar::tab {
+
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                 stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,
+                                 stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);
+     border: 2px solid #C4C4C3;
+     border-bottom-color: #C2C7CB; /* same as the pane color */
+     border-top-left-radius: 4px;
+     border-top-right-radius: 15px;
+     min-width: 8ex;
+     padding: 2px;
+	
+
+ }
+
+ QTabBar::tab:selected, QTabBar::tab:hover {
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+
+                                 stop: 0 rgb(31, 90, 175), 
+stop: 0.2 rgb(203, 235, 235),
+                                 stop: 0.6 rgb(203, 235, 235), stop: 1.0 rgb(31, 90, 175));
+
+ }
+
+
+
+ QTabBar::tab:selected {
+     border-color: rgb(31, 90, 175);
+     /*border-bottom-color: #C2C7CB; same as pane color*/ 
+	color: rgb(0, 0, 255);
+ }
+
+ QTabBar::tab:!selected {
+     margin-top: 2px; /* make non-selected tabs look smaller */
+ }
+
+ /* make use of negative margins for overlapping tabs */
+ QTabBar::tab:selected {
+     /* expand/overlap to the left and right by 4px */
+     margin-left: -4px;
+     margin-right: -4px;
+ }
+
+ QTabBar::tab:first:selected {
+     margin-left: 0; /* the first selected tab has nothing to overlap with on the left */
+ }
+
+ QTabBar::tab:last:selected {
+     margin-right: 0; /* the last selected tab has nothing to overlap with on the right */
+ }
+
+ QTabBar::tab:only-one {
+     margin: 0; /* if there is only one tab, we don't want overlapping margins */
+ }
+QLineEdit {
+  border: 1px solid rgb(41, 57, 85);
+    border-radius: 15px;  
+    background: white;  
+    selection-background-color: green; 
+    font-size: 44px;
+ lineedit-password-character: 42;
+}
+ QComboBox{
+border:1px solid gray;
+border-radius:15px;
+padding:1px18px1px3px;
+min-width:6em;
+}
+
+QLabel{
+color:rgb(0, 170, 255); 
+}
+QGroupBox{color:rgb(0, 170, 255);}
+
+QComboBox::drop-down {
+width: 40px;                 
+
+}
+
+</string>
   </property>
   <property name="currentIndex">
    <number>0</number>
   </property>
   <widget class="QWidget" name="systemSeting">
    <attribute name="title">
-    <string>系统设置</string>
+    <string>System set</string>
    </attribute>
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>90</y>
-      <width>431</width>
-      <height>441</height>
+      <x>10</x>
+      <y>10</y>
+      <width>451</width>
+      <height>301</height>
      </rect>
     </property>
-    <property name="title">
-     <string>基本设置</string>
+    <property name="font">
+     <font>
+      <family>DejaVu Serif</family>
+      <pointsize>30</pointsize>
+     </font>
     </property>
-    <widget class="QWidget" name="">
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="title">
+     <string>System </string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+    <widget class="QLabel" name="la_testmode">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>80</y>
-       <width>401</width>
-       <height>311</height>
+       <x>24</x>
+       <y>238</y>
+       <width>201</width>
+       <height>53</height>
       </rect>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_10">
-        <item>
-         <widget class="QLabel" name="label_9">
-          <property name="text">
-           <string>测试种类:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="comboBox_7"/>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>试纸型号:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="comboBox"/>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>语言设置:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="comboBox_2"/>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>测试方式:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="comboBox_3"/>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <item>
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>序号设置:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
+     <property name="font">
+      <font>
+       <family>DejaVu Serif</family>
+       <pointsize>30</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background:transparent;</string>
+     </property>
+     <property name="text">
+      <string>Test mode:</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="edt_testmode">
+     <property name="geometry">
+      <rect>
+       <x>221</x>
+       <y>241</y>
+       <width>221</width>
+       <height>46</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>28</pointsize>
+      </font>
+     </property>
+    </widget>
+    <widget class="QLabel" name="la_language">
+     <property name="geometry">
+      <rect>
+       <x>24</x>
+       <y>179</y>
+       <width>211</width>
+       <height>53</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Serif</family>
+       <pointsize>30</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background:transparent;</string>
+     </property>
+     <property name="text">
+      <string>Language:</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="edt_language">
+     <property name="geometry">
+      <rect>
+       <x>221</x>
+       <y>183</y>
+       <width>221</width>
+       <height>46</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>28</pointsize>
+      </font>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="edt_paperType">
+     <property name="geometry">
+      <rect>
+       <x>221</x>
+       <y>125</y>
+       <width>221</width>
+       <height>46</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>28</pointsize>
+      </font>
+     </property>
+    </widget>
+    <widget class="QLabel" name="la_papertype">
+     <property name="geometry">
+      <rect>
+       <x>24</x>
+       <y>120</y>
+       <width>201</width>
+       <height>53</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Serif</family>
+       <pointsize>30</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background:transparent;</string>
+     </property>
+     <property name="text">
+      <string>Strip type:</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="edt_testtype">
+     <property name="geometry">
+      <rect>
+       <x>221</x>
+       <y>67</y>
+       <width>221</width>
+       <height>46</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>28</pointsize>
+      </font>
+     </property>
+    </widget>
+    <widget class="QLabel" name="la_testtype">
+     <property name="geometry">
+      <rect>
+       <x>27</x>
+       <y>61</y>
+       <width>191</width>
+       <height>53</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Serif</family>
+       <pointsize>30</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background:transparent;</string>
+     </property>
+     <property name="text">
+      <string>Species:</string>
+     </property>
     </widget>
    </widget>
-   <widget class="QPushButton" name="btn_Back">
+   <widget class="QGroupBox" name="groupBox_3">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>10</y>
-      <width>61</width>
-      <height>61</height>
+      <y>320</y>
+      <width>451</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>DejaVu Serif</family>
+      <pointsize>30</pointsize>
+     </font>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::NoContextMenu</enum>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="title">
+     <string>Time </string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+    <widget class="QDateEdit" name="dt_sysDate">
+     <property name="geometry">
+      <rect>
+       <x>7</x>
+       <y>59</y>
+       <width>211</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>23</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QDateEdit{
+
+border-width: 1px; 
+border-style: solid;  
+border-color: rgb(0, 0, 0); 
+}
+
+QDateEdit::down-button {
+width: 60px;                 
+
+}
+
+
+QDateEdit::up-button {
+width: 60px;                 
+
+}
+</string>
+     </property>
+     <property name="displayFormat">
+      <string notr="true">yyyy-MM-dd</string>
+     </property>
+    </widget>
+    <widget class="QTimeEdit" name="dt_sysTime">
+     <property name="geometry">
+      <rect>
+       <x>251</x>
+       <y>59</y>
+       <width>191</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>25</pointsize>
+       <weight>75</weight>
+       <italic>false</italic>
+       <bold>true</bold>
+       <underline>false</underline>
+       <strikeout>false</strikeout>
+       <stylestrategy>PreferDefault</stylestrategy>
+       <kerning>true</kerning>
+      </font>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::WheelFocus</enum>
+     </property>
+     <property name="acceptDrops">
+      <bool>true</bool>
+     </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QTimeEdit{
+border-width: 1px; 
+border-style: solid;  
+border-color: rgb(0, 0, 0); 
+}
+
+QTimeEdit::down-button {
+width: 60px;                 
+}
+
+
+QTimeEdit::up-button {
+width: 60px;                 
+
+}
+</string>
+     </property>
+     <property name="wrapping">
+      <bool>true</bool>
+     </property>
+     <property name="displayFormat">
+      <string notr="true">HH:mm:ss</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="label_back">
+    <property name="geometry">
+     <rect>
+      <x>128</x>
+      <y>660</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>DejaVu Serif</family>
+      <pointsize>30</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Back</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_save">
+    <property name="geometry">
+     <rect>
+      <x>297</x>
+      <y>660</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>DejaVu Serif</family>
+      <pointsize>30</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Save</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_back">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>590</y>
+      <width>80</width>
+      <height>80</height>
      </rect>
     </property>
     <property name="maximumSize">
@@ -141,10 +470,25 @@
     </property>
     <property name="font">
      <font>
-      <pointsize>35</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
+      <pointsize>20</pointsize>
      </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+color: white;
+border-radius: 20px;
+border: 2px groove gray;
+border-style: outset;
+}
+QPushButton:hover{
+background-color:white;
+color: black;
+}
+QPushButton:pressed{
+background-color:rgb(0, 0, 0);
+color: white;
+border-style: inset;
+}</string>
     </property>
     <property name="text">
      <string/>
@@ -155,59 +499,600 @@
     </property>
     <property name="iconSize">
      <size>
-      <width>60</width>
-      <height>54</height>
+      <width>80</width>
+      <height>80</height>
      </size>
     </property>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QPushButton" name="btn_save">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>550</y>
-      <width>381</width>
+      <x>290</x>
+      <y>590</y>
+      <width>80</width>
       <height>80</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <item>
-      <widget class="QPushButton" name="btn_save">
-       <property name="maximumSize">
-        <size>
-         <width>80</width>
-         <height>80</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">image:url(:/image/Save.png)</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="rc.qrc">
-         <normaloff>:/image/Save.png</normaloff>:/image/Save.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>70</width>
-         <height>70</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <property name="maximumSize">
+     <size>
+      <width>80</width>
+      <height>80</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+color: white;
+border-radius: 20px;
+border: 2px groove gray;
+border-style: outset;
+}
+QPushButton:hover{
+background-color:white;
+color: black;
+}
+QPushButton:pressed{
+background-color:rgb(0, 0, 0);
+color: white;
+border-style: inset;
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="rc.qrc">
+      <normaloff>:/image/Save.png</normaloff>:/image/Save.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>85</width>
+      <height>85</height>
+     </size>
+    </property>
    </widget>
   </widget>
   <widget class="QWidget" name="wifiSeting">
    <attribute name="title">
-    <string>WIFI设置</string>
+    <string>WIFI Set</string>
    </attribute>
+   <widget class="QGroupBox" name="groupBox_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>461</width>
+      <height>331</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>DejaVu Serif</family>
+      <pointsize>29</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>WIFI </string>
+    </property>
+    <widget class="QComboBox" name="com_ssidWifi">
+     <property name="geometry">
+      <rect>
+       <x>144</x>
+       <y>80</y>
+       <width>191</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>28</pointsize>
+      </font>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_password">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>160</y>
+       <width>151</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Serif</family>
+       <pointsize>27</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Password</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_clean">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>150</y>
+       <width>101</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Serif</family>
+       <pointsize>29</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Clear</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_wlan">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>70</y>
+       <width>171</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Serif</family>
+       <pointsize>27</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Networks</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_scanWifi">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>70</y>
+       <width>101</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Serif</family>
+       <pointsize>29</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Scan</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_openWifi">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>250</y>
+       <width>91</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Serif</family>
+       <pointsize>29</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QToolButton{
+color: white;
+border-radius: 20px;
+border: 2px groove gray;
+border-style: outset;
+}
+
+</string>
+     </property>
+     <property name="text">
+      <string>Open</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_closeWifi">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>250</y>
+       <width>101</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Serif</family>
+       <pointsize>29</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="text">
+      <string>Close</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_connectWifi">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>250</y>
+       <width>211</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Serif</family>
+       <pointsize>30</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="text">
+      <string>Connect</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_wifi">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>40</y>
+       <width>291</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Serif</family>
+       <pointsize>22</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>status</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="edt_password">
+     <property name="geometry">
+      <rect>
+       <x>144</x>
+       <y>162</y>
+       <width>191</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>-1</pointsize>
+      </font>
+     </property>
+    </widget>
+    <zorder>btn_openWifi</zorder>
+    <zorder>com_ssidWifi</zorder>
+    <zorder>label_password</zorder>
+    <zorder>btn_clean</zorder>
+    <zorder>label_wlan</zorder>
+    <zorder>btn_scanWifi</zorder>
+    <zorder>btn_closeWifi</zorder>
+    <zorder>btn_connectWifi</zorder>
+    <zorder>label_wifi</zorder>
+    <zorder>edt_password</zorder>
+   </widget>
+   <widget class="QLabel" name="label_back_4">
+    <property name="geometry">
+     <rect>
+      <x>198</x>
+      <y>660</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>DejaVu Serif</family>
+      <pointsize>30</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Back</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_back_2">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>590</y>
+      <width>80</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>80</width>
+      <height>80</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+color: white;
+border-radius: 20px;
+border: 2px groove gray;
+border-style: outset;
+}
+QPushButton:hover{
+background-color:white;
+color: black;
+}
+QPushButton:pressed{
+background-color:rgb(0, 0, 0);
+color: white;
+border-style: inset;
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="rc.qrc">
+      <normaloff>:/image/arrow_left.png</normaloff>:/image/arrow_left.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>80</width>
+      <height>80</height>
+     </size>
+    </property>
+   </widget>
   </widget>
   <widget class="QWidget" name="btSeting">
    <attribute name="title">
-    <string>BT设置</string>
+    <string>Bluetooth Set</string>
    </attribute>
+   <widget class="QGroupBox" name="groupBox_4">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>461</width>
+      <height>281</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>DejaVu Serif</family>
+      <pointsize>30</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>Bluetooth </string>
+    </property>
+    <widget class="QComboBox" name="com_ssidBt">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>70</y>
+       <width>301</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>23</pointsize>
+      </font>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_openBt">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>150</y>
+       <width>151</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Serif</family>
+       <pointsize>30</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Open</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_closeBt">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>220</y>
+       <width>151</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Serif</family>
+       <pointsize>30</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Close</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_scanBt">
+     <property name="geometry">
+      <rect>
+       <x>341</x>
+       <y>70</y>
+       <width>111</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Serif</family>
+       <pointsize>30</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Scan</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_connectBt">
+     <property name="geometry">
+      <rect>
+       <x>300</x>
+       <y>150</y>
+       <width>151</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Serif</family>
+       <pointsize>30</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Pair</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_receiveFiles">
+     <property name="geometry">
+      <rect>
+       <x>300</x>
+       <y>220</y>
+       <width>151</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Serif</family>
+       <pointsize>30</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Receive</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_state">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>301</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Serif</family>
+       <pointsize>22</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>status</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_down">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>190</y>
+       <width>67</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="label_back_5">
+    <property name="geometry">
+     <rect>
+      <x>218</x>
+      <y>659</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>DejaVu Serif</family>
+      <pointsize>29</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Back</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_back_3">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>590</y>
+      <width>80</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>80</width>
+      <height>80</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+color: white;
+border-radius: 20px;
+border: 2px groove gray;
+border-style: outset;
+}
+QPushButton:hover{
+background-color:white;
+color: black;
+}
+QPushButton:pressed{
+background-color:rgb(0, 0, 0);
+color: white;
+border-style: inset;
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="rc.qrc">
+      <normaloff>:/image/arrow_left.png</normaloff>:/image/arrow_left.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>80</width>
+      <height>80</height>
+     </size>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources>

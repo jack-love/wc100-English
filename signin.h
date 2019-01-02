@@ -3,9 +3,9 @@
 
 #include <QDialog>
 #include <QMessageBox>
-#include "keyboard.h"
+#include <messagebox.h>
 #include <QDebug>
-extern  bool lock;
+
 namespace Ui {
 class SignIn;
 }
@@ -19,19 +19,19 @@ public:
     ~SignIn();
 
 
-   bool getlock (void);
- void sendMessage(char *message);
-   void OpenKeyboard();
+
+  
 signals:
      void SendHomeSignal();
 
 private slots:
      void on_PB_Out_clicked();
      void on_PB_SignIn_clicked();
-    bool eventFilter(QObject *,QEvent *);
+     void on_PB_contact_clicked();
+    void changeEvent(QEvent *e);
 private:
     Ui::SignIn *ui;
-    //bool lock;
+       MessageBox  msg;
 };
 
 #endif // SIGNIN_H

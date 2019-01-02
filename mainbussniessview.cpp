@@ -1,9 +1,6 @@
 #include "mainbussniessview.h"
-#include <databasehelper.h>
-#include <QMessageBox>
-//#include <testingthread.h>
+#include "databasehelper.h"
 #include <QDateTime>
-//#include<QVariant>
 #include <QtCore>
 #include <QtGui>
 #include <QDesktopWidget>
@@ -16,16 +13,22 @@
 #include"testresultmodel.h"
 #include <QTranslator>
 #include <QtDebug>
-//#include <myhelper.h>
+#include <QProcess>
 #include<assert.h>
 #include <QThread>
-#include<calibration.h>
-#include<App.h>
+#include"calibration.h"
+#include"App.h"
+#include <unistd.h>
+#include <QtTest>
+#include <QDialog>
+
 MainBussniessView::MainBussniessView(QObject *parent) :
     QObject(parent), p(parent)
 {
     assert(p!=NULL);
     memset(_result, 0, sizeof(RESULT));
+
+
     m_DatabaseHelper = new databaseHelper(".//autoUrineAnalysis.db");
     try{
         m_DatabaseHelper->createTable();
@@ -36,620 +39,768 @@ MainBussniessView::MainBussniessView(QObject *parent) :
         qDebug()<<" database conncention error";
     }
 
-    sampleTableModel = NULL;
 
-    whiteTableModel = NULL;
-    pTestingThread = NULL;
-    stopThread = NULL;
-    whiteThread = NULL;
-    m_lib = NULL;
-    patientTableModel = NULL;
-    sampleTypeTableModel = NULL;
-    showTabelModel = NULL;
-    qcItemTableModel = NULL;
-    queryTableModel = NULL;
-    calibrateObserveTableModel = NULL;
-    itemTableModel = NULL;
-    deleteTableModel = NULL;
+    for(int i = 0;i < 13; i++)
+        {
+                for(int j = 0;j < 4; j++)
+                {
+                    _result[i].wrgb_value[j]=0;
+                    _result[i].white_value[j]=0;
+                    strcpy(_result[i].item_value[j], "");
+                }
+                for(int j = 0;j < 8; j++)
+                {
+                     _result[i].calibration[j]=0;
+                }
+                strcpy(_result[i].unit,"");
+                strcpy(_result[i].name,"");
+        }
+
+
     showTabelModel = new QSqlTableModel();
+    showTabeTest=new QSqlTableModel();
     calibrateObserveTableModel = new QSqlTableModel();
-  //  Machine_Inital();
-//#ifndef TEST_SO
-//    int nResult = Machine_Reset();
-//    if(0 == nResult){
-//        myHelper::ShowMessageBoxError(tr("初始化失败, 重启机器!"));
-//        system("reboot");
-//        return;
-//    }
-//#endif
-//    Initalize();
+    testdeleteTableModel  = new QSqlTableModel();
 
+    connect(this, SIGNAL(system_Setup(QSqlTableModel*)), this, SLOT(system_setup_show(QSqlTableModel*)),Qt::AutoConnection);
+    getSystem_status();
+    Initalize();
 
+    tty_thread = new ttyThread(this);
+    connect(tty_thread,SIGNAL(receiveTtyData(QString)),this,SLOT(showTtyData(QString)));
+    connect(tty_thread,SIGNAL(receiveAck(unsigned char)),this,SLOT(showTtyAck(unsigned char)));
+    connect(tty_thread,SIGNAL(mTime(int )),this,SLOT(sTimeSlot(int)));
+    connect(tty_thread,SIGNAL(receiveWb(WRGB_DAT )),this,SLOT(showWb(WRGB_DAT)));
+    connect(tty_thread,SIGNAL(receiveRGB(WRGB_DAT,unsigned int  )),this,SLOT(showWrgb(WRGB_DAT ,unsigned int )));
 
 }
-//void MainBussniessView::Initalize(){
-//    // = new QList<ItemModel>();
-//    int icount = GetItemList(&lstItemModel);
-//    for(int i = 0;i < icount;i++){
-//        int itemNO = lstItemModel[i].getItemNo();
-//        QString strItemName = lstItemModel[i].getItemName();
-//        GetCalibration(itemNO, strItemName);
-//        qDebug() << strItemName;
-//    }
-//    for(int j = icount-1;j >= 0;j--){
-//        lstItemModel.removeAt(j);
-//    }
-//}
 
-QList<ItemModel> MainBussniessView::getItemModel(){
-    return lstItemModel;
+
+
+void MainBussniessView::startProcessing(){
+        QFont font("ZYSong18030",25);
+        progressDialog->setFont(font);
+        progressDialog->setWindowModality(Qt::WindowModal);
+
+        progressDialog->setMinimumDuration(10);
+       // progressDialog->setCancelButton(false);
+       //progressDialog->setCancelable(true);
+        progressDialog->setWindowTitle(tr("稍等....."));
+        progressDialog->setLabelText(tr("系统正在初始化."));
+        progressDialog->setCancelButtonText(tr("Cancel"));
+        progressDialog->setRange(0,100);
+        progressDialog->setStyleSheet(QString::fromUtf8("QLabel{\n"
+        "color:rgb(255, 255, 255); \n"
+        "}\n"
+        "\n"
+        "QDialog{\n"
+        "background:url(://image/backGround.png)\n"
+        "}"));
+        progressDialog->resize(500,800);
+        progressDialog->show();
+
+        for (int i=1; i<100+1; i++)
+        {
+            progressDialog->setValue(i);
+
+            QTest::qSleep(100);
+            if (progressDialog->wasCanceled())
+                return;
+        }
 }
 
-//void MainBussniessView::Machine_Inital(){
+void MainBussniessView::mcuReset()
+{
 
-//    #ifdef TEST_SO
-//        m_lib = new QLibrary("/lib/libtest.so.1.0.0");//://image/libtest.so.1.0.0
-//    #else
-//        m_lib = new QLibrary("/lib/libuart_init.so");
-//    #endif
-//    m_lib->load();
-//    if(m_lib->isLoaded()){
-//    #ifdef TEST_SO
-//        _Run = NULL;
-//        _Run = (RUN)m_lib->resolve("run");
-//        if(_Run != NULL){
-//            int ii = _Run(_result);
-//        }
+    MessageBox mes;
+   bool  get_return  =  mcuCmd(RESET);
+   if(!get_return){
+         App::errNumber = RESET_ERR;
+     //  mes.MessageBox_Err(tr("MCU reset failure!"));
+      }
 
-//        qDebug() << "load library successfull!";
-//    #else
-//        _Inital = NULL;
-//        _Inital = (INITAL)m_lib->resolve("uart_init");
-//        if(_Inital != NULL){
-//            int ii = _Inital();
-//        }
-//    #endif
-//    }
-//}
+}
+void MainBussniessView::coverHands()
+{
+     MessageBox mes;
+    bool  get_return  =  getVersion();
+    if(!get_return){
+          App::errNumber = VERSION_ERR;
+        mes.MessageBox_Err(tr("Read MCU version failed!"));
+       }
+}
 
-//int MainBussniessView::Machine_Power(){
-//    int nResult = 0;
-//#ifndef TEST_SO
-//    _Power = NULL;
-//    _Power = (POWER)m_lib->resolve("power");
-//    if(_Power != NULL){
-//        nResult = _Power();
-//    }
-//#endif
-//    return nResult;
-//}
+void MainBussniessView::setParameters(){
+ bool   get_return = setUp();
+    if(!get_return){
+          App::errNumber = SETUP_ERR;
+          MessageBox mes;
+          mes.MessageBox_Err(tr("Set MCU version failed!"));
+       }
+}
 
-//int MainBussniessView::Machine_Stop(){
-//    int nResult = 0;
-//#ifndef TEST_SO
-//    _Stop = NULL;
-//    _Stop = (STOP)m_lib->resolve("stop");
-//    if(_Stop != NULL){
-//        nResult = _Stop();
-//    }
-//#endif
-//    return nResult;
-//}
+void MainBussniessView::Initalize(){
 
-//int MainBussniessView::Machine_Go_on(){
-//    int nResult = 0;
-//#ifndef TEST_SO
-//    _Reset = NULL;
-//    _Reset = (RESET)m_lib->resolve("go_on");
-//    if(_Reset != NULL){
-//        nResult = _Reset();
-//    }
-//#endif
-//    return nResult;
-//}
+    int icount = GetItemList(&lstItemModel);//item_tb_11_3
+    qDebug()<<"debug--->Initalize()"<< icount;
+    for(int i = 0;i < icount;i++){
+        int itemNO = lstItemModel[i].getItemNo();
+        QString strItemName = lstItemModel[i].getItemName();
+        getCalibration(itemNO, strItemName);
+        qDebug() << "Initalize()"<<strItemName;
+    }
 
-//int MainBussniessView::Machine_White(struct RESULT buf[]){
-//    int nResult = 0;
-//#ifndef TEST_SO
-//    _White = NULL;
-//    _White = (WHITE)m_lib->resolve("white");
-//    if(_White != NULL){
-//        nResult = _White(buf);
-//    }
-//#endif
-//    return nResult;
-//}
+    for(int j = icount-1;j >= 0;j--){
+        lstItemModel.removeAt(j);
+    }
 
-//int MainBussniessView::Machine_Run(struct RESULT buf[]){
-//    int nResult = 0;
-//    _Run = NULL;
-//    _Run = (RUN)m_lib->resolve("run");
-//    if(_Run != NULL){
-//        nResult = _Run(buf);
-//    }
-//    return nResult;
-//}
+}
 
-//int MainBussniessView::Machine_Sys_Status(){
-//    int nResult = 0;
-//    _Sys_status = NULL;
-//    _Sys_status = (SYS_STATUS)m_lib->resolve("system_state");
-//    if(_Sys_status != NULL){
-//        nResult = _Sys_status();
-//    }
-//    return nResult;
-//}
+bool MainBussniessView::system_setup_show(QSqlTableModel* model){
+    QSqlRecord record = model->record(0);
 
-//int MainBussniessView:: Machine_Reset(){
-//    int nResult = 0;
-//    _Reset = NULL;
-//    _Reset = (RESET)m_lib->resolve("reset");
-//    if(_Reset != NULL){
-//        nResult = _Reset();
-//    }
-//    return nResult;
-//}
+    App::TestPapertype = record.value("testPapertype").toString();
+    qDebug()<< "[system_setup_show]---TestPapertype>"<<App::TestPapertype;
 
-int MainBussniessView::GetSampleType(QList<SampleTypeModel>* lstSampleType){
+
+    App::TestMode=record.value("testMode").toString();
+    qDebug()<<"[system_setup_show]---testMode"<<App::TestMode;
+
+    App::Language=record.value("language").toString();
+     qDebug()<<"[system_setup_show]--->App::Language"<<App::Language;
+
+
+    return false;
+}
+
+int MainBussniessView::getSample_Type(QList<SampleTypeModel>* lstSampleType){
     QString strSQL = "select * from SampleType_tb";
     QSqlQuery query = m_DatabaseHelper->ExecuteSqlQuery(strSQL);
     int i = 0;
     while(query.next()){
-        SampleTypeModel* sampleTYpeModel = new SampleTypeModel();
-        sampleTYpeModel->setSampleTypeNo(query.value(0).toInt());
-        sampleTYpeModel->setSampleTypeName(query.value(1).toString());
-        lstSampleType->append(*sampleTYpeModel);
+        SampleTypeModel sampleTYpeModel ;//= new SampleTypeModel();
+        sampleTYpeModel.setSampleTypeNo(query.value(0).toInt());
+        sampleTYpeModel.setSampleTypeName(query.value(1).toString());
+        lstSampleType->append(sampleTYpeModel);
         i++;
     }
     return i;
 }
 
-QList<TestResultModel*> MainBussniessView::QueryTestResult(QString strWhere){
-    QString strSQL = "select * from TestResult_tb" + strWhere;
-    QSqlQuery query = m_DatabaseHelper->ExecuteSqlQuery(strSQL);
-    lstTestResultModel.clear();
-    while(query.next()){
-        TestResultModel* testResultModel = new TestResultModel();
-        testResultModel->setSampleNo(query.value(0).toInt());
-        testResultModel->setSampleDate(query.value(1).toString());
-        testResultModel->setItemName(query.value(2).toString());
-        testResultModel->setSampleValue(query.value(3).toString());
-        testResultModel->setUnit(query.value(4).toString());
 
-        lstTestResultModel.push_back(testResultModel);
-    }
-    return lstTestResultModel;
-}
 
-void MainBussniessView::GetTestResult(RESULT result[]){
-    QList<ItemModel> lstItemModel;// = new QList<ItemModel>();
-    int icount = GetItemList(&lstItemModel);
-    QList<SampleTypeModel> lstSampleType; //= new QList<SampleTypeModel>();
-    int sampeCount = GetSampleType(&lstSampleType);
+void MainBussniessView::getTest_Result(RESULT result[]){
+//#define RU11-3       12
+//#define RU10T        11
+//#define RU12MA    13
+
+
+      TestResultModel  testResultModel; //new TestResultModel();
+    QList<ItemModel> lstItemModel;
+    int icount = GetItemList(&lstItemModel);//item_tb_11_3
+
+    QList<SampleTypeModel> lstSampleType;
+    int sampeCount = getSample_Type(&lstSampleType);//SampleType_tb
+
     uint nSampleMaxNo = GetSampleMaxNo()+1;
+                qDebug()<<"[getTest_Result]----->2"<<nSampleMaxNo;
+
+
     QList<ItemParameterModel> lstItemParams;
-    int paramCount = GetItemParam(&lstItemParams);
+
+    int paramCount = GetItemParam(&lstItemParams);//ItemParameter_tb_11_3
+
     for(int j = 0;j < icount;j++) {
-        TestResultModel* testResultModel = new TestResultModel();
+
+
         int itemNO = ((ItemModel)lstItemModel[j]).getItemNo();
         QString strItemName = ((ItemModel)lstItemModel[j]).getItemName();
         int nRegeantModel = ((ItemModel)lstItemModel[j]).getRegeantModel();
+    //qDebug()<<"[GetTestResult]"<<strItemName;
         for(int m = 0;m < paramCount;m++){
             if(lstItemParams[m].getItemName() == strItemName && lstItemParams[m].getRegeantModel() == nRegeantModel){
-                testResultModel->parameterModel.setItemProperty(lstItemParams[m].getItemProperty());
-                testResultModel->parameterModel.setRefMin(lstItemParams[m].getRefMin());
-                testResultModel->parameterModel.setRefMax(lstItemParams[m].getRefMax());
-                testResultModel->parameterModel.setUnit(lstItemParams[m].getUnit());
-                testResultModel->parameterModel.setCheckWay(lstItemParams[m].getCheckWay());
-                testResultModel->parameterModel.setItemName(lstItemParams[m].getItemName());
-                testResultModel->parameterModel.setItemNo(lstItemParams[m].getItemNo());
+                testResultModel.parameterModel.setItemProperty(lstItemParams[m].getItemProperty());
+                testResultModel.parameterModel.setRefMin(lstItemParams[m].getRefMin());
+                testResultModel.parameterModel.setRefMax(lstItemParams[m].getRefMax());
+                testResultModel.parameterModel.setUnit(lstItemParams[m].getUnit());
+                testResultModel.parameterModel.setCheckWay(lstItemParams[m].getCheckWay());
+                testResultModel.parameterModel.setItemName(lstItemParams[m].getItemName());
+                testResultModel.parameterModel.setItemNo(lstItemParams[m].getItemNo());
+               // qDebug()<<"[GetTestResult]"<<strItemName <<lstItemParams[m].getItemName() ;
                 break;
             }
         }
-        testResultModel->setTestWay(testResultModel->parameterModel.getCheckWay());
+        testResultModel.setTestWay(testResultModel.parameterModel.getCheckWay());
 
-        testResultModel->setBarcode(SystemConfig::barcode);
-        for(int i = 0;i < sampeCount;i++){
-            QString strSampleType = lstSampleType[i].getSampleTypeName();
-            if(0 == SystemConfig::sampleType.compare(strSampleType)){
-                testResultModel->setSampleType(strSampleType);
-                break;
+
+            for(int i = 0;i < sampeCount;i++){
+                QString strSampleType = lstSampleType[i].getSampleTypeName();
+                if(0 == SystemConfig::sampleType.compare(strSampleType)){
+                    testResultModel.setSampleType(strSampleType);
+                    break;
+                }
             }
+
+        testResultModel.setUnit(testResultModel.parameterModel.getUnit());
+        testResultModel.setHatchTime(SystemConfig::hatchTime);
+
+        testResultModel.setIsPrint(SystemConfig::isPrint);
+        testResultModel.setFlag(result[j].flag);
+        testResultModel.setItemNo(itemNO);
+
+        testResultModel.setItemName(strItemName);
+        lstTestResultModel.push_back(&testResultModel);
+
+        if (0 == QString::compare("11-III",App::TestPapertype)){
+           MAX_ITEM =12;
+         }else   if (0 == QString::compare("10T",   App::TestPapertype)){
+           MAX_ITEM = 11;
+         }else if (0 == QString::compare("12MA", App::TestPapertype) ){
+           MAX_ITEM = 13;
         }
 
-        testResultModel->setUnit(testResultModel->parameterModel.getUnit());
-        testResultModel->setHatchTime(SystemConfig::hatchTime);
-
-        testResultModel->setIsPrint(SystemConfig::isPrint);
-        testResultModel->setFlag(result[j].flag);
-        testResultModel->setItemNo(itemNO);
-
-        testResultModel->setItemName(strItemName);
-        lstTestResultModel.push_back(testResultModel);
 
         for(int i = 0;i < MAX_ITEM;i++){
-        //recieve item Name
+
             QString strItemName = lstTestResultModel[j]->getItemName();
+
             if(QString(result[i].name) == strItemName){
                 ((TestResultModel*)lstTestResultModel[j])->setSampleNo(nSampleMaxNo);
                 ((TestResultModel*)lstTestResultModel[j])->setItemName(result[i].name);
                 ((TestResultModel*)lstTestResultModel[j])->setSampleValue(result[i].unit);
-                ((TestResultModel*)lstTestResultModel[j])->setSampleDate(QDateTime::currentDateTime().toString("yyyy-MM-dd"));
-                TestResultSave((TestResultModel*)lstTestResultModel[j]);
-                //pMainView->lstTestResultModel.removeAt(i);
-                //qDebug() << "Accept item :" + QString("%1").arg(result[i].name) + ",  " + QString("%2").arg(result[i].unit);
+                ((TestResultModel*)lstTestResultModel[j])->setSampleDate(QDateTime::currentDateTime().toString("yyyy-MM-dd  hh:mm:ss"));//H:mm:ss
+                ((TestResultModel*)lstTestResultModel[j])->setBarcode(App::TestPapertype);
+                testResult_Save((TestResultModel*)lstTestResultModel[j]);
+                //qDebug() << "Accept item :" + QString("%1").arg(result[i].name) + ",  " + QString("%2").arg(result[i].unit);       
                 break;
             }
         }
-        _result[j].block_num = MAX_ITEM;
+        _result[j].block_num = MAX_ITEM;//MAX_ITEM 需要根据试纸型号进行修改
         _result[j].position = result[j].position;
         _result[j].mode = SystemConfig::newold_Model;
         _result[j].paper_model = SystemConfig::regeant_Model;
+
     }
-    for(int n = icount -1;n >= 0;n--){
-        lstItemModel.removeAt(n);
-    }
-    for(int m = sampeCount-1;m >= 0;m--){
-        lstSampleType.removeAt(m);
-    }
+        lstTestResultModel.clear();
+        for(int n = icount -1;n >= 0;n--){
+            lstItemModel.removeAt(n);
+        }
+        for(int n = paramCount -1;n >= 0;n--){
+            lstItemParams.removeAt(n);
+        }
+        for(int m = sampeCount-1;m >= 0;m--){
+            lstSampleType.removeAt(m);
+        }
+//delete testResultModel;
 }
+
 
 uint MainBussniessView::GetSampleMaxNo(){
     uint nMax = 0;
-    QSqlQuery query = m_DatabaseHelper->ExecuteSqlQuery(tr("select max(SampleNo) as SampleMaxNo from TestResult_tb where SampleDate like '%1'").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd")));
+    QSqlQuery query = m_DatabaseHelper->ExecuteSqlQuery(tr("select max(SampleNo) as SampleMaxNo from TestResult_tb"));
     if(0 < query.next()){
         nMax = query.value(0).toUInt();
     }
     return nMax;
 }
 
-void MainBussniessView:: PrintInformation(PatientModel patientModel){
-    if(patientModel.getSampleNo() >= 0){
-        strcpy(_report.userName, (char*)patientModel.getName().toLatin1().data());
-        strcpy(_report.age, (char*)QString("%1").arg(patientModel.getAge()).toLatin1().data());
-        strcpy(_report.sex, (char*)QString("%1").arg(patientModel.getSex()).toLatin1().data());
-        strcpy(_report.date, (char*)patientModel.getRegisterDateTime().toLatin1().data());
+/*
+
+Date: 2609-02-04 00:31
+No. 000001
+ BIL  -  Neg     umol/L
+ URO  -  3.3     umol/L
+ KET  -  Neg     mmol/L
+ BLD  -  Neg   cells/uL
+ PRO  -  Neg        g/L
+ NIT  -  Neg
+ WBC  -  Neg   cells/uL
+*GLU 3+  28      mmol/L
+ SG      1.005
+ PH      5.0
+ VC      0       mmol/L
+
+*/
 
-        for (int i = 0;lstTestResultModel.count();i++) {
+void MainBussniessView:: PrintInformation(QByteArray arr){
+    tty_thread->listWrite(arr);
+}
 
-            if(lstTestResultModel[i]->getSampleNo() == patientModel.getSampleNo() && (lstTestResultModel[i]->getIsPrint() == true && i < MAX_ITEM)){
-                strcpy(_report.sampleNo, (char*)QString("%1").arg(lstTestResultModel[i]->getSampleNo()).toLatin1().data());
-                strcpy(_report.item_result[i].itemName, (char*)(lstTestResultModel[i]->getItemName().toLatin1().data()));
-                strcpy(_report.item_result[i].result, (char*)QString("%1").arg(lstTestResultModel[i]->getSampleValue()).toLatin1().data());
-                //_report.item_result[i].unit = testResult->getUnit();
-                //strcpy(_report.item_result[i].flag, testResult->getFlag());
-            }
+void MainBussniessView::getCalibration(int itemNo, QString itemName){
+        QSqlQuery query;
+
+        if (0 == QString::compare("11-III",App::TestPapertype)){
+                query = m_DatabaseHelper->ExecuteSqlQuery(tr("select * from Calibrate_tb_11_3 where ItemNo = %1").arg(itemNo));
+                MAX_ITEM =12;
+       }else   if (0 == QString::compare("10T",   App::TestPapertype)){
+                query = m_DatabaseHelper->ExecuteSqlQuery(tr("select * from Calibrate_tb_10T  where ItemNo = %1").arg(itemNo));
+                MAX_ITEM = 11;
+        }else if (0 == QString::compare("12MA", App::TestPapertype) ){
+                query = m_DatabaseHelper->ExecuteSqlQuery(tr("select * from Calibrate_tb_12MA  where ItemNo = %1").arg(itemNo));
+                MAX_ITEM = 13;
         }
-    }
-}
 
-int MainBussniessView::GetCalibration(int itemNo, QString itemName){
-    QSqlQuery query = m_DatabaseHelper->ExecuteSqlQuery(tr("select * from Calibrate_tb where ItemNo = %1").arg(itemNo));
-    if(0 < query.next()){
-        _result[itemNo].mode = 1;
-        _result[itemNo].paper_model = 1;
-        _result[itemNo].block_num = MAX_ITEM;
-        strcpy(_result[itemNo].name, (const char*)itemName.toLatin1());
-        _result[itemNo].calibration[0] = query.value(1).toUInt();
-        _result[itemNo].calibration[1] = query.value(2).toUInt();
-        _result[itemNo].calibration[2] = query.value(3).toUInt();
-        _result[itemNo].calibration[3] = query.value(4).toUInt();
-        _result[itemNo].calibration[4] = query.value(5).toUInt();
-        _result[itemNo].calibration[5] = query.value(6).toUInt();
-        _result[itemNo].calibration[6] = query.value(7).toUInt();
-        _result[itemNo].calibration[7] = query.value(8).toUInt();
 
-        strcpy(_result[itemNo].item_value[0], (const char*)QVariant(query.value(9)).toString().toLatin1());
-        strcpy(_result[itemNo].item_value[1], (const char*)QVariant(query.value(10)).toString().toLatin1());
-        strcpy(_result[itemNo].item_value[2], (const char*)QVariant(query.value(11)).toString().toLatin1());
-        strcpy(_result[itemNo].item_value[3], (const char*)QVariant(query.value(12)).toString().toLatin1());
-        strcpy(_result[itemNo].item_value[4], (const char*)QVariant(query.value(13)).toString().toLatin1());
-        strcpy(_result[itemNo].item_value[5], (const char*)QVariant(query.value(14)).toString().toLatin1());
-        strcpy(_result[itemNo].item_value[6], (const char*)QVariant(query.value(15)).toString().toLatin1());
-        strcpy(_result[itemNo].item_value[7], (const char*)QVariant(query.value(16)).toString().toLatin1());
-   }
-    return 0;
-}
+            if(0 < query.next()){
+                _result[itemNo].mode = 1;
+                _result[itemNo].paper_model = 1;
+                _result[itemNo].block_num = MAX_ITEM;
+                strcpy(_result[itemNo].name, (const char*)itemName.toLatin1());
+                _result[itemNo].calibration[0] = query.value(1).toUInt();
+                _result[itemNo].calibration[1] = query.value(2).toUInt();
+                _result[itemNo].calibration[2] = query.value(3).toUInt();
+                _result[itemNo].calibration[3] = query.value(4).toUInt();
+                _result[itemNo].calibration[4] = query.value(5).toUInt();
+                _result[itemNo].calibration[5] = query.value(6).toUInt();
+                _result[itemNo].calibration[6] = query.value(7).toUInt();
+                _result[itemNo].calibration[7] = query.value(8).toUInt();
+
+                strcpy(_result[itemNo].item_value[0], (const char*)QVariant(query.value(9)).toString().toLatin1());
+                strcpy(_result[itemNo].item_value[1], (const char*)QVariant(query.value(10)).toString().toLatin1());
+                strcpy(_result[itemNo].item_value[2], (const char*)QVariant(query.value(11)).toString().toLatin1());
+                strcpy(_result[itemNo].item_value[3], (const char*)QVariant(query.value(12)).toString().toLatin1());
+                strcpy(_result[itemNo].item_value[4], (const char*)QVariant(query.value(13)).toString().toLatin1());
+                strcpy(_result[itemNo].item_value[5], (const char*)QVariant(query.value(14)).toString().toLatin1());
+                strcpy(_result[itemNo].item_value[6], (const char*)QVariant(query.value(15)).toString().toLatin1());
+                strcpy(_result[itemNo].item_value[7], (const char*)QVariant(query.value(16)).toString().toLatin1());
+
+        //    qDebug()<< "GetCalibration---->debug" <<itemNo<<_result[itemNo].item_value[0];
+        //    qDebug()<< "GetCalibration---->debug" <<itemNo<<_result[itemNo].item_value[1];
+        //    qDebug()<< "GetCalibration---->debug" <<itemNo<<_result[itemNo].item_value[2];
+        //    qDebug()<< "GetCalibration---->debug" <<itemNo<<_result[itemNo].item_value[3];
+        //    qDebug()<< "GetCalibration---->debug" <<itemNo<<_result[itemNo].item_value[4];
+        //    qDebug()<< "GetCalibration---->debug" <<itemNo<<_result[itemNo].item_value[5];
+        //   qDebug()<< "GetCalibration---->debug" <<itemNo<<_result[itemNo].item_value[6];
+        //    qDebug()<< "GetCalibration---->debug" <<itemNo<<_result[itemNo].item_value[7];
+         //qDebug()<< "GetCalibration---->debug"<<_result[itemNo].name;
+           }
+ }
 
 int MainBussniessView::GetItemParam(QList<ItemParameterModel>* lstItemParam)
 {
-    QSqlQuery query = m_DatabaseHelper->ExecuteSqlQuery(tr("select * from ItemParameter_tb where regeant_model = %1").arg(SystemConfig::regeant_Model));
+    QSqlQuery query;
+ //qDebug()<<"[GetItemParam]"<<App::TestPapertype;
+
+    if (0 == QString::compare("11-III",App::TestPapertype)){
+         query = m_DatabaseHelper->ExecuteSqlQuery(tr("select * from ItemParameter_tb_11_3 where regeant_model = %1").arg(SystemConfig::regeant_Model));
+    }else   if (0 == QString::compare("10T",   App::TestPapertype)){
+        query = m_DatabaseHelper->ExecuteSqlQuery(tr("select * from ItemParameter_tb_10T where regeant_model = %1").arg(SystemConfig::regeant_Model));
+    }else if (0 == QString::compare("12MA", App::TestPapertype) ){
+        query = m_DatabaseHelper->ExecuteSqlQuery(tr("select * from ItemParameter_tb_12MA where regeant_model = %1").arg(SystemConfig::regeant_Model));
+    }
+
+
     int i = 0;
     while(query.next()){
-        ItemParameterModel *parameterModel = new ItemParameterModel();
-        parameterModel->setRegeantModel(query.value(0).toInt());
-        parameterModel->setItemNo(query.value(1).toInt());
-        parameterModel->setItemName(query.value(2).toString());
-        parameterModel->setItemProperty(query.value(3).toString());
-        parameterModel->setRefMin(query.value(4).toFloat());
-        parameterModel->setRefMax(query.value(5).toFloat());
-        parameterModel->setUnit(query.value(6).toString());
-        parameterModel->setCheckWay(query.value(7).toString());
-        lstItemParam->append(*parameterModel);
+        ItemParameterModel parameterModel;// = new ItemParameterModel();
+        parameterModel.setRegeantModel(query.value(0).toInt());
+        parameterModel.setItemNo(query.value(1).toInt());
+        parameterModel.setItemName(query.value(2).toString());
+        parameterModel.setItemProperty(query.value(3).toString());
+        parameterModel.setRefMin(query.value(4).toFloat());
+        parameterModel.setRefMax(query.value(5).toFloat());
+        parameterModel.setUnit(query.value(6).toString());
+        parameterModel.setCheckWay(query.value(7).toString());
+        lstItemParam->append(parameterModel);
+        //qDebug()<<" GetItemParam" <<query.value(2).toString();
         i++;
     }
     return i;
 }
-
-
-bool MainBussniessView::Start(){
-//    App::test_start = true;
-//    if(pTestingThread != NULL){
-//        delete pTestingThread;
-//    }
-//    pTestingThread = new TestingThread(this);
-///*    if(pTestingThread->isRunning()){
-//       return false;
-//    }
-//*/
-//    pTestingThread->start();
-
-//    //执行耗时操作。。。
-//    bool bfinished = false;
-//    while(!bfinished){
-//        emit positionStatus(_result[0].position);
-//        //App::mutex.lock();
-//        bfinished = App::test_finished;
-//        pTestingThread->msleep(100);
-//        //App::mutex.unlock();
-//        QCoreApplication::processEvents(QEventLoop::AllEvents, 500);
-//    }
-//    pTestingThread->exit();
-//    //wait for result
-    return true;
+void MainBussniessView::mcuPopen() {
+     tty_thread->mcuUartOpen();
+}
+void MainBussniessView::mcuPclose() {
+     tty_thread->mcuUartClose();
 }
 
-bool MainBussniessView::Stop(){
-    printf("MainBussniessView::Stop\n");
 
-tty_thread->ttyStop();
-tty_thread->ttyClose();
-    return true;
+bool MainBussniessView::mcuCmd(WORK_STATE cmd)
+{
+            tty_thread->setCommand(cmd);
+            tty_thread->start();
+            App::test_finished=false;
+            bool bfinished = false;
+
+               while(!bfinished){
+                            bfinished = App::test_finished;
+                            tty_thread->msleep(100);
+                            try {
+                            QCoreApplication::processEvents(QEventLoop::AllEvents, 500);
+                            }catch(...){
+                            qDebug()<< "Exception....";
+                            }
+                 }
+
+
+                tty_thread->exit();
+ printf("[mcuCmd]--->%d\n",App::test_result);
+
+    return  App::test_result;;
 }
 
-void MainBussniessView::setItemName(QString arg){
-    _itemName = arg;
+bool  MainBussniessView::powerOff()
+{     MessageBox msg;
+         bool ret ;
+
+        ret = mcuCmd(POWEROFF);
+        if(!ret ){
+            msg.MessageBox_Info(tr("MCU communication failure!"));
+         }
+
+return ret;
 }
 
-QString MainBussniessView::getItemName(){
-    return _itemName;
+bool MainBussniessView::askUser(){
+    MessageBox msg;
+   int rets ;
+   rets = msg.MessageBox_Ask(tr("Do you want to turn off the power ?"));
+   if(rets == 0)
+       return true;
+   else
+      return false;
 }
 
-bool MainBussniessView::sencmd(QString mItemName){
-    qDebug()<< "+++++++++++++++begin white+++++++++++"<< mItemName;
-   Name_tmp=mItemName;
+bool MainBussniessView::normalStart(){
 
-    if(tty_thread != NULL){
-           delete tty_thread;
-       }
-
-    tty_thread = new ttyThread(this);
-   connect(tty_thread,SIGNAL(receiveTtyData(QString)),this,SLOT(showTtyData(QString)));
-   connect(tty_thread,SIGNAL(receiveAck(unsigned char)),this,SLOT(showTtyAck(unsigned char)));
-   connect(tty_thread,SIGNAL(sTime(int )),this,SLOT(sTimeSlot(int)));
-   connect(tty_thread,SIGNAL(receiveWb(unsigned int,unsigned int ,unsigned int ,unsigned int )),this,SLOT(showWb(unsigned int,unsigned int ,unsigned int,unsigned int )));
-   connect(tty_thread,SIGNAL(receiveRGB(unsigned int,unsigned int ,unsigned int ,unsigned int )),this,SLOT(showWrgb(unsigned int,unsigned int ,unsigned int,unsigned int )));
-
-    receive_count=0;
-    tty_thread->ttyOpen();
     tty_thread->setCommand(ONESTEP);
-    tty_thread->ttyStart();
+    tty_thread->start();
+
+    App::test_finished=false;
+    bool bfinished = false;
+
+
+               while(!bfinished){
+                            App::workMode= 0x02;
+                            bfinished = App::test_finished;
+
+                            tty_thread->msleep(100);
+                            try {
+                            QCoreApplication::processEvents(QEventLoop::AllEvents, 500);
+                            }catch(...){
+                            qDebug()<< "Exception....";
+                            }
+                 }
+
+
+    tty_thread->exit();
+
+  //  printf("[Start]--->%d\n",App::test_result);
+    return  App::test_result;
+}
+
+bool MainBussniessView::getVersion(){
+
+
+    tty_thread->setCommand(GETVERSION);
+
     tty_thread->start();
     App::test_finished=false;
     bool bfinished = false;
 
-       while(!bfinished){
 
-                    bfinished = App::test_finished;
+               while(!bfinished){
 
-                    tty_thread->msleep(100);
-                    try {
-                    QCoreApplication::processEvents(QEventLoop::AllEvents, 500);
-                    }catch(...){
-                    qDebug()<< "Exception....";
-                    }
-         }
+                            bfinished = App::test_finished;
 
-    tty_thread->ttyClose();
+                            tty_thread->msleep(100);
+                            try {
+                            QCoreApplication::processEvents(QEventLoop::AllEvents, 500);
+                            }catch(...){
+                            qDebug()<< "Exception....";
+                            }
+                 }
+
+  //  tty_thread->mcuUartClose();
     tty_thread->exit();
+ printf("[getVersion]--->%d\n",App::test_result);
 
-    qDebug()<<"[ debug ]--->White end.."<<App::test_result;
     return  App::test_result;;
 }
-//ok
+bool MainBussniessView::setUp(){
 
-void MainBussniessView::msleep(int sec){
-//    QTime dieTime = QTime::currentTime().addMSecs(sec);
-//    while( QTime::currentTime() < dieTime ){
-//        whiteThread->msleep(10);
-//        QCoreApplication::processEvents();
-//    }
+    tty_thread->setCommand(SETUP);
+
+    tty_thread->start();
+    App::test_finished=false;
+    bool bfinished = false;
+
+
+               while(!bfinished){
+                            bfinished = App::test_finished;
+                            tty_thread->msleep(100);
+
+                            try {
+                            QCoreApplication::processEvents(QEventLoop::AllEvents, 500);
+                            }catch(...){
+                            qDebug()<< "Exception....";
+                            }
+                 }
+
+//    tty_thread->mcuUartClose();
+    tty_thread->exit();
+ printf("[ setUp]--->%d\n",App::test_result);
+
+    return  App::test_result;;
 }
+
+
+
+bool MainBussniessView::Stop(){
+
+
+  tty_thread->setCommand(STOPR);
+
+  tty_thread->start();
+  App::test_finished=false;
+  bool bfinished = false;
+
+  while(!bfinished){
+
+               bfinished = App::test_finished;
+
+               tty_thread->msleep(100);
+               try {
+               QCoreApplication::processEvents(QEventLoop::AllEvents, 500);
+               }catch(...){
+               qDebug()<< "Exception....";
+               }
+    }
+
+//tty_thread->mcuUartClose();
+tty_thread->exit();
+printf("[Stop]--->%d\n",App::test_result);
+
+
+    return App::test_result;
+}
+
+
+
+
+//--------------------------------------------------------------------------------
+bool MainBussniessView::calibrationTest(QString mItemName){
+
+                Name_tmp = mItemName;
+                tty_thread->setCommand(ONESTEP);
+                tty_thread->start();
+
+                App::test_finished=false;
+                bool bfinished = false;
+
+               while(!bfinished){
+                            App::workMode= 0x01;
+                            bfinished = App::test_finished;
+
+                            tty_thread->msleep(100);
+                            try {
+                            QCoreApplication::processEvents(QEventLoop::AllEvents, 500);
+                            }catch(...){
+                            qDebug()<< "Exception....";
+                            }
+                 }
+
+
+    tty_thread->exit();
+
+    printf("[calibrationTest ]--->ret:%d\n",App::test_result);
+    return  App::test_result;
+}
+
+
 
 void MainBussniessView::showTtyData(QString str)
 {
-     qDebug() << "showTtyData"<< str ;
+     qDebug() << "[showTtyData]-->"<< str ;
 }
 
 void MainBussniessView::showTtyAck(unsigned char state)
 {
     switch ( state )
     {
-            case  R_VERSION:
-           // ui->cmdShow->setText("ACK Read version information ok!!\n");
-            break;
+//            case  R_VERSION:
+//            break;
 
-            case R_SELFEX:
-           // ui->cmdShow->setText("ACK Self test success");
-            break;
+//            case R_SELFEX:
+//            break;
 
-            case R_OFW:
-           // ui->cmdShow->setText("Open the Door ACK");
-            break;
+//            case R_OFW:
+//            break;
 
-            case R_ETW:
-           // ui->cmdShow->setText("Close the Door ACK");
-            break;
+//            case R_ETW:
+//            break;
 
-            case R_SETUP:
-           // ui->cmdShow->setText("Setup up success ACK");
-        printf("showTtyAck:Setup up success ACK\n");
-            break;
+//            case R_SETUP:
+//            break;
 
-            case R_ONESTEP:
-           // ui->cmdShow->setText("One Step  success ACK");
-            break;
+//            case R_ONESTEP:
+//            break;
 
             case R_RESET:
-//            ui->cmdShow->setText("Machine Reset ACK");
-//          ui->label_state->setText("machine reset ok");
-
-//          ui->start->setEnabled(true);
-//             ui->white_Balance->setEnabled(true);
-//          ui->mechaniceTest->setEnabled(true);
+                emit reset_signal();
             break;
 
-            case R_ERR_1:
-         //   ui->cmdShow->setText("Receive Mechanical error ACK");
-            break;
+//            case R_ERR_1:
+//            break;
 
-            case R_WhiteBalance:
-//            ui->cmdShow->setText("White Balance  success ACK");
-//            ui->label_state->setText("White Balance  success ACK");
+//            case R_WhiteBalance:
+//            break;
 
-//            ui->start->setEnabled(true);
+    case R_STOP:
+             tty_thread->commandSend(RESET);
+           break;
 
-//            ui->mechaniceTest->setEnabled(true);
-//            ui->white_Balance->setEnabled(true);
-            break;
 
-            case R_STOP:
-//            ui->cmdShow->setText("Receive STOP   success ACK");
-//            ui->start->setEnabled(true);
-//             ui->backHome->setEnabled(true);
-//            ui->mechaniceTest->setEnabled(true);
-//            ui->white_Balance->setEnabled(true);
-//            ui->stop->setEnabled(false);
-            break;
+    case R_POWROFF:
+                emit Spoweroff();
+           break;
 
-            default:
-             break;
+
+          default:break;
 
     }
 }
-void MainBussniessView::sTimeSlot( int st)
-{
 
-//    QString s = QString::number(st, 10);
-//    ui->timeNumber->display(s);
-emit sTime(st);
+void MainBussniessView::sTimeSlot( int st){
+    emit mTime(st);
 }
-void MainBussniessView::showWb(unsigned int W, unsigned int R, unsigned int G, unsigned int B)// rec wb
+
+void MainBussniessView::showWb(WRGB_DAT wrgb_data)// rec wb
 {
     QString w,r,g,b;
 
-    printf(" ***********  showWb ************\n");
+    w =  QString::number(wrgb_data.W, 10);
+    r  =  QString::number(wrgb_data.R, 10);
+    g =  QString::number(wrgb_data.G, 10);
+    b =  QString::number(wrgb_data.B, 10);
 
-    w =  QString::number(W, 10);
-    r  =   QString::number(R, 10);
-    g =  QString::number(G, 10);
-    b =  QString::number(B, 10);
+    _result[0].white_value[0]=wrgb_data.W;
+    _result[0].white_value[1]=wrgb_data.R;
+    _result[0].white_value[2]=wrgb_data.G;
+    _result[0].white_value[3]=wrgb_data.B;
+}
 
 
+void MainBussniessView::showWrgb(WRGB_DAT wrgb_data,unsigned int count) {
 
-    result[0].white_value[0]=W;
-    result[0].white_value[1]=R;
-    result[0].white_value[2]=G;
-    result[0].white_value[3]=B;
+        _result[count].wrgb_value[0] = wrgb_data.W;
+        _result[count].wrgb_value[1] = wrgb_data.R;
+        _result[count].wrgb_value[2] = wrgb_data.G;
+        _result[count].wrgb_value[3] = wrgb_data.B;
+
+
+            if(count==0 && App::workMode==0x01) {
+
+                _result[0].white_value[0] =  App::white_value[0];
+                _result[0].white_value[1] =  App::white_value[1];
+                _result[0].white_value[2] =  App::white_value[2];
+                _result[0].white_value[3] =  App::white_value[3];
+
+                calibrationShow(_result);
+            }
+
+            else  if  (count==0 && App::workMode==0x02)
+            {
+                cac.interval_Calculation(_result);
+                qDebug() << "Show result:" + QString(_result[0].name) + QString(_result[0].unit) + QString(_result[0].position);
+                getTest_Result(_result);
+                showTest_Result();
+            }
 
 }
 
-void MainBussniessView::showWrgb(unsigned int W, unsigned int R, unsigned int G,unsigned int B)// rec rgb
-{
-                QString w,r,g,b;
-                printf(" ***********  showWrgb ************%d\n",receive_count);
+void MainBussniessView::calibrationQuery(QString name){
 
-                w =    QString::number(W, 10);
-                r  =    QString::number(R, 10);
-                g =    QString::number(G, 10);
-                b =    QString::number(B, 10);
+m_DatabaseHelper->ExecuteQueryModel(calibrateObserveTableModel,
+tr("select  ItemName,CalibrateValue,ResultValue,White,Red,Green,Blue,CalibrateDate from Calibrate_Oberservable_tb where  ItemName= '%1' order by CalibrateDate>'%2' desc,rowid desc").arg(name).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd")));
 
+calibrateObserveTableModel->setHeaderData(0,Qt::Horizontal,tr("Item"));
+calibrateObserveTableModel->setHeaderData(1,Qt::Horizontal,tr("Calibration"));
+calibrateObserveTableModel->setHeaderData(2,Qt::Horizontal,tr("Result"));
 
+calibrateObserveTableModel->setHeaderData(3,Qt::Horizontal,tr("White"));
+calibrateObserveTableModel->setHeaderData(4,Qt::Horizontal,tr("Red"));
+calibrateObserveTableModel->setHeaderData(5,Qt::Horizontal,tr("Green"));
+calibrateObserveTableModel->setHeaderData(6,Qt::Horizontal,tr("Blue"));
+calibrateObserveTableModel->setHeaderData(7,Qt::Horizontal,tr("Date"));
+emit CalibrateObserverveResult(calibrateObserveTableModel);
 
-                result[receive_count].wrgb_value[0]=W;
-                result[receive_count].wrgb_value[1]=R;
-                result[receive_count].wrgb_value[2]=G;
-                result[receive_count].wrgb_value[3]=B;
-
-                receive_count++;
-        if(receive_count >12)
-        {
-                            CalibrateObserverModel * resultModel = new CalibrateObserverModel();
-                            printf("MainBussniessView::showWrgb\n");
-                            unsigned int W=0,R=0,G=0,B=0,Ca=0;
-
-
-                             result[0].white_value[0] =  App::white_value[0];
-                             result[0].white_value[1] =  App::white_value[1];
-                             result[0].white_value[2] =  App::white_value[2];
-                             result[0].white_value[3] =  App::white_value[3];
-
-                            cac.calibrationCalculation(result,Name_tmp,R113,&W,&R,&G,&B,&Ca);
-                            printf("cac----> %d %d %d %d \n",W,R,G,B,Ca);
-
-                            resultModel->setWhite(W);
-                            resultModel->setRed(R);
-                            resultModel->setGreen(G);
-                            resultModel->setBlue(B);
-                            resultModel->setCalibrateValue(Ca);
-
-                            int nItemNo = 7;
-
-                            resultModel->setItemNo(nItemNo);
-
-
-                            resultModel->setItemName(QString(Name_tmp));
-
-                            QString ResultValue="-";
-                            resultModel->setResultValue(QString(ResultValue));
-                            resultModel->setCalibrateDate(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
-
-                            WhiteResultSave(resultModel);
-                            Test_WhiteResult(resultModel);
-
-                            delete resultModel;
-
-                            receive_count=0;
-        }
 }
-//-------------------------------------------------------------------------------------------------------------------------------------
-//void MainBussniessView::ShowTestResult(){
 
-//        m_DatabaseHelper->ExecuteQueryModel(showTabelModel, tr("select SampleNo, ItemName, SampleValue, Unit, SampleDate, SampleType, Barcode, HatchTime, IsPrint from TestResult_tb where SampleDate = '%1' order by SampleNo desc").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd")));
-//        model->setHeaderData(0,Qt::Horizontal,tr("用户号"));
-//        showTabelModel->setHeaderData(0,Qt::Horizontal,tr("样本号"));
-//        showTabelModel->setHeaderData(1,Qt::Horizontal,tr("项目名称"));
-//        showTabelModel->setHeaderData(2,Qt::Horizontal,tr("样本值"));
-//        showTabelModel->setHeaderData(3,Qt::Horizontal,tr("单位"));
-//        showTabelModel->setHeaderData(4,Qt::Horizontal,tr("样本日期"));
-//        showTabelModel->setHeaderData(5,Qt::Horizontal,tr("样本类型"));
-//        showTabelModel->setHeaderData(6,Qt::Horizontal,tr("条码"));
-//        showTabelModel->setHeaderData(7,Qt::Horizontal,tr("孵育时间"));
-//        showTabelModel->setHeaderData(8,Qt::Horizontal,tr("是否打印"));
-//        showTabelModel->setHeaderData(4,Qt::Horizontal,tr("项目编号"));
-//        showTabelModel->setHeaderData(8,Qt::Horizontal,tr("测试方法"));
-//        showTabelModel->setHeaderData(11,Qt::Horizontal,tr("标志"));
-//        emit testResult(showTabelModel);
-//}
+void MainBussniessView::calibrationShow(struct RESULT _result[]){
+
+    CalibrateObserverModel * resultModel = new CalibrateObserverModel();
+    cac.interval_Calculation(_result);
+
+    struct resultRGB  tmp;
+    cac.get_CalculationResult(_result,Name_tmp,&tmp);
+
+    printf("[calibrationShow]: W:%d , R:%d , G:%d  , B:%d ,result:%d, unit:%s\n",tmp.W,tmp.R,tmp.G,tmp.B,tmp.Result,tmp.unit);
+
+
+    resultModel->setWhite(tmp.W);
+    resultModel->setRed(tmp.R);
+    resultModel->setGreen(tmp.G);
+    resultModel->setBlue(tmp.B);
+    resultModel->setCalibrateValue(tmp.Result);
+    resultModel->setItemNo(App::serialNumber);
+    realTime_NuSave();
+    resultModel->setItemName(QString(Name_tmp));
+    QString ResultValue = QString(QLatin1String(tmp.unit));
+
+    resultModel->setResultValue(QString(ResultValue));
+    resultModel->setCalibrateDate(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+    calibrationResult_Save(resultModel);
+    calibrationResult_Show(resultModel);
+
+    delete resultModel;
+}
+
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------结果显示
+void MainBussniessView::showTest_Result(){
+
+
+         m_DatabaseHelper->ExecuteQueryModel(showTabeTest, tr("select SampleNo, ItemName, SampleValue, Unit,TbType, SampleDate from TestResult_tb where SampleNo > '0' order by SampleNo desc,rowid asc"));
+//else
+//         m_DatabaseHelper->ExecuteQueryModel(showTabeTest, tr("select SampleNo, ItemName, SampleValue, Unit,TbType, rowid from TestResult_tb where SampleDate = '%1' order by SampleNo desc,rowid asc"));
+//        int rowCount = showTabelModel->rowCount();
+//        for(int i=0; i<rowCount; i++){
+//            qDebug()
+//                      <<showTabelModel->record(i).value(0).toString()
+//                      <<"="
+//                     <<showTabelModel->record(i).value(1).toString()
+//                     <<"="
+//                    <<showTabelModel->record(i).value(2).toString()
+//                    <<"="
+//                   <<showTabelModel->record(i).value(3).toString()
+//                   <<"="
+//                  <<showTabelModel->record(i).value(4).toString()
+//                  <<"="
+//                 <<showTabelModel->record(i).value(5).toString()
+//                 <<"="
+//                   ;
+//        }
+            showTabeTest->setHeaderData(0,Qt::Horizontal,tr("No"));
+            showTabeTest->setHeaderData(1,Qt::Horizontal,tr("Item"));
+            showTabeTest->setHeaderData(2,Qt::Horizontal,tr("Result"));
+            showTabeTest->setHeaderData(3,Qt::Horizontal,tr("Unit"));
+            showTabeTest->setHeaderData(4,Qt::Horizontal,tr("Strip"));
+            showTabeTest->setHeaderData(5,Qt::Horizontal,tr("Date"));
+            // showTabelModel->setHeaderData(5,Qt::Horizontal,tr("样本类型"));
+            // showTabelModel->setHeaderData(6,Qt::Horizontal,tr("条码"));
+            // showTabelModel->setHeaderData(7,Qt::Horizontal,tr("孵育时间"));
+            //  showTabelModel->setHeaderData(8,Qt::Horizontal,tr("是否打印"));
+            //showTabelModel->setHeaderData(4,Qt::Horizontal,tr("项目编号"));
+            //showTabelModel->setHeaderData(8,Qt::Horizontal,tr("测试方法"));
+            //showTabelModel->setHeaderData(11,Qt::Horizontal,tr("标志"));
+        emit testResult(showTabeTest);
+}
+
 
 MainBussniessView::~MainBussniessView(){
-#ifndef TEST_SO
-    if(m_lib != NULL){
-        m_lib->unload();
-        delete m_lib;
-        m_lib = NULL;
-    }
-#endif
+
     if(m_DatabaseHelper != NULL){
         delete m_DatabaseHelper;
         m_DatabaseHelper = NULL;
@@ -661,10 +812,6 @@ MainBussniessView::~MainBussniessView(){
     if(sampleTableModel != NULL){
         delete sampleTableModel;
         sampleTableModel = NULL;
-    }
-    if(whiteTableModel != NULL){
-        delete whiteTableModel;
-        whiteTableModel = NULL;
     }
     if(itemTableModel != NULL){
         delete itemTableModel;
@@ -690,373 +837,167 @@ MainBussniessView::~MainBussniessView(){
         delete calibrateObserveTableModel;
         calibrateObserveTableModel = NULL;
     }
-    if(deleteTableModel != NULL){
-        delete deleteTableModel;
-        deleteTableModel = NULL;
-    }
-    //delete model;
-    if(pTestingThread != NULL){
-        delete pTestingThread;
+
+    if(testdeleteTableModel != NULL){
+        delete testdeleteTableModel;
+        testdeleteTableModel = NULL;
     }
 
 }
 
-bool MainBussniessView::PatientSaveAndUpdate(PatientModel patientModel){
-    if(patientTableModel != NULL){
-        delete patientTableModel;
-        patientTableModel = NULL;
-    }
-    patientTableModel = new QSqlTableModel();
-    m_DatabaseHelper->ExecuteTableModel(patientTableModel, tr("PatientInfo_tb"), tr("SampleNo = %1").arg(patientModel.getSampleNo()));
-    patientTableModel->setHeaderData(0,Qt::Horizontal,tr("样本号"));
-    patientTableModel->setHeaderData(1,Qt::Horizontal,tr("用户名"));
-    patientTableModel->setHeaderData(2,Qt::Horizontal,tr("年龄"));
-    patientTableModel->setHeaderData(3,Qt::Horizontal,tr("性别"));
-    patientTableModel->setHeaderData(4,Qt::Horizontal,tr("注册日期"));
-    QSqlRecord record = patientTableModel->record(0);
-    if(patientTableModel->rowCount() == 0){
-        record.setValue("SampleNo",patientModel.getSampleNo());
-        record.setValue("Name",patientModel.getName());
-        record.setValue("Age",patientModel.getAge());
-        record.setValue("Sex",patientModel.getSex());
-        record.setValue("RegisterDate", patientModel.getRegisterDateTime());
-        patientTableModel->insertRecord(0,record);
-        patientTableModel->submitAll();
-    }
-    else
-    {
-        patientTableModel->database().transaction(); //开始事务操作
-        record.setValue("SampleNo",patientModel.getSampleNo());
-        record.setValue("Name",patientModel.getName());
-        record.setValue("Age",patientModel.getAge());
-        record.setValue("Sex",patientModel.getSex());
-        record.setValue("RegisterDate",patientModel.getRegisterDateTime());
-        patientTableModel->setRecord(0,record);
-        if (patientTableModel->submitAll()) {
-            patientTableModel->database().commit(); //提交
-        } else {
-            patientTableModel->database().rollback(); //回滚
-        //QMessageBox::warning(this, tr("tableModel") ,tr("数据库错误: %1"));
-        }
-    }
-    emit testResult(patientTableModel);
-    return false;
-}
-
-void MainBussniessView::PatientDelete(int row){
-    if(patientTableModel != NULL){
-        patientTableModel->database().transaction();//开始事务操作
-        patientTableModel->removeRow(row);
-        //int ok = QMessageBox::warning((QWidget*)p, tr("删除当前行!"),tr("你确定”“删除当前行吗？"),QMessageBox::Yes,QMessageBox::No);
-        //int nResult = myHelper::ShowMessageBoxQuesion(tr("你确定”“删除当前行吗?"));
-int nResult = 0;
-        if(nResult == 0){//
-            patientTableModel->revertAll();//如果不删除，则撤销
-        }else
-        {
-            if (patientTableModel->submitAll())
-            {
-                patientTableModel->database().commit();//提交
-            }
-            else {
-                patientTableModel->database().rollback();//回滚
-                //QMessageBox::warning(this,tr("tableModel"),tr("数据库错误: %1").arg(model->lastError().text()));
-            }
-        }
-    }
-}
-
-void MainBussniessView::PatientBySampleNo(int nSampleNo){
-    if(patientTableModel != NULL){
-        delete patientTableModel;
-    }
-    patientTableModel = new QSqlTableModel();
-    m_DatabaseHelper->ExecuteTableModel(patientTableModel, tr("PatientInfo_tb"), QObject::tr("SampleNo = %1").arg(nSampleNo));
-    QSqlRecord record = patientTableModel->record(0);
-    PatientModel patientModel;
-    if(record.count() > 0){
-        patientModel.setName(record.value("Name").toString());
-        patientModel.setAge(record.value("Age").toInt());
-        patientModel.setSex(record.value("Sex").toInt());
-        patientModel.setRegisterDateTime("RegisterDate");
-        emit patientInfo(patientModel);
-    }
-    Query_SampleResult(nSampleNo, QDateTime::currentDateTime().toString("yyyy-MM-dd"), QDateTime::currentDateTime().toString("yyyy-MM-dd 23:59:59"));
-
-}
-//query 1
-void MainBussniessView::Query_DateBySampleNoAndDate(int sampleNo, QString sBeginDate, QString sEndDate){
-    QString strSQL = "";
-    if(sampleNo > 0){
-        strSQL.append(QObject::tr("SampleNo = %1 and ").arg(sampleNo));
-    }
-    strSQL = strSQL.append("RegisterDate >= '%2' and RegisterDate <= '%3'").arg(sBeginDate).arg(sEndDate);
-    if(queryTableModel != NULL){
-        delete queryTableModel;
-    }
-    queryTableModel = new QSqlTableModel();
-    m_DatabaseHelper->ExecuteTableModel(queryTableModel, tr("PatientInfo_tb"), strSQL);
-    queryTableModel->setHeaderData(0,Qt::Horizontal,tr("样本号"));
-    queryTableModel->setHeaderData(1,Qt::Horizontal,tr("用户名"));
-    queryTableModel->setHeaderData(2,Qt::Horizontal,tr("年龄"));
-    queryTableModel->setHeaderData(3,Qt::Horizontal,tr("性别"));
-    queryTableModel->setHeaderData(4,Qt::Horizontal,tr("注册日期"));
-    emit PatientResult(queryTableModel);
-}
 
 void MainBussniessView::Query_SampleResult(int sampleNo, QString sBeginDate, QString sEndDate){
-    QString strSQL = (QObject::tr("SampleNo = %1 and SampleDate >= '%2' and SampleDate <= '%3'").arg(sampleNo).arg(sBeginDate).arg(sEndDate));
+
+    QString strSQL = (tr("SampleNo >= ' %1'   and    SampleDate > '%2' and SampleDate < '%3'").arg(sampleNo).arg(sBeginDate).arg(sEndDate));
 
     if(sampleTableModel != NULL){
         delete sampleTableModel;
+           qDebug()<<" Query_SampleResult delete...";
     }
     sampleTableModel = new QSqlTableModel();
-    m_DatabaseHelper->ExecuteTableModel(sampleTableModel, tr("TestResult_tb"), strSQL);
-    //sampleTableModel->setHeaderData(0,Qt::Horizontal,tr("用户号"));
-    sampleTableModel->setHeaderData(0,Qt::Horizontal,tr("样本号"));
-    sampleTableModel->setHeaderData(1,Qt::Horizontal,tr("孵育时间"));
-    sampleTableModel->setHeaderData(2,Qt::Horizontal,tr("样本值"));
-    sampleTableModel->setHeaderData(3,Qt::Horizontal,tr("样本类型"));
-    sampleTableModel->setHeaderData(4,Qt::Horizontal,tr("项目编号"));
-    sampleTableModel->setHeaderData(5,Qt::Horizontal,tr("项目名称"));
-    sampleTableModel->setHeaderData(6,Qt::Horizontal,tr("单位"));
-    sampleTableModel->setHeaderData(7,Qt::Horizontal,tr("条码"));
-    sampleTableModel->setHeaderData(8,Qt::Horizontal,tr("测试方法"));
-    sampleTableModel->setHeaderData(9,Qt::Horizontal,tr("样本日期"));
-    sampleTableModel->setHeaderData(10,Qt::Horizontal,tr("是否打印"));
-    sampleTableModel->setHeaderData(11,Qt::Horizontal,tr("标志"));
-    emit testResult(sampleTableModel);
-
+    m_DatabaseHelper->ExecuteTableModel(sampleTableModel, ("TestResult_tb"), strSQL);
+    sampleTableModel->setHeaderData(0,Qt::Horizontal,tr("No"));
+    sampleTableModel->setHeaderData(1,Qt::Horizontal,tr("Reaction time"));
+    sampleTableModel->setHeaderData(2,Qt::Horizontal,tr("Result"));
+    sampleTableModel->setHeaderData(3,Qt::Horizontal,tr("species"));
+    sampleTableModel->setHeaderData(4,Qt::Horizontal,tr("No"));
+    sampleTableModel->setHeaderData(5,Qt::Horizontal,tr("Item"));
+    sampleTableModel->setHeaderData(6,Qt::Horizontal,tr("Unit"));
+    sampleTableModel->setHeaderData(7,Qt::Horizontal,tr("Strip"));
+    sampleTableModel->setHeaderData(8,Qt::Horizontal,tr("Test mode"));
+    sampleTableModel->setHeaderData(9,Qt::Horizontal,tr("Time"));
+    sampleTableModel->setHeaderData(10,Qt::Horizontal,tr("printf"));
+    sampleTableModel->setHeaderData(11,Qt::Horizontal,tr("flag"));
+    emit SampleResult(sampleTableModel);
 }
 
+
+
+void MainBussniessView::Query_SampleResult_no(int sampleNo, QString sBeginDate, QString sEndDate){
+    QString strSQL = (tr("SampleNo = %1 and SampleDate >= '%2' and SampleDate <= '%3'").arg(sampleNo).arg(sBeginDate).arg(sEndDate));
+
+    if(sampleTableModel != NULL){
+        qDebug()<<" Query_SampleResult_no delete...";
+        delete  sampleTableModel;
+    }
+    sampleTableModel  = new QSqlTableModel();
+    m_DatabaseHelper->ExecuteTableModel(sampleTableModel, tr("TestResult_tb"), strSQL);
+    sampleTableModel->setHeaderData(0,Qt::Horizontal,tr("No"));
+    sampleTableModel->setHeaderData(1,Qt::Horizontal,tr("Reaction time"));
+    sampleTableModel->setHeaderData(2,Qt::Horizontal,tr("Result"));
+    sampleTableModel->setHeaderData(3,Qt::Horizontal,tr("species"));
+    sampleTableModel->setHeaderData(4,Qt::Horizontal,tr("No"));
+    sampleTableModel->setHeaderData(5,Qt::Horizontal,tr("Item"));
+    sampleTableModel->setHeaderData(6,Qt::Horizontal,tr("Unit"));
+    sampleTableModel->setHeaderData(7,Qt::Horizontal,tr("Strips"));
+    sampleTableModel->setHeaderData(8,Qt::Horizontal,tr("testing"));
+    sampleTableModel->setHeaderData(9,Qt::Horizontal,tr("Time"));
+    sampleTableModel->setHeaderData(10,Qt::Horizontal,tr("printf"));
+    sampleTableModel->setHeaderData(11,Qt::Horizontal,tr("flag"));
+    emit SampleResult(sampleTableModel);
+}
+
+
 int MainBussniessView::GetItemList(QList<ItemModel>* lstItem){
-    QString strSQL = QObject::tr("select * from item_tb where regeant_model = %1").arg(SystemConfig::regeant_Model);
+  QString strSQL;
+  //qDebug()<<"[GetItemList]"<<App::TestPapertype;
+  if (0 == QString::compare("11-III",App::TestPapertype)){
+      strSQL = QObject::tr("select * from item_tb_11_3 where regeant_model = %1").arg(SystemConfig::regeant_Model);
+  }else if (0 == QString::compare("10T",App::TestPapertype)){
+      strSQL = QObject::tr("select * from item_tb_10T where regeant_model = %1").arg(SystemConfig::regeant_Model);
+  }else if (0 == QString::compare("12MA",App::TestPapertype)){
+      strSQL = QObject::tr("select * from item_tb_12MA where regeant_model = %1").arg(SystemConfig::regeant_Model);
+  }
+
     QSqlQuery query = m_DatabaseHelper->ExecuteSqlQuery(strSQL);
     int i = 0;
     while(query.next()){
-        ItemModel* itemModel = new ItemModel();
-        itemModel->setRegeantModel(query.value(0).toInt());
-        itemModel->setItemNo(query.value(1).toInt());
-        itemModel->setItemName(query.value(2).toString());
-        lstItem->append(*itemModel);
+        ItemModel itemModel ;//= new ItemModel();
+        itemModel.setRegeantModel(query.value(0).toInt());
+        itemModel.setItemNo(query.value(1).toInt());
+        itemModel.setItemName(query.value(2).toString());
+        lstItem->append(itemModel);
+        qDebug()<<"debug----->GetItemList"<< query.value(0).toInt() << query.value(1).toInt() <<query.value(2).toString() ;
         i++;
     }
     return i;
 }
-int MainBussniessView::GetItemNoByItemName(QString itemName){
+int MainBussniessView::GetItemNoByItemName_11_3(QString itemName){
     int itemNo = 0;
-    QSqlQuery record = m_DatabaseHelper->ExecuteSqlQuery(QObject::tr("select * from item_tb where ItemName = '%1' and regeant_model = %2").arg(itemName).arg(SystemConfig::regeant_Model));
+    QSqlQuery record = m_DatabaseHelper->ExecuteSqlQuery(QObject::tr("select * from item_tb_11_3 where ItemName = '%1' and regeant_model = %2").arg(itemName).arg(SystemConfig::regeant_Model));
     if(record.next()){
         itemNo = record.value(1).toInt();
     }
     return itemNo;
 }
 
-void MainBussniessView::QualityControlItemSave(QC_SubItemModel subItemModel){
-    if(qcItemTableModel != NULL){
-        delete qcItemTableModel;
+int MainBussniessView::GetItemNoByItemName_10T(QString itemName){
+    int itemNo = 0;
+    QSqlQuery record = m_DatabaseHelper->ExecuteSqlQuery(QObject::tr("select * from item_tb_10T where ItemName = '%1' and regeant_model = %2").arg(itemName).arg(SystemConfig::regeant_Model));
+    if(record.next()){
+        itemNo = record.value(1).toInt();
     }
-    qcItemTableModel = new QSqlTableModel();
-    m_DatabaseHelper->ExecuteTableModel(qcItemTableModel, tr("QC_Sub_tb"), QObject::tr("QC_Date = '%1'").arg(subItemModel.getQc_Date()));
-    QSqlRecord record = qcItemTableModel->record();
-    if(qcItemTableModel->rowCount() == 0){
-        record.setValue("ItemNo",subItemModel.getItemNo());
-        record.setValue("QC_Value",subItemModel.getQc_Value());
-        record.setValue("QC_Date",subItemModel.getQc_Date());
-        qcItemTableModel->insertRecord(0,record);
-        qcItemTableModel->submitAll();
-    }
-    else
-    {
-        qcItemTableModel->database().transaction(); //开始事务操作
-        record.setValue("ItemNo",subItemModel.getItemNo());
-        record.setValue("QC_Value",subItemModel.getQc_Value());
-        record.setValue("QC_Date",subItemModel.getQc_Date());
-        qcItemTableModel->setRecord(0,record);
-        if (qcItemTableModel->submitAll()) {
-            qcItemTableModel->database().commit(); //提交
-        } else {
-            qcItemTableModel->database().rollback(); //回滚
-        //QMessageBox::warning(this, tr("tableModel") ,tr("数据库错误: %1"));
-        }
-    }
-    emit Qc_SubItemResult(qcItemTableModel);
+    return itemNo;
 }
 
-void MainBussniessView::Qc_Query(int itemNo, QSqlTableModel *tableModel){
-    m_DatabaseHelper->ExecuteTableModel(tableModel, tr("QC_Sub_tb"), QObject::tr("itemNo = %1").arg(itemNo));
+int MainBussniessView::GetItemNoByItemName_12MA(QString itemName){
+    int itemNo = 0;
+    QSqlQuery record = m_DatabaseHelper->ExecuteSqlQuery(QObject::tr("select * from item_tb_12MA where ItemName = '%1' and regeant_model = %2").arg(itemName).arg(SystemConfig::regeant_Model));
+    if(record.next()){
+        itemNo = record.value(1).toInt();
+    }
+    return itemNo;
+}
+
+
+void MainBussniessView::GetItemName_11_3(QSqlQueryModel *tableModel){
+    m_DatabaseHelper->ExecuteQueryModel(tableModel, tr("select ItemName from item_tb_11_3 where regeant_model = %1").arg(SystemConfig::regeant_Model));//11-3
     return;
 }
 
-void MainBussniessView::Qc_MainItemSave(QualityControlModel qcModel, float &cvValue){
-
-    qcItemTableModel = new QSqlTableModel();
-    //double cvValue = 0.0f;
-    m_DatabaseHelper->ExecuteTableModel(qcItemTableModel, tr("QualityControl_tb"), QObject::tr("ItemNo = %1 and BatchNo = '%2'").arg(qcModel.getItemNo()).arg(qcModel.getBatchNo()));
-    QSqlRecord record = qcItemTableModel->record();
-    if(qcItemTableModel->rowCount() == 0){
-        record.setValue("ItemNo",qcModel.getItemNo());
-        record.setValue("BatchNo",qcModel.getBatchNo());
-        record.setValue("TargetValue",qcModel.getTargetValue());
-        cvValue = getCalculateCV(qcModel.plstQcModel);
-        record.setValue("Qc_CvValue", cvValue);
-        qcItemTableModel->insertRecord(0,record);
-        qcItemTableModel->submitAll();
-    }
-    else
-    {
-        qcItemTableModel->database().transaction(); //开始事务操作
-        record.setValue("ItemNo",qcModel.getItemNo());
-        record.setValue("BatchNo",qcModel.getBatchNo());
-        record.setValue("TargetValue",qcModel.getTargetValue());
-        cvValue = getCalculateCV(qcModel.plstQcModel);
-        record.setValue("Qc_CvValue", cvValue);
-        qcItemTableModel->setRecord(0,record);
-        if (qcItemTableModel->submitAll()) {
-            qcItemTableModel->database().commit(); //提交
-        } else {
-            qcItemTableModel->database().rollback(); //回滚
-        //QMessageBox::warning(this, tr("tableModel") ,tr("数据库错误: %1"));
-        }
-    }
-    delete qcItemTableModel;
-    qcItemTableModel = NULL;
+void MainBussniessView::GetItemName_10T(QSqlQueryModel *tableModel){
+    m_DatabaseHelper->ExecuteQueryModel(tableModel, tr("select ItemName from item_tb_10T where regeant_model = %1").arg(SystemConfig::regeant_Model));
+    return;
 }
-
-double MainBussniessView::getCalculateCV(QList<double> lstQcValue){
-    float average = 0.0f;int number = 0;
-    for(number = 0;number < lstQcValue.count();number++){
-        average += lstQcValue[number];
-    }
-    if(number > 0){
-        average /= number;
-    }
-    //计算质控量的SD
-    double sd = 0;
-    for (int i = 0; i < number; i++)
-    {
-        if (number == 0) break;
-           sd += qPow((lstQcValue[i] - average), 2);
-    }
-    if (number != 0) {
-        sd /= number;
-    }
-    sd = qSqrt(sd);
-    //求偏移值CV
-    double cv = sd / average * 100;
-    return cv;
-
-}
-void MainBussniessView::Item_Save(ItemModel saveModel){
-    if(itemTableModel != NULL){
-        delete itemTableModel;
-        itemTableModel = NULL;
-    }
-    itemTableModel = new QSqlTableModel();
-    m_DatabaseHelper->ExecuteTableModel(itemTableModel, tr("item_tb"), QObject::tr("ItemNo = '%1' and regeant_model = %2").arg(saveModel.getItemNo()).arg(SystemConfig::regeant_Model));
-    QSqlRecord record = itemTableModel->record();
-    if(itemTableModel->rowCount() == 0){
-        record.setValue("regeant_model", saveModel.getRegeantModel());
-        record.setValue("ItemNo",saveModel.getItemNo());
-        record.setValue("ItemName",saveModel.getItemName());
-        record.setValue("flag",saveModel.getFlag());
-        itemTableModel->insertRecord(0,record);
-        itemTableModel->submitAll();
-    }
-    else
-    {
-        itemTableModel->database().transaction(); //开始事务操作
-        record.setValue("regeant_model", saveModel.getRegeantModel());
-        record.setValue("ItemNo",saveModel.getItemNo());
-        record.setValue("ItemName",saveModel.getItemName());
-        record.setValue("flag",saveModel.getFlag());
-        itemTableModel->setRecord(0,record);
-        if (itemTableModel->submitAll()) {
-            itemTableModel->database().commit(); //提交
-        } else {
-            itemTableModel->database().rollback(); //回滚
-        //QMessageBox::warning(this, tr("tableModel") ,tr("数据库错误: %1"));
-        }
-    }
-    emit Item_Result(itemTableModel);
-}
-void MainBussniessView::Item_Query(QSqlQueryModel *tableModel){
-     m_DatabaseHelper->ExecuteQueryModel(tableModel, tr("select ItemNo, ItemName, flag from Item_tb where regeant_model = %1").arg(SystemConfig::regeant_Model));
-     return;
-}
-
-void MainBussniessView::GetItemName(QSqlQueryModel *tableModel){
-    m_DatabaseHelper->ExecuteQueryModel(tableModel, tr("select ItemName from Item_tb where regeant_model = %1").arg(SystemConfig::regeant_Model));
+void MainBussniessView::GetItemName_12MA(QSqlQueryModel *tableModel){
+    m_DatabaseHelper->ExecuteQueryModel(tableModel, tr("select ItemName from item_tb_12MA where regeant_model = %1").arg(SystemConfig::regeant_Model));
     return;
 }
 
-void MainBussniessView::SampleType_Query(QSqlTableModel* tableModel){
-    m_DatabaseHelper->ExecuteQueryModel(tableModel, tr("select * from SampleType_tb"));
+
+
+
+void MainBussniessView::Calibrate_Query_11_3(QSqlQueryModel *tableModel, int nItemNo){
+    m_DatabaseHelper->ExecuteQueryModel(tableModel, QObject::tr("select * from Calibrate_tb_11_3 where ItemNo = %1").arg(nItemNo));
+    return;
+}
+void MainBussniessView::Calibrate_Query_10T(QSqlQueryModel *tableModel, int nItemNo){
+    m_DatabaseHelper->ExecuteQueryModel(tableModel, QObject::tr("select * from Calibrate_tb_10T where ItemNo = %1").arg(nItemNo));
+    return;
+}
+void MainBussniessView::Calibrate_Query_12MA(QSqlQueryModel *tableModel, int nItemNo){
+    m_DatabaseHelper->ExecuteQueryModel(tableModel, QObject::tr("select * from Calibrate_tb_12MA where ItemNo = %1").arg(nItemNo));
     return;
 }
 
-void MainBussniessView::ItemParameter_Query(QSqlQueryModel *tableModel){
-    m_DatabaseHelper->ExecuteQueryModel(tableModel, tr("select ItemNo, ItemName, ItemProperty, RefMin, RefMax, Unit from ItemParameter_tb where regeant_model = %1").arg(SystemConfig::regeant_Model));
-    return;
-}
 
-void MainBussniessView:: ItemParameter_Save(ItemParameterModel parameterModel){
-    if(itemTableModel != NULL){
-        delete itemTableModel;
-    }
-    itemTableModel = new QSqlTableModel();
-    m_DatabaseHelper->ExecuteTableModel(itemTableModel, tr("itemParameter_tb"), QObject::tr("ItemNo = '%1' and regeant_model = %2").arg(parameterModel.getItemNo()).arg(SystemConfig::regeant_Model));
-    QSqlRecord record = itemTableModel->record();
-    if(itemTableModel->rowCount() == 0){
-        record.setValue("regeant_model", parameterModel.getRegeantModel());
-        record.setValue("ItemNo",parameterModel.getItemNo());
-        record.setValue("ItemName",parameterModel.getItemName());
-        record.setValue("ItemProperty",parameterModel.getItemProperty());
-        record.setValue("RefMin",parameterModel.getRefMin());
-        record.setValue("RefMax",parameterModel.getRefMax());
-        record.setValue("Unit",parameterModel.getUnit());
-        record.setValue("CheckWay",parameterModel.getCheckWay());
-        record.setValue("PostSequence",parameterModel.getPostSequence());
-        itemTableModel->insertRecord(0,record);
-        itemTableModel->submitAll();
-    }
-    else
-    {
-        itemTableModel->database().transaction(); //开始事务操作
-        record.setValue("regeant_model", parameterModel.getRegeantModel());
-        record.setValue("ItemNo",parameterModel.getItemNo());
-        record.setValue("ItemName",parameterModel.getItemName());
-        record.setValue("ItemProperty",parameterModel.getItemProperty());
-        record.setValue("RefMin",parameterModel.getRefMin());
-        record.setValue("RefMax",parameterModel.getRefMax());
-        record.setValue("Unit",parameterModel.getUnit());
-        record.setValue("CheckWay",parameterModel.getCheckWay());
-        record.setValue("PostSequence",parameterModel.getPostSequence());
-        itemTableModel->setRecord(0,record);
-        if (itemTableModel->submitAll()) {
-            itemTableModel->database().commit(); //提交
-        } else {
-            itemTableModel->database().rollback(); //回滚
-        //QMessageBox::warning(this, tr("tableModel") ,tr("数据库错误: %1"));
-        }
-    }
-    emit ItemParameter_Result(itemTableModel);
-}
 
-void MainBussniessView::Calibrate_Query(QSqlQueryModel *tableModel, int nItemNo){
-    m_DatabaseHelper->ExecuteQueryModel(tableModel, QObject::tr("select * from Calibrate_tb where ItemNo = %1").arg(nItemNo));
-    return;
-}
 
-void MainBussniessView::Calibrate_Save(CalibrateModel calibrateModel){
-    /*if(calibrateTableModel != NULL){
-        delete calibratTableModel;
-        calibratTableModel = NULL;
-    }*/
-    QSqlTableModel *calibrateTableModel = new QSqlTableModel();
-    m_DatabaseHelper->ExecuteTableModel(calibrateTableModel, tr("Calibrate_tb"), QObject::tr("ItemNo = %1").arg(calibrateModel.getItemNo()));
-    QSqlRecord record = calibrateTableModel->record();
-    if(calibrateTableModel->rowCount() == 0){
+
+void MainBussniessView::calibrateSave(CalibrateModel calibrateModel){
+
+        QSqlTableModel calibrateTableModel;// = new QSqlTableModel();
+
+     if (0 == QString::compare("11-III",App::TestPapertype)){
+        m_DatabaseHelper->ExecuteTableModel(&calibrateTableModel, tr("Calibrate_tb_11_3"), QObject::tr("ItemNo = %1").arg(calibrateModel.getItemNo()));
+    }else   if (0 == QString::compare("10T",   App::TestPapertype)){
+        m_DatabaseHelper->ExecuteTableModel(&calibrateTableModel, tr("Calibrate_tb_10T"), QObject::tr("ItemNo = %1").arg(calibrateModel.getItemNo()));
+     }else if (0 == QString::compare("12MA", App::TestPapertype) ){
+        m_DatabaseHelper->ExecuteTableModel(&calibrateTableModel, tr("Calibrate_tb_12MA"), QObject::tr("ItemNo = %1").arg(calibrateModel.getItemNo()));
+     }
+
+    QSqlRecord record = calibrateTableModel.record();
+    if(calibrateTableModel.rowCount() == 0){
         record.setValue("ItemNo",calibrateModel.getItemNo());
         record.setValue("CalibrateValue0",calibrateModel.getCalibrateValue0());
         record.setValue("CalibrateValue1",calibrateModel.getCalibrateValue1());
@@ -1075,12 +1016,12 @@ void MainBussniessView::Calibrate_Save(CalibrateModel calibrateModel){
         record.setValue("ResultValue5",calibrateModel.getLaderValue5());
         record.setValue("ResultValue6",calibrateModel.getLaderValue6());
         record.setValue("ResultValue7",calibrateModel.getLaderValue7());
-        calibrateTableModel->insertRecord(0,record);
-        calibrateTableModel->submitAll();
+        calibrateTableModel.insertRecord(0,record);
+        calibrateTableModel.submitAll();
     }
     else
     {
-        calibrateTableModel->database().transaction(); //开始事务操作
+        calibrateTableModel.database().transaction(); //开始事务操作
         record.setValue("ItemNo",calibrateModel.getItemNo());
         record.setValue("CalibrateValue0",calibrateModel.getCalibrateValue0());
         record.setValue("CalibrateValue1",calibrateModel.getCalibrateValue1());
@@ -1099,100 +1040,26 @@ void MainBussniessView::Calibrate_Save(CalibrateModel calibrateModel){
         record.setValue("ResultValue5",calibrateModel.getLaderValue5());
         record.setValue("ResultValue6",calibrateModel.getLaderValue6());
         record.setValue("ResultValue7",calibrateModel.getLaderValue7());
-        calibrateTableModel->setRecord(0,record);
-        if (calibrateTableModel->submitAll()) {
-            calibrateTableModel->database().commit(); //提交
+        calibrateTableModel.setRecord(0,record);
+        if (calibrateTableModel.submitAll()) {
+            calibrateTableModel.database().commit(); //提交
         } else {
-            calibrateTableModel->database().rollback(); //回滚
+            calibrateTableModel.database().rollback(); //回滚
         //QMessageBox::warning(this, tr("tableModel") ,tr("数据库错误: %1"));
         }
     }
-    delete calibrateTableModel;
+    //delete calibrateTableModel;
 
 }
 
-void MainBussniessView::Calibrate_Observerve_Query( QString beginDate, QString endDate){
 
-    QString strSQL = (QObject::tr("CalibrateDate >= '%1' and CalibrateDate <= '%2'").arg(beginDate).arg(endDate));
+void MainBussniessView::testResult_Save(TestResultModel* resultModel){
 
-    m_DatabaseHelper->ExecuteTableModel(calibrateObserveTableModel, tr("Calibrate_Oberservable_tb"), strSQL);
-    calibrateObserveTableModel->setHeaderData(0,Qt::Horizontal,tr("白"));
-    calibrateObserveTableModel->setHeaderData(1,Qt::Horizontal,tr("红"));
-    calibrateObserveTableModel->setHeaderData(2,Qt::Horizontal,tr("绿"));
-    calibrateObserveTableModel->setHeaderData(3,Qt::Horizontal,tr("蓝"));
-    calibrateObserveTableModel->setHeaderData(4,Qt::Horizontal,tr("校准值"));
-    calibrateObserveTableModel->setHeaderData(5,Qt::Horizontal,tr("测试值"));
-    calibrateObserveTableModel->setHeaderData(6,Qt::Horizontal,tr("校准时间"));
-    calibrateObserveTableModel->setHeaderData(7,Qt::Horizontal,tr("项目编号"));
-    calibrateObserveTableModel->setHeaderData(8,Qt::Horizontal,tr("项目名称"));
-    emit CalibrateObserverveResult(calibrateObserveTableModel);
-}
+    QSqlTableModel testTableModel;
+    m_DatabaseHelper->ExecuteTableModel(&testTableModel, tr("TestResult_tb"), QObject::tr("where SampleNo = :SampleNo and ItemName = :ItemName and SampleDate = :SampleDate").arg(resultModel->getSampleNo()).arg(resultModel->getItemName()).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd")));
 
-void MainBussniessView::Query_TestResult(int sampleNo, QString sBeginDate, QString sEndDate){
-
-    QString strSQL = (QObject::tr("SampleNo = %1 and SampleDate >= '%2' and SampleDate <= '%3'").arg(sampleNo).arg(sBeginDate).arg(sEndDate));
-    if(queryTableModel != NULL)
-    {
-        delete queryTableModel;
-    }
-    queryTableModel = new QSqlTableModel();
-    m_DatabaseHelper->ExecuteTableModel(queryTableModel, tr("TestResult_tb"), strSQL);
-    //model->setHeaderData(0,Qt::Horizontal,tr("用户号"));
-    queryTableModel->setHeaderData(0,Qt::Horizontal,tr("样本号"));
-    queryTableModel->setHeaderData(1,Qt::Horizontal,tr("孵育时间"));
-    queryTableModel->setHeaderData(2,Qt::Horizontal,tr("样本值"));
-    queryTableModel->setHeaderData(3,Qt::Horizontal,tr("样本类型"));
-    queryTableModel->setHeaderData(4,Qt::Horizontal,tr("项目编号"));
-    queryTableModel->setHeaderData(5,Qt::Horizontal,tr("项目名称"));
-    queryTableModel->setHeaderData(6,Qt::Horizontal,tr("单位"));
-    queryTableModel->setHeaderData(7,Qt::Horizontal,tr("条码"));
-    queryTableModel->setHeaderData(8,Qt::Horizontal,tr("测试方法"));
-    queryTableModel->setHeaderData(9,Qt::Horizontal,tr("样本日期"));
-    queryTableModel->setHeaderData(10,Qt::Horizontal,tr("是否打印"));
-    queryTableModel->setHeaderData(11,Qt::Horizontal,tr("标志"));
-    emit QuerySampleResult(queryTableModel);
-}
-
-void MainBussniessView::SampleTytpeSave(SampleTypeModel sampleTypeModel){
-
-    if(sampleTypeTableModel != NULL){
-        delete sampleTypeTableModel;
-        sampleTypeTableModel = NULL;
-    }
-    sampleTypeTableModel = new QSqlTableModel();
-    m_DatabaseHelper->ExecuteTableModel(sampleTypeTableModel, tr("SampleType_tb"), QObject::tr("SampleTypeNo = %1").arg(sampleTypeModel.getSampleTypeNo()));
-    QSqlRecord record = sampleTypeTableModel->record();
-    if(sampleTypeTableModel->rowCount() == 0){
-        record.setValue("SampleTypeNo",sampleTypeModel.getSampleTypeNo());
-        record.setValue("SampleTypeName",sampleTypeModel.getSampleTypeName());
-        record.setValue("SampleFlag",sampleTypeModel.getSampleFlag());
-
-        sampleTypeTableModel->insertRecord(0,record);
-        sampleTypeTableModel->submitAll();
-    }
-    else
-    {
-        sampleTypeTableModel->database().transaction(); //开始事务操作
-        record.setValue("SampleTypeNo",sampleTypeModel.getSampleTypeNo());
-        record.setValue("SampleTypeName",sampleTypeModel.getSampleTypeName());
-        record.setValue("SampleFlag",sampleTypeModel.getSampleFlag());
-        sampleTypeTableModel->setRecord(0,record);
-        if (sampleTypeTableModel->submitAll()) {
-            sampleTypeTableModel->database().commit(); //提交
-        } else {
-            sampleTypeTableModel->database().rollback(); //回滚
-        //QMessageBox::warning(this, tr("tableModel") ,tr("数据库错误: %1"));
-        }
-    }
-    emit SampleType_Result(sampleTypeTableModel);
-}
-
-void MainBussniessView::TestResultSave(TestResultModel* resultModel){
-
-    QSqlTableModel *testTableModel = new QSqlTableModel();
-    m_DatabaseHelper->ExecuteTableModel(testTableModel, tr("TestResult_tb"), QObject::tr("where SampleNo = :SampleNo and ItemName = :ItemName and SampleDate = :SampleDate").arg(resultModel->getSampleNo()).arg(resultModel->getItemName()).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd")));
-    QSqlRecord record = testTableModel->record();
-    if(testTableModel->rowCount() == 0){
+    QSqlRecord record = testTableModel.record();
+    if(testTableModel.rowCount() == 0){
 
         record.setValue("SampleNo", resultModel->getSampleNo());
         record.setValue("HatchTime", resultModel->getHatchTime());
@@ -1201,17 +1068,17 @@ void MainBussniessView::TestResultSave(TestResultModel* resultModel){
         record.setValue("ItemNo", resultModel->getItemNo());
         record.setValue("ItemName", resultModel->getItemName());
         record.setValue("Unit", resultModel->getUnit());
-        record.setValue("Barcode", resultModel->getBarcode());
+        record.setValue("TbType", resultModel->getBarcode());
         record.setValue("TestWay", resultModel->getTestWay());
         record.setValue("SampleDate", resultModel->getSampleDate());
         record.setValue("IsPrint", resultModel->getIsPrint());
         record.setValue("Flag", resultModel->getFlag());
-        testTableModel->insertRecord(0,record);
-        testTableModel->submitAll();
+        testTableModel.insertRecord(0,record);
+        testTableModel.submitAll();
     }
     else
     {
-        testTableModel->database().transaction(); //开始事务操作
+        testTableModel.database().transaction(); //开始事务操作
         record.setValue("SampleNo", resultModel->getSampleNo());
         record.setValue("HatchTime", resultModel->getHatchTime());
         record.setValue("SampleValue", resultModel->getSampleValue());
@@ -1219,70 +1086,83 @@ void MainBussniessView::TestResultSave(TestResultModel* resultModel){
         record.setValue("ItemNo", resultModel->getItemNo());
         record.setValue("ItemName", resultModel->getItemName());
         record.setValue("Unit", resultModel->getUnit());
-        record.setValue("Barcode", resultModel->getBarcode());
+        record.setValue("TbType", resultModel->getBarcode());
         record.setValue("TestWay", resultModel->getTestWay());
         record.setValue("SampleDate", resultModel->getSampleDate());
         record.setValue("IsPrint", resultModel->getIsPrint());
         record.setValue("Flag", resultModel->getFlag());
-        testTableModel->setRecord(0,record);
-        if (testTableModel->submitAll()) {
-            testTableModel->database().commit(); //提交
+        testTableModel.setRecord(0,record);
+        if (testTableModel.submitAll()) {
+            qDebug() <<"debug---->TestResultSave-->3";
+            testTableModel.database().commit(); //提交
         } else {
-            testTableModel->database().rollback(); //回滚
+            testTableModel.database().rollback(); //回滚
         //QMessageBox::warning(this, tr("tableModel") ,tr("数据库错误: %1"));
         }
     }
-    delete testTableModel;
-}
-void MainBussniessView::StartProcessing(){
-    assert(p!=NULL);
-    progressDlg = new QProgressDialog((QWidget*)p);
-    progressDlg->setWindowTitle("Please wait...");
-    progressDlg->setFixedWidth(300);
-    progressDlg->setRange(0, 100);
-    progressDlg->setWindowFlags(Qt::Dialog | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);//不显示进度条上的“最小化”“最大化”“关闭”| Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowStaysOnTopHint
-    progressDlg->setWindowModality(Qt::WindowModal);
-    progressDlg->showFullScreen();
-    timer = new QTimer(this);
-    currentValue = 0;
-    progressDlg->setValue(currentValue);
-    connect(timer, SIGNAL(timeout()), this, SLOT(updateProgressDialog()));
-    timer->start(500);//开启一个没有终点的定时器
-
+ //   delete testTableModel;
 }
 
-void MainBussniessView::EndProcessing(){
-    //耗时操作完成后，关闭进度对话框
-    timer->stop();//停止定时器
-    if(currentValue != 100)
-       currentValue = 100;
-    progressDlg->setValue(currentValue);//进度达到最大值
-    delete progressDlg;//关闭进度对话框
+void  MainBussniessView::getSystem_species(){
+    m_DatabaseHelper->ExecuteQueryModel(showTabelModel, tr("select  species from  system_setup_species"));
+    emit system_Species(showTabelModel);
 }
 
-//借助定时器，不断更新进度条，直到耗时操纵结束
-void MainBussniessView::updateProgressDialog()
+void MainBussniessView::getSystem_language(){
+    m_DatabaseHelper->ExecuteQueryModel(showTabelModel, tr("select  language from  system_setup_language"));
+    emit system_Language(showTabelModel);
+}
+
+void MainBussniessView::getSystem_testMode(){
+    m_DatabaseHelper->ExecuteQueryModel(showTabelModel, tr("select  testMode from  system_setup_testMode"));
+    emit system_testMode(showTabelModel);
+}
+
+void MainBussniessView::getSystem_testPapertype(){
+    m_DatabaseHelper->ExecuteQueryModel(showTabelModel, tr("select  testPapertype from  system_setup_testPapertype"));
+    emit system_testPapertype(showTabelModel);
+}
+
+
+void MainBussniessView::getSystem_status(){
+    m_DatabaseHelper->ExecuteQueryModel(showTabelModel, tr("select id , species ,testPapertype, language , testMode , serialNumber from  system_setup"));
+    emit system_Setup(showTabelModel);
+}
+
+void MainBussniessView::realTime_NuSave(){
+    QSqlTableModel systemTableModel ;
+    m_DatabaseHelper->ExecuteTableModel(&systemTableModel, tr("system_setup"),QObject::tr(""));
+   systemTableModel.setData(systemTableModel.index(0,5),App::serialNumber);
+   systemTableModel.submitAll();
+}
+
+void MainBussniessView::systemStatus_Save()
 {
-    currentValue++;
-    if( currentValue == 100 )
-        currentValue = 0;
-    progressDlg->setValue(currentValue);
-    //QCoreApplication::processEvents();//避免界面冻结
-    if(progressDlg->wasCanceled()){
-        progressDlg->setHidden(true);//隐藏对话框
-    }
+    QSqlTableModel systemTableModel ;//= new QSqlTableModel();
+    m_DatabaseHelper->ExecuteTableModel(&systemTableModel, tr("system_setup"),QObject::tr(""));
+
+   emit  system_saveok();
+
+systemTableModel.setData(systemTableModel.index(0,1),App::Species);
+systemTableModel.setData(systemTableModel.index(0,2),App::TestPapertype);
+systemTableModel.setData(systemTableModel.index(0,3),App::Language);
+systemTableModel.setData(systemTableModel.index(0,4),App::TestMode);
+systemTableModel.setData(systemTableModel.index(0,5),App::serialNumber);
+
+    emit languageConversion();
+    if(!(systemTableModel.submitAll()))  {
+         qDebug()<<"submit all fail";
+      }
+
 }
-bool MainBussniessView::GetSystemStatus(){
-    return false;
-}
 
-void MainBussniessView::WhiteResultSave(CalibrateObserverModel* resultModel){
+void MainBussniessView::calibrationResult_Save(CalibrateObserverModel* resultModel){
 
-    QSqlTableModel *whiteTableModel = new QSqlTableModel();
-    m_DatabaseHelper->ExecuteTableModel(whiteTableModel, tr("Calibrate_Oberservable_tb"), QObject::tr("where ItemName = :ItemName and CalibrateDate = :CalibrateDate").arg(resultModel->getItemName()).arg(resultModel->getCalibrateDate()));
-    QSqlRecord record = whiteTableModel->record();
+    QSqlTableModel whiteTableModel ;//= new QSqlTableModel();
+    m_DatabaseHelper->ExecuteTableModel(&whiteTableModel, tr("Calibrate_Oberservable_tb"), QObject::tr("where ItemName = :ItemName and CalibrateDate = :CalibrateDate").arg(resultModel->getItemName()).arg(resultModel->getCalibrateDate()));
+    QSqlRecord record = whiteTableModel.record();
 
-    if(whiteTableModel->rowCount() == 0){
+    if(whiteTableModel.rowCount() == 0){
         record.setValue("White", resultModel->getWhite());
         record.setValue("Red", resultModel->getRed());
         record.setValue("Green", resultModel->getGreen());
@@ -1292,12 +1172,12 @@ void MainBussniessView::WhiteResultSave(CalibrateObserverModel* resultModel){
         record.setValue("CalibrateDate", resultModel->getCalibrateDate());
         record.setValue("ItemNo", resultModel->getItemNo());
         record.setValue("ItemName", resultModel->getItemName());
-        whiteTableModel->insertRecord(0,record);
-        whiteTableModel->submitAll();
+        whiteTableModel.insertRecord(0,record);
+        whiteTableModel.submitAll();
     }
     else
     {
-        whiteTableModel->database().transaction(); //开始事务操作
+        whiteTableModel.database().transaction(); //开始事务操作
         record.setValue("White", resultModel->getWhite());
         record.setValue("Red", resultModel->getRed());
         record.setValue("Green", resultModel->getGreen());
@@ -1307,69 +1187,96 @@ void MainBussniessView::WhiteResultSave(CalibrateObserverModel* resultModel){
         record.setValue("CalibrateDate", resultModel->getCalibrateDate());
         record.setValue("ItemNo", resultModel->getItemNo());
         record.setValue("ItemName", resultModel->getItemName());
-        whiteTableModel->setRecord(0,record);
-        if (whiteTableModel->submitAll()) {
-            whiteTableModel->database().commit(); //提交
+        whiteTableModel.setRecord(0,record);
+        if (whiteTableModel.submitAll()) {
+            whiteTableModel.database().commit(); //提交
         } else {
-            whiteTableModel->database().rollback(); //回滚
+            whiteTableModel.database().rollback(); //回滚
         //QMessageBox::warning(this, tr("tableModel") ,tr("数据库错误: %1"));
         }
     }
-    delete whiteTableModel;
-}
-void MainBussniessView::Test_WhiteResult(CalibrateObserverModel* resultModel){
-    QString strSQL = (QObject::tr("ItemName = '%1'").arg(resultModel->getItemName()));
-    m_DatabaseHelper->ExecuteTableModel(calibrateObserveTableModel, tr("Calibrate_Oberservable_tb"), strSQL);
-    calibrateObserveTableModel->setHeaderData(0,Qt::Horizontal,tr("白"));
-    calibrateObserveTableModel->setHeaderData(1,Qt::Horizontal,tr("红"));
-    calibrateObserveTableModel->setHeaderData(2,Qt::Horizontal,tr("绿"));
-    calibrateObserveTableModel->setHeaderData(3,Qt::Horizontal,tr("蓝"));
-    calibrateObserveTableModel->setHeaderData(4,Qt::Horizontal,tr("校准值"));
-    calibrateObserveTableModel->setHeaderData(5,Qt::Horizontal,tr("测试值"));
-    calibrateObserveTableModel->setHeaderData(6,Qt::Horizontal,tr("校准时间"));
-    calibrateObserveTableModel->setHeaderData(7,Qt::Horizontal,tr("项目编号"));
-    calibrateObserveTableModel->setHeaderData(8,Qt::Horizontal,tr("项目名称"));
-    emit CalibrateObserverveResult(calibrateObserveTableModel);
-
+  //  delete whiteTableModel;
 }
 
 
-void MainBussniessView::Test_DeleteResult(QString sItemName){
+void MainBussniessView::calibrationResult_Show(CalibrateObserverModel* resultModel){
+
+ m_DatabaseHelper->ExecuteQueryModel(calibrateObserveTableModel,
+ tr("select  ItemName,CalibrateValue,ResultValue,White,Red,Green,Blue,CalibrateDate from Calibrate_Oberservable_tb where  ItemName= '%1' order by CalibrateDate>'%2' desc,rowid desc").arg(resultModel->getItemName()).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd")));
+
+        calibrateObserveTableModel->setHeaderData(0,Qt::Horizontal, tr("Item"));
+        calibrateObserveTableModel->setHeaderData(1,Qt::Horizontal, tr("Calibration"));
+        calibrateObserveTableModel->setHeaderData(2,Qt::Horizontal, tr("Result"));
+        calibrateObserveTableModel->setHeaderData(3,Qt::Horizontal, tr("White"));
+        calibrateObserveTableModel->setHeaderData(4,Qt::Horizontal, tr("Red"));
+        calibrateObserveTableModel->setHeaderData(5,Qt::Horizontal, tr("Green"));
+        calibrateObserveTableModel->setHeaderData(6,Qt::Horizontal, tr("Blue"));
+        calibrateObserveTableModel->setHeaderData(7,Qt::Horizontal, tr("Time"));
+        calibrateObserveTableModel->setHeaderData(8,Qt::Horizontal,tr("No"));
+        emit CalibrateObserverveResult(calibrateObserveTableModel);
+}
+
+
+void MainBussniessView::calibrationDelete_Result(QString sItemName){//delete from calibrate_oberservable_tb where ItemName = 'BIL' and CalibrateDate='2018-10-24 11:31:08'
     QString strSQL = (QObject::tr("delete from calibrate_oberservable_tb where ItemName = '%1'").arg(sItemName));
     m_DatabaseHelper->ExecuteInt(strSQL);
 
     strSQL = (QObject::tr("ItemName = '%1'").arg(sItemName));
-/*    if(calibrateObserveTableModel != NULL){
-        delete calibrateObserveTableModel;
-    }
-    calibrateObserveTableModel = new QSqlTableModel();
-    */
-    m_DatabaseHelper->ExecuteTableModel(calibrateObserveTableModel, tr("Calibrate_Oberservable_tb"), strSQL);
-    calibrateObserveTableModel->setHeaderData(0,Qt::Horizontal,tr("白"));
-    calibrateObserveTableModel->setHeaderData(1,Qt::Horizontal,tr("红"));
-    calibrateObserveTableModel->setHeaderData(2,Qt::Horizontal,tr("绿"));
-    calibrateObserveTableModel->setHeaderData(3,Qt::Horizontal,tr("蓝"));
-    calibrateObserveTableModel->setHeaderData(4,Qt::Horizontal,tr("校准值"));
-    calibrateObserveTableModel->setHeaderData(5,Qt::Horizontal,tr("测试值"));
-    calibrateObserveTableModel->setHeaderData(6,Qt::Horizontal,tr("校准时间"));
-    calibrateObserveTableModel->setHeaderData(7,Qt::Horizontal,tr("项目编号"));
-    calibrateObserveTableModel->setHeaderData(8,Qt::Horizontal,tr("项目名称"));
+
+    m_DatabaseHelper->ExecuteTableModel(calibrateObserveTableModel, ("Calibrate_Oberservable_tb"), strSQL);
+
+
+    calibrateObserveTableModel->setHeaderData(0,Qt::Horizontal,tr("Item"));
+    calibrateObserveTableModel->setHeaderData(1,Qt::Horizontal,tr("calibration"));
+    calibrateObserveTableModel->setHeaderData(2,Qt::Horizontal,tr("Result"));
+    calibrateObserveTableModel->setHeaderData(3,Qt::Horizontal,tr("White"));
+    calibrateObserveTableModel->setHeaderData(4,Qt::Horizontal,tr("Red"));
+    calibrateObserveTableModel->setHeaderData(5,Qt::Horizontal,tr("Green"));
+    calibrateObserveTableModel->setHeaderData(6,Qt::Horizontal,tr("Blue"));
+    calibrateObserveTableModel->setHeaderData(7,Qt::Horizontal,tr("Time"));
+    calibrateObserveTableModel->setHeaderData(8,Qt::Horizontal,tr("No"));
+
     emit CalibrateObserverveResult(calibrateObserveTableModel);
 }
 
-void MainBussniessView::WhiteCalendar(QString sItemName, QList<int>& lstResult){
-    QString strSQL = (QObject::tr("select * from Calibrate_Oberservable_tb where ItemName = '%1' order by CalibrateDate asc").arg(sItemName));
-    QSqlQuery query = m_DatabaseHelper->ExecuteSqlQuery(strSQL);
-    int nTotal = 0, n = 0, nAva = 0;
-    while (query.next()) {
-        ++n;
-        nTotal += query.value(4).toInt();
-        if(n > 0){
-            nAva = nTotal/n;
-        }
-        if(n % 3 == 0){
-            lstResult.append(nAva);
-        }
-    }
-    return;
+void MainBussniessView::testDelete_Result(){
+    QString strSQL = (QObject::tr("delete from TestResult_tb where SampleNo >= '%1'").arg(0));
+  m_DatabaseHelper->ExecuteInt(strSQL);
+   strSQL = (QObject::tr("SampleNo  >= '%1'").arg(1));
+
+    m_DatabaseHelper->ExecuteTableModel(testdeleteTableModel, tr("TestResult_tb"), strSQL);
+
+    testdeleteTableModel->setHeaderData(0,Qt::Horizontal, tr("No"));
+
+    testdeleteTableModel->setHeaderData(1,Qt::Horizontal, tr("Reaction time"));
+
+    testdeleteTableModel->setHeaderData(2,Qt::Horizontal, tr("Result"));
+
+    testdeleteTableModel->setHeaderData(3,Qt::Horizontal, tr("类型"));
+
+    testdeleteTableModel->setHeaderData(4,Qt::Horizontal, tr("项目编号"));
+
+    testdeleteTableModel->setHeaderData(5,Qt::Horizontal, tr("Item"));
+
+    testdeleteTableModel->setHeaderData(6,Qt::Horizontal, tr("Unit"));
+
+    testdeleteTableModel->setHeaderData(7,Qt::Horizontal, tr("Strip"));
+
+    testdeleteTableModel->setHeaderData(8,Qt::Horizontal, tr("测试方法"));
+
+    testdeleteTableModel->setHeaderData(9,Qt::Horizontal, tr("Time"));
+
+    testdeleteTableModel->setHeaderData(10,Qt::Horizontal, tr("是否打印"));
+
+    testdeleteTableModel->setHeaderData(11,Qt::Horizontal, tr("标志"));
+
+    emit SampleResult(testdeleteTableModel);
+    showTest_Result();
+}
+
+
+void MainBussniessView::buzzer(){
+   system("echo 100  > /sys/class/leds/beeper-pwm/brightness");
+   usleep(500*4);
+   system("echo 0 > /sys/class/leds/beeper-pwm/brightness");
 }

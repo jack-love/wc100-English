@@ -64,7 +64,7 @@ float ItemParameterModel::getRefMax(){
     return RefMax;
 }
 
-QString ItemParameterModel::getUnit(){
+QString ItemParameterModel::getUnit(){//
     return unit;
 }
 

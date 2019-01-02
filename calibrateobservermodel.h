@@ -8,12 +8,12 @@ class CalibrateObserverModel
 
 private:
     int _itemNo;
-    QString _itemName;
     int _white;
     int _red;
     int _green;
     int _blue;
     int _calibrateValue;
+    QString _itemName;
     QString _resultValue;
     QString _calibrateDate;
 public:
@@ -28,12 +28,12 @@ public:
     void setCalibrateDate(QString);
 
     int getItemNo();
-    QString getItemName();
     int getWhite();
     int getRed();
     int getGreen();
     int getBlue();
     int getCalibrateValue();
+    QString getItemName();
     QString getResultValue();
     QString getCalibrateDate();
 };

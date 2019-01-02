@@ -1,87 +1,138 @@
 #include "testingdialog.h"
 #include "ui_testingdialog.h"
+#include "mainbussniessview.h"
+#include <QSqlTableModel>
+#include "messagebox.h"
 
-TestingDialog::TestingDialog(QWidget *parent) :
-    QDialog(parent),
+TestingDialog::TestingDialog(QWidget *parent, MainBussniessView*pMainBussniessView) :
+    QDialog(parent), pMainView(pMainBussniessView),
     ui(new Ui::TestingDialog)
 {
-   TestItem Itemval;
+
     ui->setupUi(this);
     Qt::WindowFlags flags = 0;
     flags |= Qt::WindowMinimizeButtonHint;
     flags |=Qt::WindowMaximizeButtonHint;
     setWindowFlags(flags); // 设置禁止最大化
     setFixedSize(480,800); // 禁止改变窗口大小。
-setItemval_Urs14cc();
-showItemval_Urs14cc();
+
+   connect(pMainView, SIGNAL(testResult(QSqlTableModel*)), this, SLOT(on_TestResult(QSqlTableModel*)),Qt::AutoConnection);
+   connect(pMainView, SIGNAL(reset_signal()),this,SLOT(resetSlot()),Qt::AutoConnection );
+   connect(pMainView, SIGNAL(mTime(int )),this,SLOT(sTimeSlot(int)));
+   ui->label_test->setText(tr("Status: Stop"));
+   pMainView->showTest_Result();
+
+   ui->btn_Stop->setEnabled(false);
+
 }
-
-
-
 
 TestingDialog::~TestingDialog()
 {
     delete ui;
 }
 
-void TestingDialog::showItemval_Urs14cc()
-{
-ui->edit_Number->setText("14");
-ui->edit_Model->setText("URS4CC");
-
-ui->leftShow_1->setText("10");
-ui->rightShow_1->setText("20");
 
 
-ui->leftShow_2->setText("10");
-ui->rightShow_2->setText("20");
+bool TestingDialog::on_TestResult(QSqlTableModel* model){
+    ui->tbview_TestResult->setModel(model);
+   ui->tbview_TestResult->setEditTriggers(QAbstractItemView::NoEditTriggers);   //使其不可编辑
 
-ui->leftShow_3->setText("10");
-ui->rightShow_3->setText("20");
+//    ui->tbview_TestResult->setSelectionMode(QAbstractItemView::SingleSelection);
+//    ui->tbview_TestResult->setSelectionBehavior(QAbstractItemView::SelectRows);
+//   ui->tbview_TestResult->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    ui->tbview_TestResult->verticalHeader()->hide();
+  //ui->tbview_TestResult->horizontalScrollBar()->setEnabled(false);
+ //   ui->tbview_TestResult->setHorizontalScrollBarPolic(Qt::ScrollBarAlwaysOff);
+   // ui->tbview_TestResult->setColumnHidden(5, true);
 
-ui->leftShow_4->setText("10");
-ui->rightShow_4->setText("20");
-
-ui->leftShow_5->setText("10");
-ui->rightShow_5->setText("20");
-
-ui->leftShow_6->setText("10");
-ui->rightShow_6->setText("20");
-
-ui->leftShow_7->setText("10");
-ui->rightShow_7->setText("20");
-
-ui->leftShow_8->setText("20");
+    ui->tbview_TestResult->setColumnWidth(0, 100);
+    ui->tbview_TestResult->setColumnWidth(1, 80);
+    ui->tbview_TestResult->setColumnWidth(2, 100);
+    ui->tbview_TestResult->setColumnWidth(3, 100);
+    ui->tbview_TestResult->setColumnWidth(4, 90);
+    ui->tbview_TestResult->setColumnWidth(5, 300);
+    return false;
 }
 
-void TestingDialog::setItemval_Urs14cc()
-{
-ui->leftSelection_1->setCurrentIndex(URO);
-ui->rightSelection_1->setCurrentIndex(BIL);
-ui->leftShow_1->setText("10");
-ui->leftSelection_2->setCurrentIndex(KET);
-ui->rightSelection_2->setCurrentIndex(CRE);
-
-ui->leftSelection_3->setCurrentIndex(BLD);
-ui->rightSelection_3->setCurrentIndex(PRO);
-
-
-ui->leftSelection_4->setCurrentIndex(MALB);
-ui->rightSelection_4->setCurrentIndex(NIT);
-
-ui->leftSelection_5->setCurrentIndex(WBC);
-ui->rightSelection_5->setCurrentIndex(GLU);
-
-ui->leftSelection_6->setCurrentIndex(SG);
-ui->rightSelection_6->setCurrentIndex(PH);
-
-ui->leftSelection_7->setCurrentIndex(VC);
-ui->rightSelection_7->setCurrentIndex(CA);
-ui->leftSelection_8->setCurrentIndex(ACR);
-}
-
-void TestingDialog::on_btn_Back_clicked()
-{
-//qDebug("bug--->mainbuttondialog.cpp---> SendHomeSignal");
+void TestingDialog::on_btn_Back_clicked(){
  emit SendHomeSignal();
 }
+
+
+
+void TestingDialog::on_btn_Start_clicked(){
+
+            App::test_start=true;
+            while(App::test_start){
+
+                if(App::Electric_quantity > 15){
+
+                                    ui->btn_Start->setEnabled(false);
+                                    ui->btn_Stop->setEnabled(true);
+                                    ui->btn_Back->setEnabled(false);
+
+                                    ui->label_test->setText(tr("Status: Strip Test"));
+
+                                    bool    bResult = pMainView->normalStart();
+                                            if(!bResult){
+                                                     qDebug()<<"[start testing  error!]";
+                                              }else{
+                                                      qDebug()<<"[start testint  ok!]";
+                                             }
+
+                                        if( 0 ==QString::compare(App::TestMode,"manual" ) && App::test_start){
+                                          App::test_start=false;
+                                          ui->label_test->setText(tr("Status: Stop"));
+                                                              ui->btn_Start->setEnabled(true);
+                                                              ui->btn_Stop->setEnabled(false);
+                                                              ui->btn_Back->setEnabled(true);
+                                        }
+
+                }else{
+                     App::test_start=false;
+                    MessageBox msg;
+                    msg.MessageBox_Info(tr("Low power please charge!"));
+                    ui->btn_Start->setEnabled(true);
+                    ui->btn_Stop->setEnabled(false);
+                    ui->btn_Back->setEnabled(true);
+                 }
+
+           }
+
+
+
+}
+
+void TestingDialog::on_btn_Stop_clicked(){
+
+      if(App::test_start){
+                App::test_start=false;
+                ui->btn_Stop->setEnabled(false);
+                ui->btn_Back->setEnabled(false);
+
+               bool   bResult = pMainView->Stop();
+
+                 if(!bResult){
+                         qDebug()<<"[start stop error!]";
+                }else {
+                       qDebug()<<"[start stop ok!]";
+                }
+                ui->label_test->setText(tr("Status: Reset"));
+       }
+}
+
+
+void TestingDialog::resetSlot(){
+        ui->btn_Start->setEnabled(true);
+        ui->btn_Back->setEnabled(true);
+        ui->btn_Stop->setEnabled(false);
+        ui->label_test->setText(tr("Status: Stop"));
+      //  qDebug()<<"resetSlot";
+}
+
+
+void TestingDialog::sTimeSlot( int st){
+        QString s = QString::number(st, 10);
+        ui->time_Number->display(s);
+}
+

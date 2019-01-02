@@ -7,14 +7,17 @@ TARGET =
 DEPENDPATH += .
 INCLUDEPATH += .
 CONFIG += serialport
+CONFIG += qtestlib
 QT +=sql
 QT +=core
+
+TRANSLATIONS +=syszux/tr_zh.ts \
+                               syszux/tr_en.ts
 # Input
 HEADERS += mainbutton.h maintancance.h mainwindow.h testingdialog.h \
     signin.h \
     systemsetup.h \
     keyboard.h \
-    thread.h \
     ttythread.h \
     calibration.h \
     cac.h \
@@ -29,12 +32,26 @@ HEADERS += mainbutton.h maintancance.h mainwindow.h testingdialog.h \
     qc_subitemmodel.h \
     sampletypemodel.h \
     testresultmodel.h \
-    qualitycontrolmodel.h
+    qualitycontrolmodel.h \
+    query.h \
+    systemmonitor.h \
+    network.h \
+    systemupdate.h \
+    other.h \
+    messagebox.h \
+    systeminit.h \
+    frminput.h \
+    wifibtthread.h \
+    keyboardthread.h
 FORMS += mainbutton.ui maintancance.ui mainwindow.ui testingdialog.ui \
     signin.ui \
     systemsetup.ui \
     keyboard.ui \
-    calibration.ui
+    calibration.ui \
+    query.ui \
+    systemupdate.ui \
+    other.ui \
+    frminput.ui
 SOURCES += main.cpp \
            mainbutton.cpp \
            maintancance.cpp \
@@ -43,7 +60,6 @@ SOURCES += main.cpp \
     signin.cpp \
     systemsetup.cpp \
     keyboard.cpp \
-    thread.cpp \
     ttythread.cpp \
     calibration.cpp \
     cac.cpp \
@@ -58,5 +74,15 @@ SOURCES += main.cpp \
     qc_subitemmodel.cpp \
     sampletypemodel.cpp \
     testresultmodel.cpp \
-    qualitycontrolmodel.cpp
+    qualitycontrolmodel.cpp \
+    query.cpp \
+    systemmonitor.cpp \
+    network.cpp \
+    systemupdate.cpp \
+    other.cpp \
+    messagebox.cpp \
+    systeminit.cpp \
+    frminput.cpp \
+    wifibtthread.cpp \
+    keyboardthread.cpp
 RESOURCES += rc.qrc

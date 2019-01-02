@@ -17,6 +17,8 @@
 #include <calibrateobservermodel.h>
 #include<ttythread.h>
 #include<maintancance.h>
+#include<QTimer>
+#include <QThread>
 class QLibrary;
 class databaseHelper;
 class TestingThread;
@@ -31,144 +33,135 @@ class MainBussniessView : public QObject
 {
     Q_OBJECT
 public:
+     void Initalize();
+     bool powerOff();
+     bool askUser();
+     void coverHands();
+     void mcuReset();
+     void setParameters();
+     bool  mcuCmd(WORK_STATE cmd);
+     void  mcuPclose();
+     void  mcuPopen();
+     void  startProcessing();
     explicit MainBussniessView(QObject *parent = 0);
-    bool Start();
+    bool normalStart();
     bool Stop();
-    bool sencmd(QString mItemName);
+    bool getVersion();
+    bool setUp();
+    bool calibrationTest(QString mItemName);
     ~MainBussniessView();
-    bool PatientSaveAndUpdate(PatientModel patientModel);
 
-    void PatientDelete(int row);
-    void PatientBySampleNo(int nSampleNo);
-    void Query_DateBySampleNoAndDate(int sampleNo, QString sBeginDate, QString sEndDate);
-    void Query_TestResult(int sampleNo, QString sBeginDate, QString sEndDate);
 
-    void QualityControlItemSave(QC_SubItemModel subItemModel);
-    int  GetItemNoByItemName(QString itemName);
-    void Qc_Query(int itemNo, QSqlTableModel *tableModel);
-    void Qc_MainItemSave(QualityControlModel qcModel, float &cvValue);
-    void Item_Save(ItemModel saveModel);
-    void Item_Query(QSqlQueryModel *tableModel);
-    void ItemParameter_Save(ItemParameterModel parameterModel);
-    void Calibrate_Query(QSqlQueryModel *tableModel, int nItemNo);
-    void Calibrate_Save(CalibrateModel calibrateModel);
-    void Query_SampleResult(int sampleNo, QString sBeginDate, QString sEndDate);
-    void SampleTytpeSave(SampleTypeModel model);
-    void GetTestResult(RESULT result[]);
-    int GetSampleType(QList<SampleTypeModel>* lstSampleType);
-    void TestResultSave(TestResultModel* resultModel);
-//    void ShowTestResult();
-    void PrintInformation(PatientModel patientModel);
-    void StartProcessing();
-    void EndProcessing();
-    void Calibrate_Observerve_Query(QString beginDate, QString endDate);
-    bool GetSystemStatus();
-    void Test_WhiteResult(CalibrateObserverModel* resultModel);
-    RESULT _result[MAX_ITEM];
-    QList<TestResultModel*> QueryTestResult(QString strWhere);
-    void WhiteResultSave(CalibrateObserverModel* resultModel);
-    QList<ItemModel> getItemModel();
-    QString getItemName();
-    void Test_DeleteResult(QString sItemName);
-    void WhiteCalendar(QString sItemName, QList<int>& lstResult);
-    void SampleType_Query(QSqlTableModel* tableModel);
-    void GetItemName(QSqlQueryModel *tableModel);
-    void ItemParameter_Query(QSqlQueryModel *tableModel);
-    int GetCalibration(int itemNo, QString itemName);
+    int  GetItemNoByItemName_11_3(QString itemName);
+    int  GetItemNoByItemName_10T(QString itemName);
+    int  GetItemNoByItemName_12MA(QString itemName);
+    void Calibrate_Query_11_3(QSqlQueryModel *tableModel, int nItemNo);
+    void Calibrate_Query_10T(QSqlQueryModel *tableModel, int nItemNo);
+    void Calibrate_Query_12MA(QSqlQueryModel *tableModel, int nItemNo);
+    void  calibrateSave(CalibrateModel calibrateModel);
+    void  Query_SampleResult(int sampleNo, QString sBeginDate, QString sEndDate);
+    void  Query_SampleResult_no(int sampleNo, QString sBeginDate, QString sEndDate);
+    void  getTest_Result(RESULT result[]);
+    int    getSample_Type(QList<SampleTypeModel>* lstSampleType);
+    void testResult_Save(TestResultModel* resultModel);
+    void showTest_Result();
+    void PrintInformation(QByteArray arr);
+    void  getSystem_status();
+    void  getSystem_species();
+    void  getSystem_language();
+    void  getSystem_testMode();
+    void  getSystem_testPapertype();
+
+
+    void calibrationResult_Show(CalibrateObserverModel* resultModel);
+
+    RESULT _result[13];
+
+    void calibrationResult_Save(CalibrateObserverModel* resultModel);
+    void   systemStatus_Save();
+    void   realTime_NuSave();
+    void calibrationDelete_Result(QString sItemName);
+    void testDelete_Result();
+    void GetItemName_11_3(QSqlQueryModel *tableModel);
+    void GetItemName_10T(QSqlQueryModel *tableModel);
+    void GetItemName_12MA(QSqlQueryModel *tableModel);
+    void  getCalibration(int itemNo, QString itemName);
+    void  calibrationShow(struct RESULT _result[]);
+    void  calibrationQuery(QString caliname);
+    void  buzzer();
+
 signals:
-
-    bool testResult(QSqlTableModel*);
-    void QuerySampleResult(QSqlTableModel*);
+    bool  testResult(QSqlTableModel*);
+    bool  system_Setup(QSqlTableModel*);
+    bool  system_Species(QSqlTableModel*);
+    bool  system_Language(QSqlTableModel*);
+    bool  system_testMode(QSqlTableModel*);
+    bool  system_testPapertype(QSqlTableModel*);
+    void  reset_signal();
+    void Status_signal(QString);
     bool positionStatus(uint i);
     void patientInfo(PatientModel);
+    void  system_saveok();
 
-    void PatientResult(QSqlTableModel*);
-    //void SampleResult(QSqlTableModel*);
+    void SampleResult(QSqlTableModel*);
     void Qc_SubItemResult(QSqlTableModel*);
     void Item_Result(QSqlTableModel*);
     void ItemParameter_Result(QSqlTableModel*);
     void SampleType_Result(QSqlTableModel*);
     void CalibrateObserverveResult(QSqlTableModel*);
-
+    void SignalStrength(QString signal);
+    void   Spoweroff();
+    void languageConversion();
     void SendHomeSignal();
     void  receiveTtyData(QString str);
     void  receiveAck(unsigned char state);
-    void   sTime (int s);//
-    void  receiveWb(unsigned int W,unsigned int R,unsigned int G,unsigned int B);
-    void  receiveRGB(unsigned int W,unsigned int R,unsigned int G,unsigned int B);
+    void   sTime (int s);
+     void  mTime(int s);
+    void  receiveWb(WRGB_DAT);
+    void  receiveRGB(WRGB_DAT,unsigned int count);
+
 
 public slots:
-   void sTimeSlot(int st);
-    void updateProgressDialog();
+    void sTimeSlot(int st);
     void showTtyData(QString str);
     void showTtyAck(unsigned char state);
-    void showWb(unsigned int W,unsigned int R,unsigned int G,unsigned int B);
-    void showWrgb(unsigned int W,unsigned int R,unsigned int G,unsigned int B);
+    void showWb(WRGB_DAT wrgb_data);
+    void showWrgb(WRGB_DAT wrgb_data,unsigned int count);
+    bool system_setup_show(QSqlTableModel*model);
 
 private:
     QList<ItemModel> lstItemModel;
-    void setItemName(QString);
-  //  void Initalize();
-    REPORT _report;
     QList<TestResultModel*> lstTestResultModel;
     double getCalculateCV(QList<double> lstQcValue);
     int GetItemParam(QList<ItemParameterModel>* lstItemParam);
     int  GetItemList(QList<ItemModel>* lstItem);
-
+    int  MAX_ITEM;
     uint GetSampleMaxNo();
-    databaseHelper* m_DatabaseHelper;
-    TestingThread *pTestingThread;
-    StopThread *stopThread;
-    WhiteThread *whiteThread;
-    QProgressDialog *progressDlg;
-    int currentValue;
-    QObject *p;
-    QLibrary *m_lib;
-    QTimer *timer;
-    QSqlTableModel *sampleTableModel;
-    QStringList* lstItemName;
-    //QSqlTableModel *calibrateTableModel;
-    QSqlTableModel* sampleTypeTableModel;
-    QSqlTableModel *whiteTableModel;
-    QSqlTableModel *itemTableModel;
-    QSqlTableModel *patientTableModel;
-    QSqlTableModel *showTabelModel;
-    QSqlTableModel *qcItemTableModel;
-    QSqlTableModel *queryTableModel;
-    QSqlTableModel *calibrateObserveTableModel;
-    QSqlTableModel *deleteTableModel;
-    QMutex mutex;
- ttyThread  * tty_thread=NULL;
- Maintancance aintancace;
-    typedef int (*SYS_STATUS)();
-    SYS_STATUS _Sys_status;
-    typedef int (*INITAL)();
-    INITAL _Inital;
-    typedef int(*POWER)();
-    POWER _Power;
-    typedef int(*RESET)();
-    RESET _Reset;
-    typedef int(*STOP)();
-    STOP _Stop;
-    typedef int(*WHITE)(RESULT _result[]);
-    WHITE _White;
-    typedef int(*RUN)(RESULT _result[]);
-    RUN _Run;   
-    QString _itemName;
-   // void Machine_Inital();
-    void msleep(int sec);
-        unsigned int  receive_count=0;
-         resultVal    result[13];
-          Cac  cac;
-          QString Name_tmp;
-public:
-   // int Machine_Reset();
-   // int Machine_Power();
-  //  int Machine_Stop();
-   // int Machine_Go_on();
-  //  int Machine_White(struct RESULT buf[]);
-   // int Machine_Run(struct RESULT buf[]);
-    //int Machine_Sys_Status();
+    databaseHelper* m_DatabaseHelper=NULL;
+    StopThread *stopThread=NULL;
+    WhiteThread *whiteThread=NULL;
+    QObject *p=NULL;
+    QLibrary *m_lib=NULL;
+    QTimer *timer=NULL;
+    QSqlTableModel *sampleTableModel=NULL;
+    QSqlTableModel *testdeleteTableModel=NULL;
+    QStringList* lstItemName=NULL;
+
+    QSqlTableModel* sampleTypeTableModel=NULL;
+    QSqlTableModel *itemTableModel=NULL;
+    QSqlTableModel *patientTableModel=NULL;
+    QSqlTableModel *showTabelModel=NULL;
+    QSqlTableModel *showTabeTest=NULL;
+    QSqlTableModel *qcItemTableModel=NULL;
+    QSqlTableModel *queryTableModel=NULL;
+    QSqlTableModel *calibrateObserveTableModel=NULL;
+
+
+    ttyThread  * tty_thread=NULL;
+    resultVal    result[13];
+    Cac  cac;
+    QString Name_tmp;
+    QProgressDialog *progressDialog=NULL;
 
 };
 
