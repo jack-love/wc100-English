@@ -7,10 +7,11 @@
 #include "frminput.h"
 #include <unistd.h>
 /*
-V1.0 初级版本
-V1.1 校准测试完成版本
-V2.0 基本功能完成待测试
-v2.7 全部功能完毕
+VER:1.0 初级版本
+VER:1.1 校准测试完成版本
+VER:2.0 基本功能完成待测试
+VER:2.7 全部功能完毕
+VER:2.9.8 解决机器Bug阶段
 */
 
 int main(int argc, char *argv[])
