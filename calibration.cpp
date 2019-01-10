@@ -248,7 +248,8 @@ void Calibration::on_calibrate_start_clicked()
         if(!bResult){//判断是否完成
             msg.MessageBox_Err(tr("Single step Test failure!"));
         }
-
+        int  nTotalCount = pageCount(ui->calibrateList);
+        ui->lbTotalCount->setText(QString("%1").arg(nTotalCount));
      //  ui->calibrateList->setEnabled(true);
         ui->calibrate_start->setEnabled(true);
         ui->calibrate_stop->setEnabled(false);
@@ -265,12 +266,12 @@ void Calibration::on_calibrate_stop_clicked(){
 
     bResult = pMainBussView->Stop();
     if(!bResult){
-     msg.MessageBox_Err(tr("Single stop Test failure!"));
+     msg.MessageBox_Err(tr("Single step Test failure!"));
     }
-   else{
+  // else{
         int  nTotalCount = pageCount(ui->calibrateList);
         ui->lbTotalCount->setText(QString("%1").arg(nTotalCount));
-    }
+   // }
 
     ui->calibrate_stop->setEnabled(false);
     ui->calibrate_start->setEnabled(true);
@@ -398,6 +399,8 @@ bool Calibration::pageUp(QTableView *p,bool isLoop)//上翻
 void Calibration::on_btn_FirstPag_clicked(){
    pMainBussView->calibrationQuery(ui->btn_options_show->currentText());
    pageHome(ui->calibrateList);
+   int  nTotalCount = pageCount(ui->calibrateList);
+   ui->lbTotalCount->setText(QString("%1").arg(nTotalCount));
 }
 
 void Calibration::on_btn_PreviousPage_clicked(){

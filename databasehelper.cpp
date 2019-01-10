@@ -59,10 +59,10 @@ bool databaseHelper::createTable()
     bResult &=success;
 
     success = query.exec("create table TestResult_tb(SampleNo int, HatchTime int,"
-                         "SampleValue int, SampleType varchar, ItemNo int, ItemName varchar, Unit varchar, "
+                         "SampleType varchar, ItemNo int, ItemName varchar,SampleValue varchar,Unit varchar, "
                          "TbType varchar, TestWay varchar, SampleDate varchar, IsPrint bool, Flag varchar)");
-    query.exec(QObject::tr("insert into TestResult_tb values (23, 1, 22, '20.5', 'blood', 1, 'WEB', 'testing', '345', '1', '2017-12-22', 1, 0)"));
-    query.exec(QObject::tr("insert into TestResult_tb values (23, 2, 33, '32.5', 'blood', 2, 'KET', 'testing', '345', '2', '2017-10-19', 1, 0)"));
+    //query.exec(QObject::tr("insert into TestResult_tb values (23, 1, 22, '20.5', 'blood', 1, 'WEB', 'testing', '345', '1', '2017-12-22', 1, 0)"));
+    //query.exec(QObject::tr("insert into TestResult_tb values (23, 2, 33, '32.5', 'blood', 2, 'KET', 'testing', '345', '2', '2017-10-19', 1, 0)"));
     //query.exec(QObject::tr("insert into TestResult_tb values (23, 3, 33, '54.5', 'blood', 3, 'VC', 'testing', '345', 0, '2017-10-19', 1, 0)"));
     bResult &=success;
 
@@ -305,8 +305,8 @@ const extern char valueitemsi[14][8][9]={
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     success = query.exec("create table Calibrate_Oberservable_tb(White int, Red int, Green int, Blue int, CalibrateValue int, ResultValue varchar, CalibrateDate varchar, ItemNo int, ItemName varchar)");
-    query.exec(QObject::tr("insert into Calibrate_Oberservable_tb values ( 456, 123, 789, 222, 456, '-Neg', '2018-01-11 12:12:00', 1, 'WBC')"));
-    query.exec(QObject::tr("insert into Calibrate_Oberservable_tb values ( 258, 369, 147, 666, 789, '-Neg', '2018-01-05 10:14:59', 2, 'KET')"));
+    //query.exec(QObject::tr("insert into Calibrate_Oberservable_tb values ( 456, 123, 789, 222, 456, '-Neg', '2018-01-11 12:12:00', 1, 'WBC')"));
+   // query.exec(QObject::tr("insert into Calibrate_Oberservable_tb values ( 258, 369, 147, 666, 789, '-Neg', '2018-01-05 10:14:59', 2, 'KET')"));
     bResult &=success;
 
     success = query.exec("create table SampleType_tb(SampleTypeNo int primary key, SampleTypeName varchar,SampleFlag varchar)");

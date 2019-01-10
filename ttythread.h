@@ -24,9 +24,10 @@
 #define RD_ATAACK     0xbb
 #define R_POWROFF   0xb9
 
-#define  INIT_TIME    63
-#define BUZZER         60
-#define TESTSTART       38
+#define  INIT_TIME      63
+#define BUZZER          60
+#define LOOP_TIME       40
+#define TESTSTART       36
 enum WORK_STATE{
             GETVERSION = 0, //Get a version
             SELFEX   = 1, //Self-examination
@@ -109,6 +110,7 @@ public:
     void  commandSend(WORK_STATE  status);
     void setCommand(WORK_STATE  cmd);
     void setWorkTime(unsigned int s,bool status);
+    void setinitCondition();
     void setTestTime(unsigned int s,bool status);
     QString ByteArrayToHexStr(QByteArray data);
     char ConvertHexChar(char ch);

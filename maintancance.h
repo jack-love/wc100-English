@@ -82,7 +82,11 @@ private slots:
         void showWrgb(WRGB_DAT wrgb_data,unsigned int count);
         void open_door_clicked();
         void close_door_clicked();
- private:
+
+
+
+
+private:
         void openMcuUart();
 };
 

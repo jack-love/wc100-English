@@ -21,7 +21,7 @@
 #include <unistd.h>
 #include <QtTest>
 #include <QDialog>
-
+#include <myqsqltablemodel.h>
 MainBussniessView::MainBussniessView(QObject *parent) :
     QObject(parent), p(parent)
 {
@@ -61,7 +61,7 @@ MainBussniessView::MainBussniessView(QObject *parent) :
     showTabeTest=new QSqlTableModel();
     calibrateObserveTableModel = new QSqlTableModel();
     testdeleteTableModel  = new QSqlTableModel();
-
+    myshowTabeTest=new myQSqlTableModel();
     connect(this, SIGNAL(system_Setup(QSqlTableModel*)), this, SLOT(system_setup_show(QSqlTableModel*)),Qt::AutoConnection);
     getSystem_status();
     Initalize();
@@ -116,7 +116,7 @@ void MainBussniessView::mcuReset()
    bool  get_return  =  mcuCmd(RESET);
    if(!get_return){
          App::errNumber = RESET_ERR;
-     //  mes.MessageBox_Err(tr("MCU reset failure!"));
+       mes.MessageBox_Err(tr("MCU reset failure!"));
       }
 
 }
@@ -141,13 +141,13 @@ void MainBussniessView::setParameters(){
 
 void MainBussniessView::Initalize(){
 
-    int icount = GetItemList(&lstItemModel);//item_tb_11_3
-    qDebug()<<"debug--->Initalize()"<< icount;
+    int icount = GetItemList(&lstItemModel);
+    //qDebug()<<"debug--->Initalize()"<< icount;
     for(int i = 0;i < icount;i++){
         int itemNO = lstItemModel[i].getItemNo();
         QString strItemName = lstItemModel[i].getItemName();
         getCalibration(itemNO, strItemName);
-        qDebug() << "Initalize()"<<strItemName;
+        //qDebug() << "Initalize()"<<strItemName;
     }
 
     for(int j = icount-1;j >= 0;j--){
@@ -460,7 +460,10 @@ bool MainBussniessView::askUser(){
    else
       return false;
 }
-
+void MainBussniessView::setinitCondition()
+{
+  tty_thread->setinitCondition();
+}
 bool MainBussniessView::normalStart(){
 
     tty_thread->setCommand(ONESTEP);
@@ -702,7 +705,7 @@ void MainBussniessView::showWrgb(WRGB_DAT wrgb_data,unsigned int count) {
             else  if  (count==0 && App::workMode==0x02)
             {
                 cac.interval_Calculation(_result);
-                qDebug() << "Show result:" + QString(_result[0].name) + QString(_result[0].unit) + QString(_result[0].position);
+                qDebug() << "Show result:" + QString(_result[8].name) + QString(_result[8].unit) + QString(_result[8].position);
                 getTest_Result(_result);
                 showTest_Result();
             }
@@ -735,7 +738,7 @@ void MainBussniessView::calibrationShow(struct RESULT _result[]){
     struct resultRGB  tmp;
     cac.get_CalculationResult(_result,Name_tmp,&tmp);
 
-    printf("[calibrationShow]: W:%d , R:%d , G:%d  , B:%d ,result:%d, unit:%s\n",tmp.W,tmp.R,tmp.G,tmp.B,tmp.Result,tmp.unit);
+  //  printf("[calibrationShow]: W:%d , R:%d , G:%d  , B:%d ,result:%d, unit:%s\n",tmp.W,tmp.R,tmp.G,tmp.B,tmp.Result,tmp.unit);
 
 
     resultModel->setWhite(tmp.W);
@@ -759,10 +762,10 @@ void MainBussniessView::calibrationShow(struct RESULT _result[]){
 
 
 //-------------------------------------------------------------------------------------------------------------------------------------结果显示
-void MainBussniessView::showTest_Result(){
+void MainBussniessView::showTest_Result(){//ok
 
 
-         m_DatabaseHelper->ExecuteQueryModel(showTabeTest, tr("select SampleNo, ItemName, SampleValue, Unit,TbType, SampleDate from TestResult_tb where SampleNo > '0' order by SampleNo desc,rowid asc"));
+         m_DatabaseHelper->ExecuteQueryModel(myshowTabeTest, tr("select SampleNo, ItemName, SampleValue, Unit,TbType, SampleDate from TestResult_tb where SampleNo > '0' order by SampleNo desc,rowid asc"));
 //else
 //         m_DatabaseHelper->ExecuteQueryModel(showTabeTest, tr("select SampleNo, ItemName, SampleValue, Unit,TbType, rowid from TestResult_tb where SampleDate = '%1' order by SampleNo desc,rowid asc"));
 //        int rowCount = showTabelModel->rowCount();
@@ -782,12 +785,12 @@ void MainBussniessView::showTest_Result(){
 //                 <<"="
 //                   ;
 //        }
-            showTabeTest->setHeaderData(0,Qt::Horizontal,tr("No"));
-            showTabeTest->setHeaderData(1,Qt::Horizontal,tr("Item"));
-            showTabeTest->setHeaderData(2,Qt::Horizontal,tr("Result"));
-            showTabeTest->setHeaderData(3,Qt::Horizontal,tr("Unit"));
-            showTabeTest->setHeaderData(4,Qt::Horizontal,tr("Strip"));
-            showTabeTest->setHeaderData(5,Qt::Horizontal,tr("Date"));
+            myshowTabeTest->setHeaderData(0,Qt::Horizontal,tr("No"));
+            myshowTabeTest->setHeaderData(1,Qt::Horizontal,tr("Item"));
+            myshowTabeTest->setHeaderData(2,Qt::Horizontal,tr("Result"));
+            myshowTabeTest->setHeaderData(3,Qt::Horizontal,tr("Unit"));
+            myshowTabeTest->setHeaderData(4,Qt::Horizontal,tr("Strip"));
+            myshowTabeTest->setHeaderData(5,Qt::Horizontal,tr("Date"));
             // showTabelModel->setHeaderData(5,Qt::Horizontal,tr("样本类型"));
             // showTabelModel->setHeaderData(6,Qt::Horizontal,tr("条码"));
             // showTabelModel->setHeaderData(7,Qt::Horizontal,tr("孵育时间"));
@@ -795,7 +798,7 @@ void MainBussniessView::showTest_Result(){
             //showTabelModel->setHeaderData(4,Qt::Horizontal,tr("项目编号"));
             //showTabelModel->setHeaderData(8,Qt::Horizontal,tr("测试方法"));
             //showTabelModel->setHeaderData(11,Qt::Horizontal,tr("标志"));
-        emit testResult(showTabeTest);
+        emit testResult(myshowTabeTest);
 }
 
 
@@ -842,7 +845,10 @@ MainBussniessView::~MainBussniessView(){
         delete testdeleteTableModel;
         testdeleteTableModel = NULL;
     }
-
+    if(myshowTabeTest != NULL){
+        delete myshowTabeTest;
+        myshowTabeTest=NULL;
+      }
 }
 
 
@@ -856,24 +862,24 @@ void MainBussniessView::Query_SampleResult(int sampleNo, QString sBeginDate, QSt
     }
     sampleTableModel = new QSqlTableModel();
     m_DatabaseHelper->ExecuteTableModel(sampleTableModel, ("TestResult_tb"), strSQL);
-    sampleTableModel->setHeaderData(0,Qt::Horizontal,tr("No"));
-    sampleTableModel->setHeaderData(1,Qt::Horizontal,tr("Reaction time"));
-    sampleTableModel->setHeaderData(2,Qt::Horizontal,tr("Result"));
-    sampleTableModel->setHeaderData(3,Qt::Horizontal,tr("species"));
-    sampleTableModel->setHeaderData(4,Qt::Horizontal,tr("No"));
-    sampleTableModel->setHeaderData(5,Qt::Horizontal,tr("Item"));
+   sampleTableModel->setHeaderData(0,Qt::Horizontal,tr("No"));
+   // sampleTableModel->setHeaderData(1,Qt::Horizontal,tr("Reaction time"));
+   // sampleTableModel->setHeaderData(2,Qt::Horizontal,tr("Result"));
+   // sampleTableModel->setHeaderData(3,Qt::Horizontal,tr("species"));
+      sampleTableModel->setHeaderData(4,Qt::Horizontal,tr("Item"));
+      sampleTableModel->setHeaderData(5,Qt::Horizontal,tr("Result"));
     sampleTableModel->setHeaderData(6,Qt::Horizontal,tr("Unit"));
-    sampleTableModel->setHeaderData(7,Qt::Horizontal,tr("Strip"));
-    sampleTableModel->setHeaderData(8,Qt::Horizontal,tr("Test mode"));
+    sampleTableModel->setHeaderData(7,Qt::Horizontal,tr("Strips"));
+   // sampleTableModel->setHeaderData(8,Qt::Horizontal,tr("testing"));
     sampleTableModel->setHeaderData(9,Qt::Horizontal,tr("Time"));
-    sampleTableModel->setHeaderData(10,Qt::Horizontal,tr("printf"));
-    sampleTableModel->setHeaderData(11,Qt::Horizontal,tr("flag"));
+ //   sampleTableModel->setHeaderData(10,Qt::Horizontal,tr("printf"));
+ //   sampleTableModel->setHeaderData(11,Qt::Horizontal,tr("flag")); 
     emit SampleResult(sampleTableModel);
 }
 
 
 
-void MainBussniessView::Query_SampleResult_no(int sampleNo, QString sBeginDate, QString sEndDate){
+void MainBussniessView::Query_SampleResult_No(int sampleNo, QString sBeginDate, QString sEndDate){
     QString strSQL = (tr("SampleNo = %1 and SampleDate >= '%2' and SampleDate <= '%3'").arg(sampleNo).arg(sBeginDate).arg(sEndDate));
 
     if(sampleTableModel != NULL){
@@ -883,17 +889,17 @@ void MainBussniessView::Query_SampleResult_no(int sampleNo, QString sBeginDate, 
     sampleTableModel  = new QSqlTableModel();
     m_DatabaseHelper->ExecuteTableModel(sampleTableModel, tr("TestResult_tb"), strSQL);
     sampleTableModel->setHeaderData(0,Qt::Horizontal,tr("No"));
-    sampleTableModel->setHeaderData(1,Qt::Horizontal,tr("Reaction time"));
-    sampleTableModel->setHeaderData(2,Qt::Horizontal,tr("Result"));
-    sampleTableModel->setHeaderData(3,Qt::Horizontal,tr("species"));
-    sampleTableModel->setHeaderData(4,Qt::Horizontal,tr("No"));
-    sampleTableModel->setHeaderData(5,Qt::Horizontal,tr("Item"));
+   // sampleTableModel->setHeaderData(1,Qt::Horizontal,tr("Reaction time"));
+   // sampleTableModel->setHeaderData(2,Qt::Horizontal,tr("Result"));
+   // sampleTableModel->setHeaderData(3,Qt::Horizontal,tr("species"));
+      sampleTableModel->setHeaderData(4,Qt::Horizontal,tr("Item"));
+      sampleTableModel->setHeaderData(5,Qt::Horizontal,tr("Result"));
     sampleTableModel->setHeaderData(6,Qt::Horizontal,tr("Unit"));
     sampleTableModel->setHeaderData(7,Qt::Horizontal,tr("Strips"));
-    sampleTableModel->setHeaderData(8,Qt::Horizontal,tr("testing"));
+   // sampleTableModel->setHeaderData(8,Qt::Horizontal,tr("testing"));
     sampleTableModel->setHeaderData(9,Qt::Horizontal,tr("Time"));
-    sampleTableModel->setHeaderData(10,Qt::Horizontal,tr("printf"));
-    sampleTableModel->setHeaderData(11,Qt::Horizontal,tr("flag"));
+ //   sampleTableModel->setHeaderData(10,Qt::Horizontal,tr("printf"));
+ //   sampleTableModel->setHeaderData(11,Qt::Horizontal,tr("flag"));
     emit SampleResult(sampleTableModel);
 }
 
@@ -1227,7 +1233,7 @@ void MainBussniessView::calibrationDelete_Result(QString sItemName){//delete fro
 
 
     calibrateObserveTableModel->setHeaderData(0,Qt::Horizontal,tr("Item"));
-    calibrateObserveTableModel->setHeaderData(1,Qt::Horizontal,tr("calibration"));
+    calibrateObserveTableModel->setHeaderData(1,Qt::Horizontal,tr("Calibration"));
     calibrateObserveTableModel->setHeaderData(2,Qt::Horizontal,tr("Result"));
     calibrateObserveTableModel->setHeaderData(3,Qt::Horizontal,tr("White"));
     calibrateObserveTableModel->setHeaderData(4,Qt::Horizontal,tr("Red"));
@@ -1248,27 +1254,15 @@ void MainBussniessView::testDelete_Result(){
 
     testdeleteTableModel->setHeaderData(0,Qt::Horizontal, tr("No"));
 
-    testdeleteTableModel->setHeaderData(1,Qt::Horizontal, tr("Reaction time"));
+    testdeleteTableModel->setHeaderData(4,Qt::Horizontal, tr("Item"));
 
-    testdeleteTableModel->setHeaderData(2,Qt::Horizontal, tr("Result"));
-
-    testdeleteTableModel->setHeaderData(3,Qt::Horizontal, tr("类型"));
-
-    testdeleteTableModel->setHeaderData(4,Qt::Horizontal, tr("项目编号"));
-
-    testdeleteTableModel->setHeaderData(5,Qt::Horizontal, tr("Item"));
+    testdeleteTableModel->setHeaderData(5,Qt::Horizontal, tr("Result"));
 
     testdeleteTableModel->setHeaderData(6,Qt::Horizontal, tr("Unit"));
 
     testdeleteTableModel->setHeaderData(7,Qt::Horizontal, tr("Strip"));
 
-    testdeleteTableModel->setHeaderData(8,Qt::Horizontal, tr("测试方法"));
-
     testdeleteTableModel->setHeaderData(9,Qt::Horizontal, tr("Time"));
-
-    testdeleteTableModel->setHeaderData(10,Qt::Horizontal, tr("是否打印"));
-
-    testdeleteTableModel->setHeaderData(11,Qt::Horizontal, tr("标志"));
 
     emit SampleResult(testdeleteTableModel);
     showTest_Result();

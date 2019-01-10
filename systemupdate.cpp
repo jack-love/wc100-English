@@ -3,7 +3,11 @@
 #include "App.h"
 #include "QDebug"
 #include "messagebox.h"
-
+#include <QSplashScreen>
+#include <QPixmap>
+#include <unistd.h>
+#include <QMovie>
+#include<QTimer>
 SystemUpdate::SystemUpdate(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SystemUpdate) {
@@ -24,6 +28,10 @@ SystemUpdate::SystemUpdate(QWidget *parent) :
         this, SLOT(showDownloadProgress(QString,qint64,double,double)));
     connect(network,SIGNAL(downError_signal(QString)),this,SLOT(downloadErro_hand(QString)));
 
+    up_wTimer = new QTimer(this);
+    connect(up_wTimer,SIGNAL(timeout()),this,SLOT(upTimeout()));
+
+
     ui->up_progress->setMaximum(100);
     ui->up_progress->setValue(0);
     ui->version_mcu->setText((App::mcu_version));
@@ -32,9 +40,50 @@ SystemUpdate::SystemUpdate(QWidget *parent) :
 
 }
 
+void SystemUpdate::upTimeout()
+{
+       if(up_wTimer->isActive()){
+           up_wTimer->stop();
+
+           time_up--;
+
+           if(time_up != 0){
+              up_wTimer->start(1*1000);
+           }else{
+               Movie->stop();
+               if(Movie!=NULL){
+               delete Movie;
+                   qDebug()<<"uptimeout delete movie";
+               }
+               MessageBox msg;
+               msg.MessageBox_Info(tr("update success！"));
+               ui->label_state->setText(tr("Success"));
+               ui->label_update->clear();
+           }
+       }
+}
+
+void SystemUpdate::setTestTime(unsigned int s,bool status)
+{
+    if(status){
+        time_up = s;
+        up_wTimer->start(1*1000);
+    }
+    else{
+           up_wTimer->stop();
+           time_up=0;
+           Movie->stop();
+           if(Movie!=NULL){
+            delete Movie;
+           }
+    }
+}
+
+
 SystemUpdate::~SystemUpdate(){
     delete ui;
     delete network;
+    delete up_wTimer;
 }
 
 void SystemUpdate::on_btn_back_clicked(){
@@ -101,9 +150,24 @@ void SystemUpdate::downloadErro_hand(QString err)
 void SystemUpdate::on_btn_upsystem_clicked()
 {
 
+    ui->label_update->setScaledContents(true);
+    Movie = new QMovie(":/image/update.gif");
+ui->label_update->show();
+    ui->label_update->setMovie(Movie);
+    Movie->start();
+    setTestTime(10,true);
+    ui->label_state->setText(tr("Start"));
+
 }
 
 void SystemUpdate::on_btn_upmcu_clicked()
 {
+    ui->label_update->setScaledContents(true);
+    Movie = new QMovie(":/image/update.gif");
+
+    ui->label_update->setMovie(Movie);
+    Movie->start();
+    setTestTime(10,true);
+    ui->label_state->setText(tr("Start"));
 
 }

@@ -3,6 +3,7 @@
 #include <QtGui>
 #include <QDialog>
 #include<QWidget>
+#include "myqsqltablemodel.h"
 class MainBussniessView;
 class QSqlTableModel;
 class QValidator;
@@ -37,25 +38,21 @@ public:
     explicit TestingDialog(QWidget *parent = 0, MainBussniessView* pMainBussniessView = NULL);
     ~TestingDialog();
 
-
-
-   QVBoxLayout *verticalLayout;
-   QHBoxLayout *horizontalLayout_1;
-   QVariant data(const QModelIndex &idx, int role = Qt::DisplayRole) const;
-
+   void start_process(bool status);
 private slots:
         void on_btn_Back_clicked();
-        bool on_TestResult(QSqlTableModel*);
+        bool on_TestResult(myQSqlTableModel*);
         void on_btn_Start_clicked();
         void on_btn_Stop_clicked();
         void sTimeSlot( int st);
         void resetSlot();
 signals:
         void SendHomeSignal();
-        bool testResult(QSqlTableModel*);
+        bool testResult(myQSqlTableModel*);
 private:
       Ui::TestingDialog *ui;
       MainBussniessView *pMainView=NULL;
+      QMovie *Movie;
 };
 
 #endif // TESTINGDIALOG_H

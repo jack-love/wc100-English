@@ -64,6 +64,19 @@ background:url(://image/backGround.png)
     <string>Thank you for your use!</string>
    </property>
   </widget>
+  <widget class="QLabel" name="label_process">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>370</y>
+     <width>256</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

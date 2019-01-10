@@ -8,12 +8,8 @@
  Query::Query (QWidget *parent, MainBussniessView*pMainBussniessView) :QTabWidget(parent),pMainView(pMainBussniessView),ui(new Ui::Query)
 {
     ui->setupUi(this);
-
-    //connect(pMainView, SIGNAL(PatientResult(QSqlTableModel*)), this, SLOT(on_PatientResult(QSqlTableModel*)));
     connect(pMainView, SIGNAL(SampleResult(QSqlTableModel*)), this, SLOT(on_SampleResult(QSqlTableModel*)));
-    //connect(pMainView, SIGNAL(QuerySampleResult(QSqlTableModel*)), this, SLOT(on_QuerySampleResult(QSqlTableModel*)));
-      ui->dt_query_End->setDateTime(QDateTime::currentDateTime());
-      // printModel = new QSqlQueryModel();
+    ui->dt_query_End->setDateTime(QDateTime::currentDateTime());
 }
 
 
@@ -24,31 +20,17 @@ Query::~Query()
 }
 
 
+/*
+    ui->tbview_TestResult->setColumnWidth(0, 100);
+    ui->tbview_TestResult->setColumnWidth(1, 70);
+    ui->tbview_TestResult->setColumnWidth(2, 90);
+    ui->tbview_TestResult->setColumnWidth(3, 100);
+    ui->tbview_TestResult->setColumnWidth(4, 90);
+    ui->tbview_TestResult->setColumnWidth(5, 300);
+
+*/
 
 
-//void Query::on_tablevew_Patient_pressed(const QModelIndex &index)
-//{
-//    nRow = index.row();
-//    QSqlRecord record = patientModel->record(nRow);
-//    if(record.count() > 0){
-//        int nSampleNo = record.value("SampleNo").toInt();
-//        QString strDateTime = record.value("RegisterDate").toString();
-//        QString tempDate = strDateTime;
-//        QString sEndDate = tempDate.replace(10, 9, " 23:59:59");
-//        pMainView->Query_SampleResult(nSampleNo, strDateTime, sEndDate);
-//    }
-//}
-
-//void Query::on_PatientResult(QSqlTableModel*model){
-//    patientModel = model;
-//    ui->tablevew_Patient->setModel(model);
-//    ui->tablevew_Patient->setEditTriggers(QAbstractItemView::NoEditTriggers);   //使其不可编辑
-
-//    ui->tablevew_Patient->setSelectionMode(QAbstractItemView::SingleSelection);
-//    ui->tablevew_Patient->setSelectionBehavior(QAbstractItemView::SelectRows);
-//    //ui->tablevew_Patient->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-//    ui->tablevew_Patient->verticalHeader()->hide();
-//}
 
 
 void Query::on_SampleResult(QSqlTableModel* testModel){
@@ -57,54 +39,62 @@ void Query::on_SampleResult(QSqlTableModel* testModel){
     ui->tableView_TestResult->setEditTriggers(QAbstractItemView::NoEditTriggers);   //使其不可编辑
     ui->tableView_TestResult->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->tableView_TestResult->setSelectionBehavior(QAbstractItemView::SelectRows);
-        //ui->tablevew_Patient->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+
     ui->tableView_TestResult->verticalHeader()->hide();
     ui->tableView_TestResult->setColumnHidden(1, true);
+    ui->tableView_TestResult->setColumnHidden(2, true);
     ui->tableView_TestResult->setColumnHidden(3, true);
-    ui->tableView_TestResult->setColumnHidden(4, true);
-    //ui->tableView_TestResult->setColumnHidden(7, true);
     ui->tableView_TestResult->setColumnHidden(8, true);
-    //ui->tableView_TestResult->setColumnHidden(9, true);
     ui->tableView_TestResult->setColumnHidden(10, true);
     ui->tableView_TestResult->setColumnHidden(11, true);
 
 
     ui->tableView_TestResult->setColumnWidth(0, 80);
-    ui->tableView_TestResult->setColumnWidth(2, 100);
-    ui->tableView_TestResult->setColumnWidth(5, 80);
-    ui->tableView_TestResult->setColumnWidth(6, 120);
-    ui->tableView_TestResult->setColumnWidth(7, 80);
+    ui->tableView_TestResult->setColumnWidth(2, 70);
+    ui->tableView_TestResult->setColumnWidth(5, 90);
+    ui->tableView_TestResult->setColumnWidth(6, 100);
+    ui->tableView_TestResult->setColumnWidth(7, 90);
     ui->tableView_TestResult->setColumnWidth(9, 300);
     printModel=testModel;
 
 }
 
 
-//void Query::on_QuerySampleResult(QSqlTableModel* testModel){
-//    ui->tbView_SampleResult->setModel(testModel);
-//    ui->tbView_SampleResult->setEditTriggers(QAbstractItemView::NoEditTriggers);   //使其不可编辑
-
-//    ui->tbView_SampleResult->setSelectionMode(QAbstractItemView::SingleSelection);
-//    ui->tbView_SampleResult->setSelectionBehavior(QAbstractItemView::SelectRows);
-//    //ui->tablevew_Patient->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-//    ui->tbView_SampleResult->verticalHeader()->hide();
-//}
 
 
 void Query::on_btn_query_clicked()
 {
-    sBeginDate = ui->dt_query_Start->dateTime().toString("yyyy-MM-dd hh:mm:ss");
-       sEndDate = ui->dt_query_End->dateTime().toString("yyyy-MM-dd hh:mm:ss");
-
-    if(ui->edt_query_SampleNo->text().isEmpty()){
-             pMainView->Query_SampleResult(1, sBeginDate, sEndDate);
+    if(!ui->edt_query_SampleNo->text().isEmpty()){
+      bool ret = queryDate(ui->edt_query_SampleNo->text().toInt());
+      if(!ret){
+          MessageBox msg ;
+          msg.MessageBox_Info(tr("No sample data!"));
+      }
     }else{
-             int sampleNo = ui->edt_query_SampleNo->text().toInt();
-             pMainView->Query_SampleResult_no(sampleNo, sBeginDate, sEndDate);
-             // pMainView->Query_SampleResult(sampleNo, sBeginDate, sEndDate);
+        queryDate(0);
     }
 }
 
+bool Query::queryDate(int sampleNo){
+    sBeginDate = ui->dt_query_Start->dateTime().toString("yyyy-MM-dd hh:mm:ss");
+       sEndDate = ui->dt_query_End->dateTime().toString("yyyy-MM-dd hh:mm:ss");
+
+   if(ui->edt_query_SampleNo->text().isEmpty()){
+             pMainView->Query_SampleResult(1, sBeginDate, sEndDate);
+    }else{
+             //int sampleNo = ui->edt_query_SampleNo->text().toInt();
+             pMainView->Query_SampleResult_No(sampleNo, sBeginDate, sEndDate);
+    }
+
+
+    if (printModel->rowCount()==0){
+    return false;
+    }
+    else{
+        qDebug()<<"return ...true";
+    return true;
+    }
+}
 
 
 /*
@@ -124,17 +114,66 @@ No. 000001
  VC      0       mmol/L
 
 */
-void Query::on_btn_export_clicked()
-{
+void Query::on_btn_export_clicked(){
+ MessageBox msg ;
+    int ret = msg.MessageBox_Ask(tr("export data?"));
+     if(0 == ret){
+
+    if(!ui->edt_query_SampleNo->text().isEmpty()){
+            SampleNo =ui->edt_query_SampleNo->text().toInt();
+
+
+            QString  tmp = QString("%1").arg(SampleNo);
+            ui->edt_query_SampleNo->setText(tmp);
+            bool ret = queryDate(SampleNo);
+               if(!ret){
+                msg.MessageBox_Info(tr("No sample data!"));
+               }else{
+                dataExport();
+                msg.MessageBox_Info(tr("Export success!"));
+               }
+
+
+    }else{
+
+
+        SampleNo =1;
+    while(1){
+
+        QString  tmp = QString("%1").arg(SampleNo);
+        ui->edt_query_SampleNo->setText(tmp);
+
+        bool ret = queryDate(SampleNo);
+            if(!ret) break;
+
+         dataExport();
+         SampleNo++;
+        }
+         ui->edt_query_SampleNo->clear();
+         on_btn_query_clicked();
+
+         msg.MessageBox_Info(tr("Export result %1").arg(SampleNo-1));
+       }
+
+
+ }
+
+}
+
+
+bool Query::dataExport(){
     QString printStr = "";
 
-    if (printModel->rowCount()==0)
-            return;
+    if (printModel->rowCount()==0){
+        //qDebug()<<"return ...";
+    return false;
+    }
+
 
     QSqlRecord aRec = printModel->record(0);
-
+    printStr.append("\n\r\n");
     printStr.append(trUtf8("Date:")).append(aRec.value("SampleDate").toString()).append("\r\n");
-    printStr.append(trUtf8("No:")).append(aRec.value("SampleNo").toString()).append("\r\n");
+    printStr.append(trUtf8("NO:")).append(aRec.value("SampleNo").toString()).append("\t").append(trUtf8("Strips:")).append(aRec.value("TbType").toString()).append("\r\n");
 
 
     for (int i=0;i<printModel->rowCount();i++)
@@ -145,30 +184,35 @@ void Query::on_btn_export_clicked()
          QString Unit=aRec.value("Unit").toString();
          printStr.append(ItemName).append("\t").append(SampleValue).append("\t").append(Unit).append("\r\n");
     }
-
+    printStr.append("\n\r\n");
     QTextCodec *codec = QTextCodec::codecForName("GBK");
     QByteArray sendForGBK = codec->fromUnicode(printStr);
 
     pMainView->PrintInformation(sendForGBK);
+return true;
 }
 
 void Query::on_tableView_TestResult_pressed(const QModelIndex &index)
 {
 int nRow = index.row();
 qDebug()<<"on_tableView_TestResult_pressed"<<nRow;
-  //printModel->removeRow(nRow);
+
 }
 
 void Query::on_btn_delete_clicked() {
-
-//        if (printModel->rowCount()==0)
-//                return;
     MessageBox msg ;
-        int ret = msg.MessageBox_Ask(tr("Delete data?"));
+
+        if (printModel->rowCount()==0){
+                msg.MessageBox_Info(tr("No sample data!"));
+              return;
+          }
+
+
+        int ret = msg.MessageBox_Ask(tr("Delete sample data?"));
 
          if(0 == ret){
              qDebug()<<"start dele!";
-ui->btn_delete->setEnabled(false);
+            ui->btn_delete->setEnabled(false);
 //             int nRowCnt = printModel->rowCount();
 //            qDebug()<<"[on_btn_delete_clicked]"<<nRowCnt;
 //             while (nRowCnt > 0){
@@ -178,8 +222,8 @@ ui->btn_delete->setEnabled(false);
 
                 pMainView->testDelete_Result();
 
-ui->btn_delete->setEnabled(true);
-msg.MessageBox_Info(tr("Delete completed !"));
+                ui->btn_delete->setEnabled(true);
+                msg.MessageBox_Info(tr("Delete successful!"));
         }
 
 
@@ -192,13 +236,17 @@ void Query::on_btn_next_clicked()
       MessageBox msg ;
    if(!ui->edt_query_SampleNo->text().isEmpty()){
           SampleNo =ui->edt_query_SampleNo->text().toInt();
-        pMainView->Query_SampleResult(SampleNo, sBeginDate, sEndDate);
+
        SampleNo++;
       QString  tmp = QString("%1").arg(SampleNo);
        ui->edt_query_SampleNo->setText(tmp);
-       on_btn_query_clicked();
+        bool ret =queryDate(SampleNo);
+        if(!ret){
+            MessageBox msg ;
+            msg.MessageBox_Info(tr("No sample data!"));
+        }
    }else{
-               msg.MessageBox_Info(tr("Please input sample number!"));
+               msg.MessageBox_Info(tr("Please enter the sample number!"));
    }
 }
 
@@ -206,18 +254,21 @@ void Query::on_btn_previous_clicked() {
       MessageBox msg ;
     if(!ui->edt_query_SampleNo->text().isEmpty()){
            SampleNo =ui->edt_query_SampleNo->text().toInt();
-         pMainView->Query_SampleResult(SampleNo, sBeginDate, sEndDate);
+
          if(SampleNo > 0){
             SampleNo--;
          }
        QString  tmp = QString("%1").arg(SampleNo);
         ui->edt_query_SampleNo->setText(tmp);
-        on_btn_query_clicked();
+        bool ret = queryDate(SampleNo);
+        if(!ret){
+            MessageBox msg ;
+            msg.MessageBox_Info(tr("No sample data!"));
+        }
     }else{
-              msg.MessageBox_Info(tr("Please input sample number!"));
+              msg.MessageBox_Info(tr("Please enter the sample number!"));
     }
 }
-
 void Query::on_btn_back_clicked()
 {
    emit SendHomeSignal();

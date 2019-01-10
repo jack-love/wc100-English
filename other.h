@@ -18,6 +18,7 @@ public:
 private:
     Ui::Other *ui;
       MainBussniessView *pMainBussView=NULL;
+      QMovie *Movie;
 };
 
 #endif // OTHER_H

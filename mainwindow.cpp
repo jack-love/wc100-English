@@ -48,17 +48,18 @@ MainWindow::MainWindow(QWidget *parent) :
             }
 
 //开机动画
-            //m_system_init=new Systeminit(this);
-           // m_system_init->start();
+//            m_system_init=new Systeminit(this);
+//            m_system_init->start();
             m_MainView->mcuReset();//必须放在这个位置
-            //delete  m_system_init;
+            ////  QTest::qWait(1000);
+//            delete  m_system_init;
 
 //语言支持
             connect(m_MainView,SIGNAL(languageConversion()),this,SLOT(LanguageConversion()));
             trans =new QTranslator;
 
             QString curLang=readLanguage_Setting(); //读取语言设置
-
+            //qDebug()<<"[MainWindow]---->"<<curLang;
        if (curLang == "EN")
             trans->load(":/syszux/tr_en.qm");
        else

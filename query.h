@@ -20,6 +20,8 @@ public:
     ~Query();
 
    ttyThread  * tty_thread=NULL;
+   bool dataExport(void);
+   bool queryDate(int sampleNo);
 private slots:
     void on_SampleResult(QSqlTableModel*);
     void on_btn_export_clicked();

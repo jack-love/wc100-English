@@ -59,7 +59,7 @@ uint TestResultModel::getSampleNo(){
 }
 
 int TestResultModel::getHatchTime(){
-    return HatchTime;//
+    return HatchTime;
 }
 
 QString TestResultModel::getSampleValue(){

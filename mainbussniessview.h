@@ -19,6 +19,7 @@
 #include<maintancance.h>
 #include<QTimer>
 #include <QThread>
+#include<myqsqltablemodel.h>
 class QLibrary;
 class databaseHelper;
 class TestingThread;
@@ -45,6 +46,7 @@ public:
      void  startProcessing();
     explicit MainBussniessView(QObject *parent = 0);
     bool normalStart();
+     void setinitCondition();
     bool Stop();
     bool getVersion();
     bool setUp();
@@ -60,7 +62,7 @@ public:
     void Calibrate_Query_12MA(QSqlQueryModel *tableModel, int nItemNo);
     void  calibrateSave(CalibrateModel calibrateModel);
     void  Query_SampleResult(int sampleNo, QString sBeginDate, QString sEndDate);
-    void  Query_SampleResult_no(int sampleNo, QString sBeginDate, QString sEndDate);
+    void  Query_SampleResult_No(int sampleNo, QString sBeginDate, QString sEndDate);
     void  getTest_Result(RESULT result[]);
     int    getSample_Type(QList<SampleTypeModel>* lstSampleType);
     void testResult_Save(TestResultModel* resultModel);
@@ -91,7 +93,7 @@ public:
     void  buzzer();
 
 signals:
-    bool  testResult(QSqlTableModel*);
+    bool  testResult(myQSqlTableModel*);
     bool  system_Setup(QSqlTableModel*);
     bool  system_Species(QSqlTableModel*);
     bool  system_Language(QSqlTableModel*);
@@ -152,6 +154,7 @@ private:
     QSqlTableModel *patientTableModel=NULL;
     QSqlTableModel *showTabelModel=NULL;
     QSqlTableModel *showTabeTest=NULL;
+     myQSqlTableModel *myshowTabeTest=NULL;
     QSqlTableModel *qcItemTableModel=NULL;
     QSqlTableModel *queryTableModel=NULL;
     QSqlTableModel *calibrateObserveTableModel=NULL;

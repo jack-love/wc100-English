@@ -272,7 +272,7 @@ QGroupBox{color:rgb(0, 170, 255);}
     <property name="font">
      <font>
       <family>DejaVu Serif</family>
-      <pointsize>30</pointsize>
+      <pointsize>28</pointsize>
       <weight>75</weight>
       <bold>true</bold>
      </font>
@@ -281,7 +281,7 @@ QGroupBox{color:rgb(0, 170, 255);}
      <string notr="true"/>
     </property>
     <property name="title">
-     <string>White Balance：</string>
+     <string>White Balance:</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignHCenter|Qt::AlignTop</set>

@@ -51,7 +51,7 @@ void SignIn::on_PB_SignIn_clicked(){
 
 
 void SignIn::on_PB_contact_clicked(){
-    msg.MessageBox_Info(tr("    长春万成生物　 \n\n联系人:jack.niu\n电话:18043112621\n"));
+    msg.MessageBox_Info(tr("CHANGCHUN WANCHENG\nBIO ELECTRON CO.,LTD\n\nT:0086-431-84859877\nEmail:yanruzhang@ccwancheng.com\n"));
 }
 
 void SignIn::changeEvent(QEvent *e){

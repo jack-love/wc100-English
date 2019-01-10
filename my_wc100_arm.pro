@@ -42,7 +42,8 @@ HEADERS += mainbutton.h maintancance.h mainwindow.h testingdialog.h \
     systeminit.h \
     frminput.h \
     wifibtthread.h \
-    keyboardthread.h
+    keyboardthread.h \
+    myqsqltablemodel.h
 FORMS += mainbutton.ui maintancance.ui mainwindow.ui testingdialog.ui \
     signin.ui \
     systemsetup.ui \
@@ -84,5 +85,6 @@ SOURCES += main.cpp \
     systeminit.cpp \
     frminput.cpp \
     wifibtthread.cpp \
-    keyboardthread.cpp
+    keyboardthread.cpp \
+    myqsqltablemodel.cpp
 RESOURCES += rc.qrc

@@ -44,8 +44,8 @@ SystemSetup::SystemSetup(QWidget *parent,MainBussniessView*pMainBussniessView) :
     ui->btn_closeBt->setEnabled(false);
     ui->btn_scanBt->setEnabled(false);
     ui->btn_connectBt->setEnabled(false);
-    ui->edt_language->setEnabled(false);
-
+    ui->com_ssidBt->setEditable(false);
+    ui->btn_receiveFiles->setEnabled(false);
      btn_openWfi=false;
      bt_Status=0x00;
      lsmodko=false;
@@ -57,10 +57,6 @@ SystemSetup::SystemSetup(QWidget *parent,MainBussniessView*pMainBussniessView) :
     ui->label_down->setPixmap(pixmapBattery);
     state=false;
     updateState(state);
-
-
-
-
 }
 
 SystemSetup::~SystemSetup()
@@ -140,6 +136,7 @@ void SystemSetup::finishedProcess( ){
                   ui->com_ssidBt->addItem(tmp);
                 }
                  ui->btn_connectBt->setEnabled(true);
+                 ui->label_state->setText(tr("Bluetooth Scanning Completion!"));
               }
          }
 
@@ -155,7 +152,7 @@ void SystemSetup::finishedProcess( ){
                 if( ret > -1) {
                     lsmodko=true;
                 }
-                 qDebug()<<"finishedProcess 1"<<shellOutput<<ret;
+                 //qDebug()<<"finishedProcess 1"<<shellOutput<<ret;
                 ret=shellOutput.indexOf("brcmfmac");
                 if(ret > -1){
                     lsmodko=true;
@@ -176,7 +173,9 @@ void SystemSetup::finishedProcess( ){
                      list = shellOutput.split("\n");            
                     if (0 == QString::compare("Disconnect done!", list.at(0)) ){
                          MessageBox msg;
-                         msg.MessageBox_Info("Bluetooth received data successfully");
+                         displayUpdate_set(0,false);
+                         msg.MessageBox_Info(tr("Bluetooth Receives Data Successfully！"));
+                         ui->label_state->setText(tr("Bluetooth Receiving Completion!"));
                          updateState(false);
                     }
            }
@@ -279,7 +278,7 @@ bool SystemSetup::systemShow(QSqlTableModel* model){
         }
           ui->edt_language->setCurrentIndex(0);
          qDebug()<<"［systemShow］--->App::Language"<<App::Language;
-
+        ui->edt_language->setEnabled(false);//默认为英文版本
 
         App::TestMode=record.value("testMode").toString();
         ui->edt_testmode->addItem(App::TestMode);
@@ -733,33 +732,42 @@ void SystemSetup::on_btn_closeWifi_clicked(){
 
 void SystemSetup::on_btn_openBt_clicked(){
         bt_Status = bt_open;
+        ui->label_state->setText(tr("BT Open"));
         executeShellCmd("lsmod|grep -E  \"brcmfmac\"");
-        ui->btn_closeBt->setEnabled(true);
 }
 
 
 void SystemSetup::on_btn_scanBt_clicked(){
     bt_Status=bt_scan;
+     ui->label_state->setText(tr("Bluetooth is scanning...."));
     executeShellQProcessq("hcitool scan");
 }
 
 
 void SystemSetup::on_btn_closeBt_clicked(){
     ui->btn_openBt->setEnabled(true);
-
-
+    ui->btn_closeBt->setEnabled(false);
+    ui->btn_scanBt->setEnabled(false);
+    ui->btn_connectBt->setEnabled(false);
+    ui->btn_receiveFiles->setEnabled(false);
+    ui->label_state->setText(tr("BT Close"));
+    bt_Status = bt_close;
+    emit Signalbt(false);
+    executeShellCmd("ps -ef | grep \"brcm --enable_hci\"");
 }
 
 void SystemSetup::on_btn_connectBt_clicked(){
+    ui->label_state->setText(tr("Start connecting"));
     QString  ssidName = ui->com_ssidBt->currentText();
     QString tmp  = ssidName.left(18).trimmed();
     QString cmd  = QString("agent -a hci0 0000 %1").arg(tmp);
 
-    executeShellQProcessq(cmd);
-    emit Signalbt(true);
+     executeShellQProcessq(cmd);
+     emit Signalbt(true);
     executeShellCmd("sync");
     executeShellCmd("sdptool add OPUSH");
-
+    ui->btn_receiveFiles->setEnabled(true);
+     ui->label_state->setText(tr("Connection Successful"));
 }
 
 
@@ -769,8 +777,8 @@ void SystemSetup::on_btn_receiveFiles_clicked()
     if(rets == 0){
         qDebug()<<"[Debug] receive data ..";
         bt_Status = bt_receive;
-displayUpdate_set(60,true);
-        //system("cd /opt/BT/ && ./bt_update.sh");
+        displayUpdate_set(100,true);
+        ui->label_state->setText(tr("Bluetooth is receiving data..."));
         executeShellCmd("obex_test_wc -b local 9 |grep -E  \"Disconnect done!\"");
     }
 }

@@ -43,5 +43,8 @@
         <file>image/download1.png</file>
         <file>image/download2.png</file>
         <file>image/Initialize_logo.gif</file>
+        <file>image/update.gif</file>
+        <file>image/test.gif</file>
+        <file>image/poweroff.gif</file>
     </qresource>
 </RCC>

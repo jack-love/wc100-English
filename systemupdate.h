@@ -16,7 +16,7 @@ class SystemUpdate : public QDialog
 public:
     explicit SystemUpdate(QWidget *parent = 0);
     ~SystemUpdate();
-
+   void setTestTime(unsigned int s,bool status);
 
 private slots:
     void on_btn_back_clicked();
@@ -24,6 +24,7 @@ private slots:
     void taskInfo(QString task, QString fileName, qint64 fileSize);
     void downloadFinished(QString task);
     void downloadErro_hand(QString err);
+    void upTimeout();
     void showDownloadProgress(QString task, qint64 byteTotal, double percent, double speed);
 
 
@@ -44,6 +45,9 @@ private:
     Ui::SystemUpdate *ui;
     Network *network=NULL;
     QString downloadPath;
+    QTimer *up_wTimer;
+    QMovie *Movie;
+     unsigned int  time_up;
 
 };
 

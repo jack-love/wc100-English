@@ -123,9 +123,10 @@ color:rgb(0, 170, 255);
 background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0#E0E0E0, stop: 1 #FFFFFF);
 border:2px solid gray;
 border-radius:12px;
-font-size: 40px;
+font-size: 35px;
 margin-top:1ex;/* leave space at the top for the title */
 }
+
 QLabel{
 color:rgb(0, 170, 255); 
 }
@@ -134,7 +135,7 @@ color:rgb(0, 170, 255);
 </string>
   </property>
   <property name="currentIndex">
-   <number>1</number>
+   <number>0</number>
   </property>
   <widget class="QWidget" name="tab_date">
    <attribute name="title">
@@ -157,7 +158,6 @@ color:rgb(0, 170, 255);
     </property>
     <property name="font">
      <font>
-      <family>DejaVu Serif</family>
       <pointsize>-1</pointsize>
      </font>
     </property>
@@ -170,7 +170,7 @@ color:rgb(0, 170, 255);
        <x>10</x>
        <y>100</y>
        <width>81</width>
-       <height>401</height>
+       <height>371</height>
       </rect>
      </property>
      <property name="font">
@@ -449,20 +449,20 @@ color:rgb(0, 170, 255);
     <widget class="QLabel" name="label_5">
      <property name="geometry">
       <rect>
-       <x>260</x>
-       <y>60</y>
-       <width>141</width>
+       <x>250</x>
+       <y>57</y>
+       <width>151</width>
        <height>31</height>
       </rect>
      </property>
      <property name="font">
       <font>
        <family>DejaVu Serif</family>
-       <pointsize>23</pointsize>
+       <pointsize>27</pointsize>
       </font>
      </property>
      <property name="text">
-      <string>Gradient</string>
+      <string>Gradient:</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="edt_LaderValue0">
@@ -588,8 +588,27 @@ color:rgb(0, 170, 255);
     <widget class="QLabel" name="label_6">
      <property name="geometry">
       <rect>
-       <x>150</x>
-       <y>60</y>
+       <x>130</x>
+       <y>57</y>
+       <width>111</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Serif</family>
+       <pointsize>27</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Value:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_8">
+     <property name="geometry">
+      <rect>
+       <x>7</x>
+       <y>70</y>
        <width>91</width>
        <height>31</height>
       </rect>
@@ -597,30 +616,11 @@ color:rgb(0, 170, 255);
      <property name="font">
       <font>
        <family>DejaVu Serif</family>
-       <pointsize>23</pointsize>
+       <pointsize>26</pointsize>
       </font>
      </property>
      <property name="text">
-      <string>Value</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_8">
-     <property name="geometry">
-      <rect>
-       <x>12</x>
-       <y>70</y>
-       <width>81</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>DejaVu Serif</family>
-       <pointsize>25</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Item</string>
+      <string>Item:</string>
      </property>
     </widget>
    </widget>
@@ -638,20 +638,20 @@ color:rgb(0, 170, 255);
    <widget class="QLabel" name="label_18">
     <property name="geometry">
      <rect>
-      <x>100</x>
+      <x>153</x>
       <y>2</y>
-      <width>201</width>
+      <width>181</width>
       <height>51</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>DejaVu Serif</family>
-      <pointsize>30</pointsize>
+      <pointsize>26</pointsize>
      </font>
     </property>
     <property name="text">
-     <string>Strip Type</string>
+     <string>Strip type:</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="edt_TestPapertype">
@@ -838,7 +838,6 @@ border-style: inset;
     </property>
     <property name="font">
      <font>
-      <family>DejaVu Serif</family>
       <pointsize>-1</pointsize>
      </font>
     </property>
@@ -846,7 +845,7 @@ border-style: inset;
      <string notr="true"/>
     </property>
     <property name="title">
-     <string>Calibration test</string>
+     <string>Calibration Test</string>
     </property>
     <widget class="QComboBox" name="btn_options_show">
      <property name="geometry">
@@ -1241,7 +1240,7 @@ QScrollBar:horizontal{height:30px;background:transparent;background-color:rgb(24
     <widget class="QLabel" name="label_7">
      <property name="geometry">
       <rect>
-       <x>220</x>
+       <x>233</x>
        <y>60</y>
        <width>81</width>
        <height>31</height>
@@ -1254,7 +1253,7 @@ QScrollBar:horizontal{height:30px;background:transparent;background-color:rgb(24
       </font>
      </property>
      <property name="text">
-      <string>Item</string>
+      <string>Item:</string>
      </property>
     </widget>
    </widget>
@@ -1262,7 +1261,7 @@ QScrollBar:horizontal{height:30px;background:transparent;background-color:rgb(24
     <property name="geometry">
      <rect>
       <x>29</x>
-      <y>601</y>
+      <y>595</y>
       <width>80</width>
       <height>80</height>
      </rect>
@@ -1313,9 +1312,9 @@ border-style: inset;
     <property name="geometry">
      <rect>
       <x>371</x>
-      <y>601</y>
-      <width>78</width>
-      <height>74</height>
+      <y>595</y>
+      <width>80</width>
+      <height>80</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -1332,8 +1331,9 @@ border-style: inset;
     </property>
     <property name="font">
      <font>
-      <weight>75</weight>
-      <bold>true</bold>
+      <pointsize>20</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="cursor">
@@ -1377,7 +1377,7 @@ border-style: inset;
     <property name="geometry">
      <rect>
       <x>44</x>
-      <y>668</y>
+      <y>666</y>
       <width>101</width>
       <height>51</height>
      </rect>
@@ -1396,7 +1396,7 @@ border-style: inset;
     <property name="geometry">
      <rect>
       <x>153</x>
-      <y>668</y>
+      <y>666</y>
       <width>101</width>
       <height>51</height>
      </rect>
@@ -1415,7 +1415,7 @@ border-style: inset;
     <property name="geometry">
      <rect>
       <x>264</x>
-      <y>668</y>
+      <y>666</y>
       <width>91</width>
       <height>51</height>
      </rect>
@@ -1434,7 +1434,7 @@ border-style: inset;
     <property name="geometry">
      <rect>
       <x>369</x>
-      <y>668</y>
+      <y>666</y>
       <width>141</width>
       <height>51</height>
      </rect>
@@ -1446,14 +1446,14 @@ border-style: inset;
      </font>
     </property>
     <property name="text">
-     <string>delete</string>
+     <string>Delete</string>
     </property>
    </widget>
    <widget class="QPushButton" name="calibrate_start">
     <property name="geometry">
      <rect>
       <x>143</x>
-      <y>601</y>
+      <y>595</y>
       <width>80</width>
       <height>80</height>
      </rect>
@@ -1504,7 +1504,7 @@ border-style: inset;
     <property name="geometry">
      <rect>
       <x>257</x>
-      <y>601</y>
+      <y>595</y>
       <width>80</width>
       <height>80</height>
      </rect>

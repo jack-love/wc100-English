@@ -99,9 +99,9 @@ color:rgb(0, 170, 255);
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>120</y>
+      <y>110</y>
       <width>461</width>
-      <height>371</height>
+      <height>381</height>
      </rect>
     </property>
     <property name="font">
@@ -202,7 +202,7 @@ QScrollBar::handle:vertical:hover{width:25px;background:rgb(0, 85, 127);border-r
     <property name="geometry">
      <rect>
       <x>38</x>
-      <y>662</y>
+      <y>665</y>
       <width>91</width>
       <height>51</height>
      </rect>
@@ -221,7 +221,7 @@ QScrollBar::handle:vertical:hover{width:25px;background:rgb(0, 85, 127);border-r
     <property name="geometry">
      <rect>
       <x>265</x>
-      <y>662</y>
+      <y>665</y>
       <width>121</width>
       <height>51</height>
      </rect>
@@ -233,14 +233,14 @@ QScrollBar::handle:vertical:hover{width:25px;background:rgb(0, 85, 127);border-r
      </font>
     </property>
     <property name="text">
-     <string>duery</string>
+     <string>Query</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_export">
     <property name="geometry">
      <rect>
       <x>143</x>
-      <y>662</y>
+      <y>665</y>
       <width>121</width>
       <height>51</height>
      </rect>
@@ -252,14 +252,14 @@ QScrollBar::handle:vertical:hover{width:25px;background:rgb(0, 85, 127);border-r
      </font>
     </property>
     <property name="text">
-     <string>export</string>
+     <string>Export</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_delete">
     <property name="geometry">
      <rect>
       <x>383</x>
-      <y>662</y>
+      <y>665</y>
       <width>101</width>
       <height>51</height>
      </rect>
@@ -271,33 +271,32 @@ QScrollBar::handle:vertical:hover{width:25px;background:rgb(0, 85, 127);border-r
      </font>
     </property>
     <property name="text">
-     <string>delete</string>
+     <string>Delete</string>
     </property>
    </widget>
    <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>480</y>
+      <y>490</y>
       <width>461</width>
       <height>91</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>-1</pointsize>
+      <family>Droid Serif</family>
+      <pointsize>29</pointsize>
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">QGroupBox{
-color:rgb(0, 170, 255); 
-
-font-size: 36px;
-
-}</string>
+     <string notr="true"/>
     </property>
     <property name="title">
      <string>Sample number</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
     <widget class="QPushButton" name="btn_previous">
      <property name="geometry">
@@ -311,7 +310,7 @@ font-size: 36px;
      <property name="font">
       <font>
        <family>DejaVu Serif</family>
-       <pointsize>20</pointsize>
+       <pointsize>23</pointsize>
        <weight>75</weight>
        <bold>true</bold>
       </font>
@@ -332,7 +331,7 @@ font-size: 36px;
      <property name="font">
       <font>
        <family>DejaVu Serif</family>
-       <pointsize>20</pointsize>
+       <pointsize>23</pointsize>
        <weight>75</weight>
        <bold>true</bold>
       </font>
@@ -373,7 +372,7 @@ font-size: 36px;
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>0</y>
+      <y>-8</y>
       <width>461</width>
       <height>121</height>
      </rect>
@@ -542,7 +541,7 @@ image: url(:/image/Left.png);
     <property name="geometry">
      <rect>
       <x>28</x>
-      <y>590</y>
+      <y>598</y>
       <width>80</width>
       <height>80</height>
      </rect>
@@ -593,7 +592,7 @@ border-style: inset;
     <property name="geometry">
      <rect>
       <x>140</x>
-      <y>593</y>
+      <y>598</y>
       <width>80</width>
       <height>80</height>
      </rect>
@@ -644,7 +643,7 @@ border-style: inset;
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>590</y>
+      <y>598</y>
       <width>80</width>
       <height>80</height>
      </rect>
@@ -695,7 +694,7 @@ border-style: inset;
     <property name="geometry">
      <rect>
       <x>380</x>
-      <y>590</y>
+      <y>598</y>
       <width>80</width>
       <height>80</height>
      </rect>

@@ -609,7 +609,7 @@ border-style: inset;
       </font>
      </property>
      <property name="text">
-      <string>Password</string>
+      <string>Password:</string>
      </property>
     </widget>
     <widget class="QPushButton" name="btn_clean">
@@ -647,7 +647,7 @@ border-style: inset;
       </font>
      </property>
      <property name="text">
-      <string>Networks</string>
+      <string>Networks:</string>
      </property>
     </widget>
     <widget class="QPushButton" name="btn_scanWifi">
@@ -745,7 +745,7 @@ border-style: outset;
     <widget class="QLabel" name="label_wifi">
      <property name="geometry">
       <rect>
-       <x>160</x>
+       <x>20</x>
        <y>40</y>
        <width>291</width>
        <height>31</height>
@@ -758,7 +758,7 @@ border-style: outset;
       </font>
      </property>
      <property name="text">
-      <string>status</string>
+      <string/>
      </property>
     </widget>
     <widget class="QLineEdit" name="edt_password">
@@ -993,7 +993,7 @@ border-style: inset;
     <widget class="QLabel" name="label_state">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>14</x>
        <y>40</y>
        <width>301</width>
        <height>31</height>
@@ -1006,7 +1006,7 @@ border-style: inset;
       </font>
      </property>
      <property name="text">
-      <string>status</string>
+      <string/>
      </property>
     </widget>
     <widget class="QLabel" name="label_down">

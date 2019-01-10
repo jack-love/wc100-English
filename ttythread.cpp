@@ -33,6 +33,10 @@ delete mcuUart;
 delete listUart;
 }
 
+void ttyThread::setinitCondition(){
+ working_condition=UN_LOCATION;
+}
+
 void ttyThread::setWorkTime(unsigned int s,bool status)
 {
     if(status){
@@ -225,7 +229,8 @@ void ttyThread::run() {
 
                                                                          if(!oneTime){
                                                                                  if(!fist_condition){
-                                                                                    setTestTime(INIT_TIME ,true);
+                                                                                    setTestTime(LOOP_TIME ,true);
+                                                                                    buzzer();
                                                                                  }
                                                                                 fist_condition=false;
                                                                                 oneTime=true;
@@ -614,11 +619,10 @@ void ttyThread::commandSend(WORK_STATE  status)
             }else if (0 == QString::compare("12MA", App::TestPapertype) ){
                 data[3]=0x02;
             }
-//qDebug()<<"commandSend" <<App::TestPapertype;
+
             data[4]=0xca;
             data[5]=(data[0]+data[1]+data[2]+data[3]+data[4])%256;
             cmdok=true;
-              // printf("---- SETUP----\n");
             break;
 
         case  ONESTEP:

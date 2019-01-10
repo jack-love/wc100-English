@@ -14,7 +14,7 @@ Systeminit::Systeminit(QObject *parent):QThread(parent)
 
     progressDialog->setWindowFlags(Qt::FramelessWindowHint);
     progressDialog->setWindowTitle(tr("please wait"));
-    progressDialog->setLabelText(tr(" Thanks for using vansful products\n  Initialization..."));
+    progressDialog->setLabelText(tr(" Thanks for using vansful products\n  Initialization"));
     progressDialog->setCancelButtonText(tr("Canl"));
     progressDialog->setRange(0,100);
     progressDialog->setStyleSheet(QString::fromUtf8("QLabel{\n"
