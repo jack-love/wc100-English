@@ -9,6 +9,9 @@
 #include <QProcess>
 #include "messagebox.h"
 #include<QTimer>
+#include <QtNetwork/QHostAddress>
+#include <QtNetwork/QNetworkInterface>
+#include <QList>
 
 SystemSetup::SystemSetup(QWidget *parent,MainBussniessView*pMainBussniessView) :
     QTabWidget(parent),pMainView(pMainBussniessView),
@@ -203,6 +206,9 @@ void SystemSetup::getwifiState(QString state){
                      if(flag_udhcpc){
                         system("udhcpc -i wlan0");
                         flag_udhcpc=false;
+
+                        qDebug()<<"getipaddr is"<<getIPAddr();;
+                        ui->label_wifi->setText(tr("IPAddr:%1").arg(getIPAddr()));
                       }
         }
 
@@ -781,6 +787,32 @@ void SystemSetup::on_btn_receiveFiles_clicked()
         ui->label_state->setText(tr("Bluetooth is receiving data..."));
         executeShellCmd("obex_test_wc -b local 9 |grep -E  \"Disconnect done!\"");
     }
+}
+
+QString SystemSetup::getIPAddr()
+{
+    QStringList ips;
+
+    QList<QNetworkInterface> networkinterfaces = QNetworkInterface::allInterfaces();
+
+    foreach (QNetworkInterface interface,networkinterfaces)
+    {
+        QNetworkInterface::InterfaceFlags t_interFlags =  interface.flags();
+        if(t_interFlags & QNetworkInterface::IsUp &&
+           t_interFlags & QNetworkInterface::IsRunning)
+        {
+            foreach (QNetworkAddressEntry entry, interface.addressEntries())
+            {
+                if (entry.ip() != QHostAddress::LocalHost
+                    && entry.ip().protocol() == QAbstractSocket::IPv4Protocol
+                    )
+                {
+                    ips.append(entry.ip().toString());
+                }
+            }
+        }
+    }
+    return ips.join("|");
 }
 
 

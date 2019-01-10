@@ -37,7 +37,7 @@ public:
        void  displayUpdate_set(unsigned int s,bool status);
         void updateState(bool status);
         void setSystemTime();
-
+  QString getIPAddr();
 private slots:
         void finishedProcess();
         void readProcess();
